@@ -29,7 +29,6 @@ public class Station {
 			boolean hasKiosk) {
 		this.stationId = stationId;
 		this.address = address;
-		this.numBikes = numBikes;
 		this.numFreeDocks = numFreeDocks;
 		this.capacity = capacity;
 		this.maintenanceReqs = maintenanceReqs;
