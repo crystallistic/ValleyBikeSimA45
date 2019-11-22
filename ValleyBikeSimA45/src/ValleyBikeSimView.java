@@ -39,8 +39,10 @@ public class ValleyBikeSimView {
 		switch (prompt) {
 		case "email":
 			System.out.println("Please enter your email:\n");
+			break;
 		case "welcome": // welcome screen, with 3 options for login, sign up, or exit
 			System.out.println("To start, please enter a number corresponding to one of the options below (1-3)\n");
+			break;
 		} 	
 		
 		input = sc.nextLine();

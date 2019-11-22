@@ -62,8 +62,10 @@ public class ValleyBikeSimModel {
 		switch (userInputName) {
 		case "stationId":			
 			inputIsValid = (stations.containsKey(userInput));
+			break;
 		case "bikeId":
 			inputIsValid = (bikes.containsKey(userInput));
+			break;
 		} 
 		
 		return inputIsValid;
