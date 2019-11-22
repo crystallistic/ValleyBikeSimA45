@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -20,7 +21,7 @@ public class ValleyBikeSimModel {
 	private ValleyBikeSimModel() {
 		
 		HashMap<Station, HashSet<Integer>> stations = new HashMap<>();
-		HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods; = new HashMap<>()
+		HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods = new HashMap<>();
 		User activeUser = null; // what's the default value here and when should it be initialized?
 		HashSet<Ticket> tickets = new HashSet<>();
 		HashMap<Rider,HashSet<Ride>> ridesCompleted = new HashMap<>();
