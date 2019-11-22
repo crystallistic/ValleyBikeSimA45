@@ -18,7 +18,7 @@ public class ValleyBikeSimModel {
 	/**
 	 * Constructor for the Valley Bike Simulator Model.
 	 */
-	private ValleyBikeSimModel() {
+	public ValleyBikeSimModel() {
 		
 		HashMap<Station, HashSet<Integer>> stations = new HashMap<>();
 		HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods = new HashMap<>();

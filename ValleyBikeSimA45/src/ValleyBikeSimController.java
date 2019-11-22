@@ -11,7 +11,7 @@ public class ValleyBikeSimController {
 	 * @param view
 	 * @param model
 	 */
-	private ValleyBikeSimController(ValleyBikeSimView view, ValleyBikeSimModel model) {
+	public ValleyBikeSimController(ValleyBikeSimView view, ValleyBikeSimModel model) {
 		this.view = view;
 		this.model = model;
 	}
@@ -44,4 +44,10 @@ public class ValleyBikeSimController {
 		this.model = model;
 	}
 	
+	/**
+	 * start program and show main menu
+	 */  
+	public void start() {
+		
+	}
 }

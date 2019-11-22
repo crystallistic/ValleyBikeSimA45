@@ -8,7 +8,7 @@ public class ValleyBikeSimView {
 	/**
 	 * Constructor for the Valley Bike Simulator View.
 	 */
-	private ValleyBikeSimView() {
+	public ValleyBikeSimView() {
 		
 	}
 }

@@ -8,7 +8,6 @@ public class Station {
 	
 	int stationId;
 	String address;
-	int numBikes;
 	int numFreeDocks;
 	int capacity;
 	int maintenanceReqs;
@@ -63,18 +62,7 @@ public class Station {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	/**
-	 * @return the number of bikes at this station
-	 */
-	public int getNumBikes() {
-		return numBikes;
-	}
-	/**
-	 * @param numBikes 		the number of bikes to set at this station
-	 */
-	public void setNumBikes(int numBikes) {
-		this.numBikes = numBikes;
-	}
+
 	/**
 	 * @return the number of free docks
 	 */
