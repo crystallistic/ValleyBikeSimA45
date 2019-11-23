@@ -137,7 +137,7 @@ public class ValleyBikeSimController {
 		Membership membership;
 		switch (membershipOption) {
 		case "1":
-			membership = new Pay
+			membership = new PayPerRide();
 		}
 	}
 	

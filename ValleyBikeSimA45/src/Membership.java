@@ -1,5 +1,3 @@
-import java.util.Date;
-
 /**
  * @author maingo
  *
@@ -12,7 +10,10 @@ public abstract class Membership {
 	/** get the duration limit for a ride before the user gets charged overtime fees,
 	 *  corresponding to the membership */
 	public abstract int getRideDurationLimit();
-
+	
+	/** given the ride duration, calculate the amount the user would be charged for the ride */
+	public abstract float getChargeForRide(int rideDurationInMinutes);
+	
 	/**
 	 * @return the baseRate
 	 */
