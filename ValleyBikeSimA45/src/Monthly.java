@@ -20,11 +20,6 @@ public class Monthly extends Membership {
 	}
 
 	@Override
-	public void chargeForRide() {
-		
-	}
-
-	@Override
 	public int getRideDurationLimit() {
 		return rideDurationLimit;
 	}

@@ -17,12 +17,6 @@ public class FoundingMember extends Membership {
 	}
 
 	@Override
-	public void chargeForRide() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public int getRideDurationLimit() {
 		// TODO Auto-generated method stub
 		return rideDurationLimit;

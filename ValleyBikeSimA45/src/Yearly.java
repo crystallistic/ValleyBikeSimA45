@@ -14,12 +14,6 @@ public class Yearly extends Membership {
 	}
 
 	@Override
-	public void getChargeForRide() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public int getRideDurationLimit() {
 		// TODO Auto-generated method stub
 		return rideDurationLimit;
