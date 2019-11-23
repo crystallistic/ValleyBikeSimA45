@@ -25,7 +25,7 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String arr[] = {"bikeId", "stationId"}; 
+		String arr[] = {"bikeId", "stationId", "newUsername", "email"}; 
 	    // Set demonstration using HashSet Constructor 
 		validateInModel = new HashSet<>(Arrays.asList(arr));
 	}
@@ -63,6 +63,7 @@ public class ValleyBikeSimController {
 	 */
 	private void generateRegex() {
 		regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
+		regex.put("newPassword", Pattern.compile(".{6}.*")); // password has to be at least 6 characters
 		regex.put("phoneNumber", Pattern.compile("")); // add later
 	}
 	
@@ -85,6 +86,63 @@ public class ValleyBikeSimController {
 	}
 	
 	/**
+	 * Prompts for the user's valid login information and logs the user in the system.
+	 */
+	public void login() {
+		view.displayLoginScreen();
+		String username = getUserInput("username");
+		
+		if (username.equals("leave")) {
+			start();
+			return;
+		} 
+		
+		model.setActiveUser(username);		
+		boolean userIsAdmin = model.activeUserIsAdmin();
+		
+		// if active user is a rider
+		if (!userIsAdmin) {
+			boolean rideIsInProgress = model.isRideInProgress(); // check if user has a ride in progress
+			
+			// if the rider has a ride in progress
+			if (rideIsInProgress) {
+				view.remindEndRide(); // display message reminding user to end ride
+				boolean isOverdue = model.bikeIsOverdue(); // check whether bike is overdue
+				
+				// if bike is overdue
+				if (isOverdue) {
+					int amountCharged = model.chargeUser(); // charge user $2000 overdue bike
+					view.notifyOverdue(amountCharged); // notify user of charge
+				}
+			}
+		}
+		
+		mainMenu(userIsAdmin); // show admin menu if user is admin, else show rider menu
+		
+	}
+	
+	public void signup() {
+		view.displaySignupScreen();
+		
+		
+	}
+	
+	/**
+	 * Invokes appropriate menu for the currently active user.
+	 * @param userIsAdmin 	true if user is admin, else false
+	 */
+	public void mainMenu(boolean userIsAdmin) {
+		
+		view.displayMainMenu(userIsAdmin);
+		
+		String newUserName = getUserInput("newUsername");
+		String password = getUserInput("newPassword");
+		String email = getUserInput("email");
+		String address = getUserInput("address");
+		
+	}
+	
+	/**
 	 * Prompts user and validates using the name of the thing that we want (e.g. getUserInput(email))
 	 * @return user input as a string
 	 */
@@ -93,11 +151,31 @@ public class ValleyBikeSimController {
 		boolean inputIsValid;
 		String userInput = view.prompt(userInputName);
 		
-		if (validateInModel.contains(userInputName)) {
+		if (userInputName.equals("username")) {
+			String password = view.prompt("password");
+			String loginInfo = userInput + " " + password;
+			inputIsValid = model.isValid("loginInfo",loginInfo);
+			
+			while (!inputIsValid) {
+				
+				System.out.println("Invalid username and password combination, please try again.");
+				
+				// wantToCont == getUserInput(option2) 
+				// if wantToCont == 0: // no
+				// userInput == "leave"
+				// break
+	
+				userInput = view.prompt(userInputName); // username
+				password = view.prompt("password");
+				loginInfo = userInput + " " + password;
+				inputIsValid = model.isValid("loginInfo",loginInfo);
+			}
+		}
+		else if (validateInModel.contains(userInputName)) {
 			inputIsValid = model.isValid(userInputName,userInput); // 
 			
 			while(!inputIsValid) {
-				System.out.println("Invalid input, please try again.");
+				System.out.println("Invalid " + userInputName + ", please try again.");
 				userInput = view.prompt(userInputName);
 				inputIsValid = model.isValid(userInputName,userInput);
 			}
