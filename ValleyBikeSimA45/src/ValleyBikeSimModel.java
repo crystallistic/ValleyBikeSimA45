@@ -1,8 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-
-import com.sun.tools.internal.ws.processor.model.Model;
+import java.util.regex.Pattern;
 
 import java.util.Date;
 
@@ -79,6 +78,13 @@ public class ValleyBikeSimModel {
 			break;
 		case "newUsername":
 			inputIsValid = (!users.containsKey(userInput) && userInput.length() >= 6);
+			break;
+		case "newEmail":
+			// regex to validate email format
+			Pattern r = Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"); 
+			
+			// email is valid if it's in valid format and it does not belong to an existing user
+			inputIsValid = (r.matcher(userInput).find() && !emails.containsKey(userInput));
 			break;
 			
 		} 	

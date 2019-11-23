@@ -36,6 +36,16 @@ public class ValleyBikeSimView {
 		System.out.println("Please enter the following information to create an account.");
 	}
 	
+	
+	public void displayMembershipOptions() {
+		System.out.println("Please choose from the membership options below by entering the corresponding option number (1-5):\n"
+				+ "1) Pay per ride\n"
+				+ "2) Day Pass\n"
+				+ "3) Monthly\n"
+				+ "4) Yearly\n"
+				+ "5) Founding Member\n");
+	}
+	
 	/**
 	 * Prompts the user for information 
 	 * @param prompt the information that the program is prompting for 

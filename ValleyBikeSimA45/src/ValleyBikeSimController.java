@@ -25,9 +25,9 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String arr[] = {"bikeId", "stationId", "newUsername", "email"}; 
+		String fieldsToValidateInModel[] = {"bikeId", "stationId", "newUsername", "newEmail"}; 
 	    // Set demonstration using HashSet Constructor 
-		validateInModel = new HashSet<>(Arrays.asList(arr));
+		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
 
 	/**
@@ -64,7 +64,8 @@ public class ValleyBikeSimController {
 	private void generateRegex() {
 		regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
 		regex.put("newPassword", Pattern.compile(".{6}.*")); // password has to be at least 6 characters
-		regex.put("phoneNumber", Pattern.compile("")); // add later
+		regex.put("address", Pattern.compile(".*")); // we assume the user will enter a valid address
+		regex.put("phoneNumber", Pattern.compile("[1-9][0-9]{9}")); // phone number format
 	}
 	
 	/**
@@ -124,7 +125,20 @@ public class ValleyBikeSimController {
 	public void signup() {
 		view.displaySignupScreen();
 		
+		String newUserName = getUserInput("newUsername");
+		String password = getUserInput("newPassword");
+		String email = getUserInput("newEmail");
+		String address = getUserInput("address");
+		String phoneNumber = getUserInput("phoneNumber");
 		
+		view.displayMembershipOptions();
+		String membershipOption = getUserInput("option5");
+		
+		Membership membership;
+		switch (membershipOption) {
+		case "1":
+			membership = new Pay
+		}
 	}
 	
 	/**
@@ -135,10 +149,7 @@ public class ValleyBikeSimController {
 		
 		view.displayMainMenu(userIsAdmin);
 		
-		String newUserName = getUserInput("newUsername");
-		String password = getUserInput("newPassword");
-		String email = getUserInput("email");
-		String address = getUserInput("address");
+		
 		
 	}
 	
