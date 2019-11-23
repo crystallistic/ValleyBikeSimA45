@@ -134,11 +134,28 @@ public class ValleyBikeSimController {
 		view.displayMembershipOptions();
 		String membershipOption = getUserInput("option5");
 		
+		// create membership object based on user input
 		Membership membership;
+		MembershipFactory mf = new MembershipFactory();
 		switch (membershipOption) {
 		case "1":
-			membership = new PayPerRide();
+			membership = mf.getMembership("PayPerRide");
+			break;
+		case "2":
+			membership = mf.getMembership("DayPass");
+			break;
+		case "3":
+			membership = mf.getMembership("Monthly");
+			break;
+		case "4":
+			membership = mf.getMembership("Yearly");
+			break;
+		case "5":
+			membership = mf.getMembership("FoundingMember");
+			break;
 		}
+		
+		
 	}
 	
 	/**

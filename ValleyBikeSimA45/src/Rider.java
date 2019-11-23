@@ -7,6 +7,7 @@ public class Rider extends User {
 	String fullName;
 	String phoneNumber;
 	String address;
+	String email;
 
 	/**
 	 * @param userName
