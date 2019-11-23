@@ -159,11 +159,6 @@ public class ValleyBikeSimController {
 			while (!inputIsValid) {
 				
 				System.out.println("Invalid username and password combination, please try again.");
-				
-				// wantToCont == getUserInput(option2) 
-				// if wantToCont == 0: // no
-				// userInput == "leave"
-				// break
 	
 				userInput = view.prompt(userInputName); // username
 				password = view.prompt("password");
