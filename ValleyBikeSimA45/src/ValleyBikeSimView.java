@@ -163,7 +163,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * 
+	 * Displays the menu appropriate for the type of user (rider or admin)
 	 * @param userIsAdmin
 	 */
 	public void displayMainMenu(boolean userIsAdmin) {
@@ -174,4 +174,13 @@ public class ValleyBikeSimView {
 			displayRiderMainMenu();
 		}
 	}
+
+	public void displayAdminMainMenu() {
+		
+	}
+	
+	public void displayRiderMainMenu() {
+		
+	}
+	
 }

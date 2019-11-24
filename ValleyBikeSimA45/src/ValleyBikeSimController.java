@@ -102,7 +102,7 @@ public class ValleyBikeSimController {
 	}
 	
 	/**
-	 * start program and show main menu
+	 * Start the ValleyBike program. User can login, sign up for a rider account, or exit the system.
 	 */  
 	public void start() {
 		// show welcome screen with options to login, signup, or exit program
@@ -119,9 +119,7 @@ public class ValleyBikeSimController {
 		case "3": 
 			exit(); // displays exit message, exit system
 			break;
-		}
-		
-		
+		}	
 	}
 	
 	/**
@@ -217,10 +215,8 @@ public class ValleyBikeSimController {
 		model.addPaymentMethod(rider, paymentMethod); // add payment method to rider's account
 		model.setMembership(rider, membership); // set rider's membership
 		 
-		
-		mainMenu(false); // show rider menu (userIsAdmin = false)
 		model.setActiveUser(newUserName); // set rider as currently active user
-		
+		mainMenu(false); // show rider menu (userIsAdmin = false)	
 	}
 	
 	public void exit() {
