@@ -218,7 +218,7 @@ public class ValleyBikeSimController {
 		model.setMembership(rider, membership); // set rider's membership
 		 
 		
-		mainMenu(userIsAdmin); // show rider menu,
+		mainMenu(false); // show rider menu (userIsAdmin = false)
 		model.setActiveUser(newUserName); // set rider as currently active user
 		
 	}
