@@ -9,6 +9,7 @@ public class Monthly extends Membership {
 	 * 
 	 */
 	public Monthly() {
+		membershipType = "Monthly";
 		baseRate = 20;
 		rideDurationLimit = 45;
 	}

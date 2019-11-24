@@ -4,6 +4,7 @@
  */
 public abstract class Membership {
 	
+	public String membershipType;
 	public int baseRate;
 	public int rideDurationLimit;
 	
@@ -26,6 +27,20 @@ public abstract class Membership {
 	 */
 	public void setBaseRate(int baseRate) {
 		this.baseRate = baseRate;
+	}
+
+	/**
+	 * @return the membershipType
+	 */
+	public String getMembershipType() {
+		return membershipType;
+	}
+
+	/**
+	 * @param membershipType the membershipType to set
+	 */
+	public void setMembershipType(String membershipType) {
+		this.membershipType = membershipType;
 	}
 
 	/**

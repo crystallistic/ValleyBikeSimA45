@@ -8,6 +8,7 @@ public class DayPass extends Membership {
 	 * 
 	 */
 	public DayPass() {
+		membershipType = "Day Pass";
 		baseRate = 6;
 		rideDurationLimit = 30;
 	}

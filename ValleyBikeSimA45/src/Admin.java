@@ -9,7 +9,7 @@ public class Admin extends User {
 	 * @param password
 	 */
 	public Admin(String userName, String password) {
-		super(userName, password);		
+		super(userName, password);	
 	}
 
 }

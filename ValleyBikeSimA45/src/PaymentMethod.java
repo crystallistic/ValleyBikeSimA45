@@ -1,5 +1,3 @@
-import java.util.Date;
-
 /**
  * @author maingo
  *
@@ -8,8 +6,8 @@ public class PaymentMethod {
 	
 	String billingName;
 	String cardNumber;
-	String address;
-	Date expiryDate;
+	String billingAddress;
+	String expiryDate;
 	String cvv;
 	
 	/**
@@ -19,10 +17,10 @@ public class PaymentMethod {
 	 * @param expiryDate
 	 * @param cvv
 	 */
-	public PaymentMethod(String billingName, String cardNumber, String address, Date expiryDate, String cvv) {
+	public PaymentMethod(String billingName, String cardNumber, String billingAddress, String expiryDate, String cvv) {
 		this.billingName = billingName;
 		this.cardNumber = cardNumber;
-		this.address = address;
+		this.billingAddress = billingAddress;
 		this.expiryDate = expiryDate;
 		this.cvv = cvv;
 	}

@@ -14,6 +14,7 @@ public class PayPerRide extends Membership {
 	 * 
 	 */
 	public PayPerRide() {
+		membershipType = "Pay Per Ride";
 		baseRate = 2;
 		rideDurationLimit = 30;
 	}

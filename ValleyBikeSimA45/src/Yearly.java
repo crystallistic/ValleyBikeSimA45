@@ -8,7 +8,7 @@ public class Yearly extends Membership {
 	 * 
 	 */
 	public Yearly() {
-		// TODO Auto-generated constructor stub
+		membershipType = "Yearly";
 		baseRate = 80;
 		rideDurationLimit = 45;
 	}

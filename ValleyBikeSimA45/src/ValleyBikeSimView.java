@@ -4,6 +4,10 @@ import java.util.Scanner;
  * @author maingo
  *
  */
+/**
+ * @author maingo
+ *
+ */
 public class ValleyBikeSimView {
 	
 	
@@ -26,17 +30,25 @@ public class ValleyBikeSimView {
 				+ "3) Exit\n");
 	}
 	
+	/**
+	 * Displays message on the login screen.
+	 */
 	public void displayLoginScreen() {
 		// show login screen
 		System.out.println("Please enter your login information.");
 	}
 	
+	/**
+	 * Displays message on the signup screen.
+	 */
 	public void displaySignupScreen() {
 		// show sign up screen
 		System.out.println("Please enter the following information to create an account.");
 	}
 	
-	
+	/**
+	 * Displays a list from all membership options and prompts the rider to enter their selection.
+	 */
 	public void displayMembershipOptions() {
 		System.out.println("Please choose from the membership options below by entering the corresponding option number (1-5):\n"
 				+ "1) Pay per ride\n"
@@ -44,6 +56,30 @@ public class ValleyBikeSimView {
 				+ "3) Monthly\n"
 				+ "4) Yearly\n"
 				+ "5) Founding Member\n");
+	}
+	
+	/**
+	 * Displays message confirming purchase of membership and amount charged to rider for membership.
+	 * @param membershipType	the type of the membership
+	 * @param baseRate			the amount initially charged to the user's account (i.e. does not include overtime fee for rides)
+	 */
+	public void displayPurchaseMembershipSuccess(String membershipType, int baseRate) {
+		System.out.println("You have successfully purchased the " + membershipType + " membership. Your credit card has been charged in the amount of $" + Integer.toString(baseRate));
+	}
+	
+	/**
+	 * Displays message confirming new account creation and username.
+	 * @param newUserName 	username associated with newly created account
+	 */
+	public void displayAccountCreationSuccess(String newUserName) {
+		System.out.println("Congratulations! You have successfully created an account with ValleyBike. Your username is " + newUserName + ".");
+	}
+	
+	/**
+	 * Displays message at program exit.
+	 */
+	public void displayExit() {
+		System.out.println("Thank you for using ValleyBike!");
 	}
 	
 	/**
@@ -69,14 +105,42 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your password: \n");
 			break;
 		case "newUserName":
-			System.out.println("Please enter a username (at least 6 characters)");
+			System.out.println("Please enter a username (at least 6 characters): \n");
 			break;
 		case "newPassword":
-			System.out.println("Please enter a password (at least 6 characters)");
+			System.out.println("Please enter a password (at least 6 characters): \n");
 			break;
+		case "fullName":
+			System.out.println("Please enter your first and last name: \n");
+			break;
+		case "phoneNumber":
+			System.out.println("Please enter your 10-digit cellphone number: \n");
+			break;
+		case "address":
+			System.out.println("Please enter your address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":\n");
+			break;
+		case "billingName":
+			System.out.println("Please enter the full name on your credit card: \n");
+			break;
+		case "billingAddress":
+			System.out.println("Please enter your billingaddress on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":\n");
+			break;
+		case "creditCardNumber":
+			System.out.println("Please enter your credit card number: \n");
+			break;
+		case "creditCardDate":
+			System.out.println("Please enter your credit card expiration date in one of the following formats - MM/YY or MM/YYYY: \n");
+			break;
+		case "CVV":
+			System.out.println("Please enter your 3 or 4-digit security code on your credit card: \n");
+			break;
+		default: // default is options for a menu
+			System.out.println("Please enter a number corresponding to your option: \n");
+			break;
+		
 		} 
 		
-		input = sc.nextLine();
+		input = sc.nextLine().trim();
 		
 		sc.close();
 		

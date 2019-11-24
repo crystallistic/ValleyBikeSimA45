@@ -4,20 +4,21 @@
  */
 public class Rider extends User {
 	
-	String fullName;
-	String phoneNumber;
-	String address;
-	String email;
+	private String fullName;
+	private String phoneNumber;
+	private String address;
+	private String email;
 
 	/**
 	 * @param userName
 	 * @param password
 	 */
-	public Rider(String userName, String password, String fullName, String phoneNumber, String address) {
+	public Rider(String userName, String password, String fullName, String email, String phoneNumber, String address) {
 		super(userName, password);
 		this.fullName = fullName;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
+		this.email = email;
 	}
 
 	/**
@@ -61,6 +62,21 @@ public class Rider extends User {
 	 */
 	public void setAddress(String address) {
 		this.address = address;
+	}
+
+	/**
+	 * @return the email
+	 */
+	public String getEmail() {
+		return email;
+	}
+
+	/**
+	 * @param email the email to set
+	 */
+	public void setEmail(String email) {
+		this.email = email;
 	}	
+	
 
 }

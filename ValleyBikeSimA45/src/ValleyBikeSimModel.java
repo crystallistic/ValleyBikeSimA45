@@ -41,6 +41,9 @@ public class ValleyBikeSimModel {
 	/** map all riders to the ride they currently have in progress */
 	private HashMap<Rider,Ride> ridesInProgress;
 	
+	/** map all riders to their membership type */
+	private HashMap<Rider,Membership> memberships;
+	
 	
 	/**
 	 * Constructor for the Valley Bike Simulator Model.
@@ -90,7 +93,7 @@ public class ValleyBikeSimModel {
 		} 	
 		return inputIsValid;
 	}
-
+	
 	/**
 	 * Check if the currently active user is an admin
 	 * @return
@@ -154,5 +157,46 @@ public class ValleyBikeSimModel {
 		this.activeUser = users.get(activeUsername);
 	}
 	
+	/**
+	 * 
+	 * Map a rider to the associated membership.
+	 * @param rider			The rider
+	 * @param membership	The rider's membership
+	 */
+	public void setMembership(Rider rider, Membership membership) {
+		this.memberships.put(rider, membership);
+	}
+	
+	/**
+	 * Map the user to the associated username.
+	 * @param user the user to add
+	 */
+	public void addUser(User user) {
+		this.users.put(user.getUserName(), user);
+	}
+	
+	/**
+	 * Map a rider with their payment methods.
+	 * @param rider			The rider
+	 * @param paymentMethod	The rider's payment method
+	 */
+	public void addPaymentMethod(Rider rider, PaymentMethod paymentMethod) {
+		// create new list of payment methods if new user
+		this.paymentMethods.putIfAbsent(rider, new ArrayList<PaymentMethod>());
+		
+		// add payment method to list of payment methods associated with user
+		this.paymentMethods.get(rider).add(paymentMethod);
+	}
+	
+	/**
+	 * Map an email address to the associated ValleyBike rider.
+	 * @param rider			The rider
+	 * @param email			The rider's email address
+	 */
+	public void addEmail(Rider rider, String email) {
+	
+		// add email associated with user
+		this.emails.put(email, rider);
+	}
 	
 }

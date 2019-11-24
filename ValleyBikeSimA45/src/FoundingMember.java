@@ -8,6 +8,7 @@ public class FoundingMember extends Membership {
 	 * 
 	 */
 	public FoundingMember() {
+		membershipType = "Founding Member";
 		baseRate = 90;
 		rideDurationLimit = 60;
 	}
