@@ -111,13 +111,13 @@ public class ValleyBikeSimController {
 		
 		switch (optionSelected) {
 		case "1":
-			login();
+			login(); // rider logs in using valid username and password
 			break;
 		case "2":
-			signup();
+			signup(); // rider creates new account and purchase a membership
 			break;
 		case "3": 
-			exit();
+			exit(); // displays exit message, exit system
 			break;
 		}
 		
