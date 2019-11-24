@@ -232,6 +232,8 @@ public class ValleyBikeSimController {
 	public void mainMenu(boolean userIsAdmin) {
 		view.displayMainMenu(userIsAdmin);
 		
+		
+		
 	}
 	
 	/**

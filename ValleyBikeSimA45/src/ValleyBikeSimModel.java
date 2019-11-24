@@ -1,7 +1,8 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.regex.Pattern;
+import java.io.FileReader;
+import java.util.*;
+//import java.util.regex.Pattern;
+
+import com.opencsv.CSVReader;
 
 import java.util.Date;
 
@@ -12,38 +13,37 @@ import java.util.Date;
 public class ValleyBikeSimModel {
 	
 	/** map all stations to their station ID */
-	private HashMap<Integer, Station> stations;
-	
+	private static HashMap<Integer, Station> stations;
+
 	/** map all bikes to their bike ID */
-	private HashMap<Integer, Bike> bikes;
-	
+	private static HashMap<Integer, Bike> bikes;
+
 	/** map each station to its list of bike IDs */
-	private HashMap<Station, HashSet<Integer>> stationsBikes;
-	
+	private static HashMap<Station, HashSet<Integer>> stationsBikes;
+
 	/** map each rider to their payment methods */
-	private HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods;
-	
+	private static HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods;
+
 	/** the currently logged in user */
-	private User activeUser;
-	
+	private static User activeUser;
+
 	/** contains all technical support tickets */
-	private HashSet<Ticket> tickets;
-	
+	private static HashSet<Ticket> tickets;
+
 	/** map all users to their user names */
-	private HashMap<String,User> users;
-	
+	private static HashMap<String, User> users;
+
 	/** map all users to their emails */
-	private HashMap<String,User> emails;
-	
+	private static HashMap<String, User> emails;
+
 	/** map all riders to the rides they have completed */
-	private HashMap<Rider,HashSet<Ride>> ridesCompleted;
-	
+	private static HashMap<Rider, HashSet<Ride>> ridesCompleted;
+
 	/** map all riders to the ride they currently have in progress */
-	private HashMap<Rider,Ride> ridesInProgress;
-	
+	private static HashMap<Rider, Ride> ridesInProgress;
+
 	/** map all riders to their membership type */
-	private HashMap<Rider,Membership> memberships;
-	
+	private static HashMap<Rider, Membership> memberships;
 	
 	/**
 	 * Constructor for the Valley Bike Simulator Model.
@@ -57,6 +57,48 @@ public class ValleyBikeSimModel {
 		HashMap<Rider,HashSet<Ride>> ridesCompleted = new HashMap<>();
 		HashMap<Rider,HashSet<Ride>> ridesInProgress = new HashMap<>();		
 	} 
+	
+	/**
+	 * Read in all the data files and store them in appropriate data structures.
+	 */
+	public static void readData() {
+		try {
+			String stationData = "data-files/station-data.csv";
+
+			
+			CSVReader stationDataReader = new CSVReader(new FileReader(stationData));
+
+			
+			/* to read the CSV data row wise: */
+			List<String[]> allStationEntries = stationDataReader.readAll();
+			
+			System.out.println("");
+			int counter = 0;
+			for(String[] array : allStationEntries) {
+				if(counter != 0) {
+					
+					// create new station object
+					Station station = new Station(Integer.parseInt(array[0]), array[1], 
+							array[8], Integer.parseInt(array[2]), Integer.parseInt(array[4]), 
+							Integer.parseInt(array[6]), Integer.parseInt(array[5]),(array[7].equals("1")));
+					
+					// map station to its ID number
+					stations.put(Integer.parseInt(array[0]), station); 
+					
+				}
+				counter++;	
+			}
+		
+			for(Station station : stationsList) {
+				stationsMap.put(station.getID(), station);
+			}
+			
+		
+		} 
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}	
+	}
 	
 	
 	/**

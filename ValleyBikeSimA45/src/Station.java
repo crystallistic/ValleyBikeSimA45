@@ -7,6 +7,7 @@ public class Station {
 	
 	
 	int stationId;
+	String stationName;
 	String address;
 	int numFreeDocks;
 	int capacity;
@@ -25,9 +26,10 @@ public class Station {
 	 * @param maintenanceReqs
 	 * @param hasKiosk
 	 */
-	public Station(int stationId, String address, int numBikes, int numFreeDocks, int capacity, int maintenanceReqs,
-			boolean hasKiosk) {
+	public Station(int stationId, String stationName, String address, int numBikes, 
+			int numFreeDocks, int capacity, int maintenanceReqs, boolean hasKiosk) {
 		this.stationId = stationId;
+		this.stationName = stationName;
 		this.address = address;
 		this.numFreeDocks = numFreeDocks;
 		this.capacity = capacity;
@@ -110,4 +112,19 @@ public class Station {
 	public void setHasKiosk(boolean hasKiosk) {
 		this.hasKiosk = hasKiosk;
 	}
+
+	/**
+	 * @return the stationName
+	 */
+	public String getStationName() {
+		return stationName;
+	}
+
+	/**
+	 * @param stationName the stationName to set
+	 */
+	public void setStationName(String stationName) {
+		this.stationName = stationName;
+	}
+	
 }
