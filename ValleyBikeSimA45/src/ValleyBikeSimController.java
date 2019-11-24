@@ -121,6 +121,7 @@ public class ValleyBikeSimController {
 			break;
 		}
 		
+		
 	}
 	
 	/**
@@ -215,7 +216,10 @@ public class ValleyBikeSimController {
 		model.addEmail(rider, email); // map email address to rider in the system
 		model.addPaymentMethod(rider, paymentMethod); // add payment method to rider's account
 		model.setMembership(rider, membership); // set rider's membership
-		model.setActiveUser(newUserName); // logs this user in 
+		 
+		
+		mainMenu(userIsAdmin); // show rider menu,
+		model.setActiveUser(newUserName); // set rider as currently active user
 		
 	}
 	
