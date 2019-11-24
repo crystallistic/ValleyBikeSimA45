@@ -167,6 +167,11 @@ public class ValleyBikeSimView {
 	 * @param userIsAdmin
 	 */
 	public void displayMainMenu(boolean userIsAdmin) {
-		//
+		
+		if (userIsAdmin) {
+			displayAdminMainMenu();
+		} else {
+			displayRiderMainMenu();
+		}
 	}
 }
