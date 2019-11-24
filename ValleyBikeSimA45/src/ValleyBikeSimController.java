@@ -154,6 +154,7 @@ public class ValleyBikeSimController {
 			}
 		}
 		
+		view.displayLoginSuccess();
 		mainMenu(userIsAdmin); // show admin menu if user is admin, else show rider menu
 		
 	}
@@ -229,7 +230,6 @@ public class ValleyBikeSimController {
 	 * @param userIsAdmin 	true if user is admin, else false
 	 */
 	public void mainMenu(boolean userIsAdmin) {
-		
 		view.displayMainMenu(userIsAdmin);
 		
 	}

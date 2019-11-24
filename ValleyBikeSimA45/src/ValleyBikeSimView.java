@@ -76,6 +76,14 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
+	 * Displays message confirming successful login.
+	 * @param newUserName 	username associated with newly created account
+	 */
+	public void displayLoginSuccess() {
+		System.out.println("You are now logged in.");
+	}
+	
+	/**
 	 * Displays message at program exit.
 	 */
 	public void displayExit() {
@@ -176,11 +184,30 @@ public class ValleyBikeSimView {
 	}
 
 	public void displayAdminMainMenu() {
-		
+		System.out.println("Please enter a number corresponding to one of the actions below:\n"
+				+ "1) Add station\n"
+				+ "2) Remove station\n"
+				+ "3) Add bikes\n"
+				+ "4) Remove bikes\n"
+				+ "5) Redistribute bikes\n"
+				+ "6) View station list\n"
+				+ "7) Resolve ride\n"
+				+ "8) Create support ticket"
+				+ "9) Log out");
 	}
 	
 	public void displayRiderMainMenu() {
-		
+		System.out.println("Please enter a number corresponding to one of the actions below:\n"
+				+ "1) View station list\n"
+				+ "2) Start ride\n"
+				+ "3) End ride\n"
+				+ "4) Edit profile\n"
+				+ "5) Edit payment method\n"
+				+ "6) Edit membership\n"
+				+ "7) View ride history\n"
+				+ "8) View transaction history\n"
+				+ "9) Report issue\n"
+				+ "10) Log out\n");
 	}
 	
 }

@@ -57,27 +57,27 @@ public class PaymentMethod {
 	 * @return the address
 	 */
 	public String getAddress() {
-		return address;
+		return billingAddress;
 	}
 
 	/**
 	 * @param address the address to set
 	 */
-	public void setAddress(String address) {
-		this.address = address;
+	public void setAddress(String billingAddress) {
+		this.billingAddress = billingAddress;
 	}
 
 	/**
 	 * @return the expiryDate
 	 */
-	public Date getExpiryDate() {
+	public String getExpiryDate() {
 		return expiryDate;
 	}
 
 	/**
 	 * @param expiryDate the expiryDate to set
 	 */
-	public void setExpiryDate(Date expiryDate) {
+	public void setExpiryDate(String expiryDate) {
 		this.expiryDate = expiryDate;
 	}
 
