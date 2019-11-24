@@ -221,6 +221,7 @@ public class ValleyBikeSimController {
 	
 	public void exit() {
 		view.displayExit();
+		System.exit(0);
 	}
 	
 	/**
