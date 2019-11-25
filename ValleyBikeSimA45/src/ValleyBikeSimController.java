@@ -86,7 +86,8 @@ public class ValleyBikeSimController {
 		// Discover card numbers begin with 6011 or 65. All have 16 digits.
 		// - JCB: ^(?:2131|1800|35\d{3})\d{11}$ 
 		// JCB cards beginning with 2131 or 1800 have 15 digits. JCB cards beginning with 35 have 16 digits.
-		regex.put("creditCardNumber", Pattern.compile("^("
+		
+		/** regex.put("creditCardNumber", Pattern.compile("^("
 				+ "?:4[0-9]{12}(?:[0-9]{3})?|"
 				+ "(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|"
 				+ "3[47][0-9]{13}|"
@@ -94,6 +95,10 @@ public class ValleyBikeSimController {
 				+ "6(?:011|5[0-9]{2})[0-9]{12}|"
 				+ "(?:2131|1800|35\\d{3})\\d{11}"
 				+ ")$")); 
+				
+		*/
+		
+		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$"));
 		regex.put("billingAddress", Pattern.compile(".*")); // we assume the user will enter a valid address
 		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$")); // expiry date of credit card. Regex source: https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
 		regex.put("CVV", Pattern.compile("^[0-9]{3,4}$")); // CVV of credit card. Regex source: https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
@@ -102,10 +107,11 @@ public class ValleyBikeSimController {
 	}
 	
 	/**
-	 * Start the ValleyBike program. User can login, sign up for a rider account, or exit the system.
+	 * Start the ValleyBike program and load data. User can login, sign up for a rider account, or exit the system.
 	 */  
 	public void start() {
 		// show welcome screen with options to login, signup, or exit program
+		model.readData();
 		view.displayWelcomeScreen();
 		String optionSelected = getUserInput("option3");		
 		
@@ -212,9 +218,9 @@ public class ValleyBikeSimController {
 		Rider rider = new Rider(newUserName, password, fullName, email, phoneNumber, address);
 		
 		model.addUser(rider); // maps rider to username in system
-		model.addEmail(rider, email); // map email address to rider in the system
-		model.addPaymentMethod(rider, paymentMethod); // add payment method to rider's account
-		model.setMembership(rider, membership); // set rider's membership
+		model.addEmail(email,rider); // map email address to rider in the system
+		model.addPaymentMethod(newUserName, paymentMethod); // add payment method to rider's account
+		model.setMembership(newUserName, membership); // set rider's membership
 		 
 		model.setActiveUser(newUserName); // set rider as currently active user
 		mainMenu(false); // show rider menu (userIsAdmin = false)	
@@ -230,8 +236,9 @@ public class ValleyBikeSimController {
 	 * @param userIsAdmin 	true if user is admin, else false
 	 */
 	public void mainMenu(boolean userIsAdmin) {
-		view.displayMainMenu(userIsAdmin);
 		
+		
+		view.displayMainMenu(userIsAdmin);
 		
 		
 	}

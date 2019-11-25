@@ -30,13 +30,7 @@ public class Monthly extends Membership {
 			// they would be charged for 46mins
 			totalAmount += (1 + (rideDurationInMinutes - 45)) * 0.15;
 		}
-		return totalAmount;
-		
-	}
-
-	@Override
-	public int getRideDurationLimit() {
-		return rideDurationLimit;
+		return totalAmount;	
 	}
 
 }

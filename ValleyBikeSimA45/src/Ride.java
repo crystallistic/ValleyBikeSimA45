@@ -6,7 +6,7 @@ import java.util.Date;
  *
  */
 public class Ride {
-	int rideId;
+
 	int bikeId;
 	Station startStation;
 	Station endStation;
@@ -22,27 +22,13 @@ public class Ride {
 	 * @param startStation
 	 * @param startTime
 	 */
-	public Ride(int rideId, int bikeId, Station startStation, Date startTime) {
-		this.rideId = rideId;
+	public Ride(int bikeId, Station startStation, Date startTime) {
+
 		this.bikeId = bikeId;
 		this.startStation = startStation;
 		this.startTime = startTime;
 		this.endStation = null;
 		this.endTime = null;
-	}
-
-	/**
-	 * @return the rideId
-	 */
-	public int getRideId() {
-		return rideId;
-	}
-
-	/**
-	 * @param rideId the rideId to set
-	 */
-	public void setRideId(int rideId) {
-		this.rideId = rideId;
 	}
 
 	/**

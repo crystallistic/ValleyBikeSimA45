@@ -1,10 +1,13 @@
 import java.io.FileReader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 //import java.util.regex.Pattern;
 
 import com.opencsv.CSVReader;
 
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * @author maingo
@@ -13,55 +16,72 @@ import java.util.Date;
 public class ValleyBikeSimModel {
 	
 	/** map all stations to their station ID */
-	private static HashMap<Integer, Station> stations;
+	private HashMap<Integer, Station> stations;
 
 	/** map all bikes to their bike ID */
-	private static HashMap<Integer, Bike> bikes;
+	private HashMap<Integer, Bike> bikes;
 
 	/** map each station to its list of bike IDs */
-	private static HashMap<Station, HashSet<Integer>> stationsBikes;
+	private HashMap<Integer, HashSet<Integer>> stationsBikes;
 
-	/** map each rider to their payment methods */
-	private static HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods;
+	/** map each rider by username to their payment methods */
+	private HashMap<String, ArrayList<PaymentMethod>> paymentMethods;
 
 	/** the currently logged in user */
-	private static User activeUser;
+	private User activeUser;
 
-	/** contains all technical support tickets */
-	private static HashSet<Ticket> tickets;
+	/** map all usernames to technical support tickets */
+	private HashMap<String, Ticket> tickets;
 
-	/** map all users to their user names */
-	private static HashMap<String, User> users;
+	/** map all users to their user names. The HashMap contains Admin and Rider objects, 
+	 * and requires casting to the proper child class at retrieval. */
+	private HashMap<String, User> users;
 
-	/** map all users to their emails */
-	private static HashMap<String, User> emails;
+	/** map all users by username to their emails */
+	private HashMap<String, Rider> emails;
 
-	/** map all riders to the rides they have completed */
-	private static HashMap<Rider, HashSet<Ride>> ridesCompleted;
+	/** map all riders by username to the rides they have completed */
+	private HashMap<String, HashSet<Ride>> ridesCompleted;
 
-	/** map all riders to the ride they currently have in progress */
-	private static HashMap<Rider, Ride> ridesInProgress;
+	/** map all riders by username to the ride they currently have in progress */
+	private HashMap<String, Ride> ridesInProgress;
 
-	/** map all riders to their membership type */
-	private static HashMap<Rider, Membership> memberships;
+	/** map all riders by username to their membership type */
+	private HashMap<String, Membership> memberships;
 	
 	/**
 	 * Constructor for the Valley Bike Simulator Model.
 	 */
 	public ValleyBikeSimModel() {
 		
-		HashMap<Station, HashSet<Integer>> stations = new HashMap<>();
-		HashMap<Rider, ArrayList<PaymentMethod>> paymentMethods = new HashMap<>();
-		User activeUser = null; // what's the default value here and when should it be initialized?
-		HashSet<Ticket> tickets = new HashSet<>();
-		HashMap<Rider,HashSet<Ride>> ridesCompleted = new HashMap<>();
-		HashMap<Rider,HashSet<Ride>> ridesInProgress = new HashMap<>();		
+		stations = new HashMap<>();
+		paymentMethods = new HashMap<>();
+		activeUser = null; // what's the default value here and when should it be initialized?
+		tickets = new HashMap<>();
+		ridesCompleted = new HashMap<>();
+		ridesInProgress = new HashMap<>();
+		bikes = new HashMap<>();
+		memberships = new HashMap<>();
 	} 
 	
 	/**
 	 * Read in all the data files and store them in appropriate data structures.
 	 */
-	public static void readData() {
+	public void readData() {
+		readStationData();
+		readBikeData();
+		readAdminData();
+		readRiderData();
+		readTicketData();
+		readRidesCompletedData();
+		readRidesInProgressData();
+		readPaymentMethodData();
+	}
+	
+	/**
+	 * Read in the station data file and store stations in the model.
+	 */
+	private void readStationData() {
 		try {
 			String stationData = "data-files/station-data.csv";
 
@@ -69,7 +89,7 @@ public class ValleyBikeSimModel {
 			CSVReader stationDataReader = new CSVReader(new FileReader(stationData));
 
 			
-			/* to read the CSV data row wise: */
+			/* read the CSV data row wise and map stations to station IDs */
 			List<String[]> allStationEntries = stationDataReader.readAll();
 			
 			System.out.println("");
@@ -84,22 +104,276 @@ public class ValleyBikeSimModel {
 					
 					// map station to its ID number
 					stations.put(Integer.parseInt(array[0]), station); 
-					
 				}
 				counter++;	
 			}
-		
-			for(Station station : stationsList) {
-				stationsMap.put(station.getID(), station);
-			}
-			
-		
+			stationDataReader.close();
+
 		} 
 		catch(Exception e) {
 			System.out.println(e.getMessage());
 		}	
 	}
 	
+	
+	/**
+	 * Read in the bike data file, store bikes in the model, and .
+	 */
+	private void readBikeData() {
+		try {
+			String bikeData = "data-files/bike-data.csv";
+			CSVReader bikesDataReader = new CSVReader(new FileReader(bikeData));
+			
+			/* read the CSV data row wise and map bikes to station IDs */
+			List<String[]> allBikesEntries = bikesDataReader.readAll();
+			
+			System.out.println("");
+			int counter = 0;
+			for(String[] array : allBikesEntries) {
+				if(counter != 0) {
+					
+					int bikeId = Integer.parseInt(array[0]);
+					
+					// create new bike object
+					Bike bike = new Bike(bikeId);
+					
+					// map bike object to bike ID
+					this.bikes.put(bikeId, bike);
+					
+					// obtain station ID
+					int stationId = Integer.parseInt(array[1]);
+	
+					// add bike ID to the set of bike IDs at this station
+					stationsBikes.putIfAbsent(stationId, new HashSet<Integer>());
+					stationsBikes.get(stationId).add(bikeId);			 
+				}
+				counter++;	
+			}
+			bikesDataReader.close();
+			
+			
+		} 
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}	
+	}
+	
+	/**
+	 * Read in the admin data file, stores information about admins in model.
+	 */
+	private void readAdminData() {
+		try {
+			String adminData = "data-files/admins-data.csv";
+			CSVReader adminDataReader = new CSVReader(new FileReader(adminData));
+			
+			/* read the CSV data row wise and map bikes to station IDs */
+			List<String[]> allAdminEntries = adminDataReader.readAll();
+			
+			System.out.println("");
+			int counter = 0;
+			for(String[] array : allAdminEntries) {
+				if(counter != 0) {
+					
+					// create new Admin object
+					Admin admin = new Admin(array[0], array[1]);
+					
+					// map rider object to username
+					this.users.put(array[0], admin);
+				}
+				counter++;	
+			}
+			adminDataReader.close();
+		} 
+		
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}		
+	}
+	
+	/**
+	 * Read in the rider data file, stores information about riders, memberships and emails in model.
+	 */
+	private void readRiderData() {
+		try {
+			String riderData = "data-files/rider-data.csv";
+			CSVReader riderDataReader = new CSVReader(new FileReader(riderData));
+			
+			/* read the CSV data row wise and map bikes to station IDs */
+			List<String[]> allRiderEntries = riderDataReader.readAll();
+			
+			System.out.println("");
+			int counter = 0;
+			MembershipFactory membershipFactory = new MembershipFactory();
+			for(String[] array : allRiderEntries) {
+				if(counter != 0) {
+					
+					// create new rider object
+					Rider rider = new Rider(array[0], array[1], array[2], array[3], array[4], array[5]);
+					
+					// create membership object
+					Membership membership = membershipFactory.getMembership(array[6]);
+					
+					// map rider object to username
+					this.users.put(array[0], rider);
+					
+					// map email to rider object
+					this.emails.put(array[3], rider);
+					
+					// map rider object to membership object
+					this.memberships.put(array[0],  membership);
+				}
+				counter++;	
+			}
+			riderDataReader.close();
+		} 
+		
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}	
+		
+		
+	}
+	
+	/**
+	 * Read in the tickets data file, stores information about tickets in model.
+	 */
+	private void readTicketData() {
+		try {
+			String ticketData = "data-files/ticket-data.csv";
+			CSVReader ticketDataReader = new CSVReader(new FileReader(ticketData));
+			
+			/* read the CSV data row wise and map bikes to station IDs */
+			List<String[]> allTicketEntries = ticketDataReader.readAll();
+			
+			System.out.println("");
+			int counter = 0;
+		
+			for(String[] array : allTicketEntries) {
+				if(counter != 0) {
+					
+					// create new ticket object
+					Ticket ticket = new Ticket(Integer.parseInt(array[0]), array[1], array[2]);
+					
+					
+					// map user to Ticket
+					this.tickets.put(array[2], ticket);
+				}
+				counter++;	
+			}
+			ticketDataReader.close();
+		} 
+		
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}	
+	}
+	
+	/**
+	 * Reads the rides completed data file, record all the completed rides
+	 */
+	private void readRidesCompletedData() {
+		String ridesCompletedData = "data-files/rides-completed-data.csv";
+		
+		try {
+			CSVReader ridesCompletedDataReader = new CSVReader(new FileReader(ridesCompletedData));
+			
+			List<String[]> allRidesCompletedEntries = ridesCompletedDataReader.readAll();
+			System.out.println("");
+			
+			int counter = 0;
+			for(String[] array : allRidesCompletedEntries) {
+				if(counter == 0) {
+					
+				} else {
+					// create new Ride object
+					Date startTime = toDate(array[4]);
+					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
+					ride.setEndStation(this.stations.get(Integer.parseInt(array[3])));
+					ride.setEndTime(toDate(array[5]));
+					
+					// add ride to user's list of completed rides
+					String username = array[0];
+					ridesCompleted.putIfAbsent(username, new HashSet<>());
+					ridesCompleted.get(username).add(ride);
+				}
+				counter++;
+			} 
+			ridesCompletedDataReader.close();
+		} 
+		
+		catch (Exception e) {
+			System.out.println("\n" + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Reads the rides in progress data file, record all the rides currently in progress
+	 */
+	private void readRidesInProgressData() {
+		String ridesInProgressData = "data-files/rides-in-progress.csv";
+		
+		try {
+			CSVReader ridesInProgressDataReader = new CSVReader(new FileReader(ridesInProgressData));
+			
+			List<String[]> allRidesInProgressEntries = ridesInProgressDataReader.readAll();
+			System.out.println("");
+			
+			int counter = 0;
+			for(String[] array : allRidesInProgressEntries) {
+				if(counter == 0) {
+					
+				} else {
+					// create new Ride object with endTime and endStation set to null
+					Date startTime = toDate(array[3]);
+					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
+					
+					ridesInProgress.put(array[0], ride);
+				}
+				counter++;
+	
+			} 
+			ridesInProgressDataReader.close();
+		} 
+		
+		catch (Exception e) {
+			System.out.println("\n" + e.getMessage());
+		}
+	}
+	
+	/**
+	 * Reads the payment methods data file, record all payment methods in model.
+	 */
+	private void readPaymentMethodData() {
+		String paymentMethodsData = "data-files/payment-methods-data.csv";
+		try {
+			CSVReader paymentMethodsDataReader = new CSVReader(new FileReader(paymentMethodsData));
+			
+			List<String[]> allPaymentMethodsEntries = paymentMethodsDataReader.readAll();
+			System.out.println("");
+			
+			int counter = 0;
+			for(String[] array : allPaymentMethodsEntries) {
+				if(counter == 0) {
+					
+				} else {
+					// create new PaymentMethod object
+					PaymentMethod pm = new PaymentMethod(array[1], array[2], array[3], array[4], array[5]);
+					
+					// map payment method to username of user
+					String username = array[0];
+					this.paymentMethods.putIfAbsent(username, new ArrayList<>());
+					this.paymentMethods.get(username).add(pm);
+					
+				}
+				counter++;
+			} 
+			paymentMethodsDataReader.close();
+		} 
+		
+		catch (Exception e) {
+			System.out.println("\n" + e.getMessage());
+		}
+	}
 	
 	/**
 	 * @param userInputName 	the user's input type
@@ -112,10 +386,10 @@ public class ValleyBikeSimModel {
 		
 		switch (userInputName) {
 		case "stationId":			
-			inputIsValid = (stations.containsKey(userInput));
+			inputIsValid = (stations.containsKey(Integer.parseInt(userInput)));
 			break;
 		case "bikeId":
-			inputIsValid = (bikes.containsKey(userInput));
+			inputIsValid = (bikes.containsKey(Integer.parseInt(userInput)));
 			break;
 		case "loginInfo":
 			String[] info = userInput.split(" ");
@@ -149,7 +423,7 @@ public class ValleyBikeSimModel {
 	 * @return 
 	 */
 	public boolean isRideInProgress() {
-		return ridesInProgress.containsKey(activeUser);
+		return ridesInProgress.containsKey(activeUser.getUserName());
 	}
 	
 	/**
@@ -161,7 +435,7 @@ public class ValleyBikeSimModel {
 
 	public boolean bikeIsOverdue() {
 		// retrieve the Ride in progress associated with the active user
-		Ride ride = ridesInProgress.get(activeUser);
+		Ride ride = ridesInProgress.get(activeUser.getUserName());
 		Date currentTime = new Date(); // get current time
 		Date startTime = ride.getStartTime(); // get ride start time
 		long difference = (currentTime.getTime() - startTime.getTime()) / 1000; // difference in seconds
@@ -196,7 +470,7 @@ public class ValleyBikeSimModel {
 	 * @param activeUser the activeUser to set
 	 */
 	public void setActiveUser(String activeUsername) {
-		this.activeUser = users.get(activeUsername);
+		this.activeUser = this.users.get(activeUsername);
 	}
 	
 	/**
@@ -205,8 +479,8 @@ public class ValleyBikeSimModel {
 	 * @param rider			The rider
 	 * @param membership	The rider's membership
 	 */
-	public void setMembership(Rider rider, Membership membership) {
-		this.memberships.put(rider, membership);
+	public void setMembership(String username, Membership membership) {
+		this.memberships.put(username, membership);
 	}
 	
 	/**
@@ -222,12 +496,12 @@ public class ValleyBikeSimModel {
 	 * @param rider			The rider
 	 * @param paymentMethod	The rider's payment method
 	 */
-	public void addPaymentMethod(Rider rider, PaymentMethod paymentMethod) {
+	public void addPaymentMethod(String username, PaymentMethod paymentMethod) {
 		// create new list of payment methods if new user
-		this.paymentMethods.putIfAbsent(rider, new ArrayList<PaymentMethod>());
+		this.paymentMethods.putIfAbsent(username, new ArrayList<PaymentMethod>());
 		
 		// add payment method to list of payment methods associated with user
-		this.paymentMethods.get(rider).add(paymentMethod);
+		this.paymentMethods.get(username).add(paymentMethod);
 	}
 	
 	/**
@@ -235,10 +509,25 @@ public class ValleyBikeSimModel {
 	 * @param rider			The rider
 	 * @param email			The rider's email address
 	 */
-	public void addEmail(Rider rider, String email) {
+	public void addEmail(String email,Rider rider) {
 	
 		// add email associated with user
 		this.emails.put(email, rider);
 	}
 	
+	
+	/*
+	 *
+	 * ********* HELPER FUNCTIONS START HERE: ***********
+	 *
+	 */
+	
+	/**
+	 * Convert a string to Date java object.
+	 * @throws ParseException 
+	 */
+	private static Date toDate(String s) throws ParseException {
+		Date dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+		return dateTime;
+	}
 }

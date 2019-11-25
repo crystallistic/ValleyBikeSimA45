@@ -6,25 +6,27 @@ public class Ticket {
 	
 	int ticketId;
 	String description;
+	String username;
 	
 	/**
 	 * @param ticketId
 	 * @param description
 	 */
-	public Ticket(int ticketId, String description) {
+	public Ticket(int ticketId, String description, String username) {
 		this.ticketId = ticketId;
 		this.description = description;
+		this.username = username;
 	}
 	/**
 	 * @return the ticketId
 	 */
-	public int getTicketid() {
+	public int getTicketId() {
 		return ticketId;
 	}
 	/**
 	 * @param ticketId the ticketId to set
 	 */
-	public void setTicketid(int ticketId) {
+	public void setTicketId(int ticketId) {
 		this.ticketId = ticketId;
 	}
 	/**
@@ -39,5 +41,20 @@ public class Ticket {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	/**
+	 * @return the username
+	 */
+	public String getUsername() {
+		return username;
+	}
+	/**
+	 * @param username the username to set
+	 */
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	
 	
 }

@@ -32,10 +32,4 @@ public class DayPass extends Membership {
 		return totalAmount;
 		
 	}
-
-	@Override
-	public int getRideDurationLimit() {
-		return rideDurationLimit;
-	}
-
 }
