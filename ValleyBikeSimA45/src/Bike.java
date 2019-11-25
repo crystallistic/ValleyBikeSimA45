@@ -27,5 +27,11 @@ public class Bike {
 	public void setBikeId(int bikeId) {
 		this.bikeId = bikeId;
 	}
+
+	@Override
+	public String toString() {
+		return "Bike [bikeId=" + bikeId + "]";
+	}
+	
 	
 }

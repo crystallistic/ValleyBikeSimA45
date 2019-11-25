@@ -55,6 +55,9 @@ public class Ticket {
 		this.username = username;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return "Ticket [ticketId=" + ticketId + ", description=" + description + ", username=" + username + "]";
+	}
 	
 }

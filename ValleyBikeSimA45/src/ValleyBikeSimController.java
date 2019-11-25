@@ -110,8 +110,11 @@ public class ValleyBikeSimController {
 	 * Start the ValleyBike program and load data. User can login, sign up for a rider account, or exit the system.
 	 */  
 	public void start() {
-		// show welcome screen with options to login, signup, or exit program
+		
+		// load data in model
 		model.readData();
+		
+		// show welcome screen with options to login, signup, or exit program
 		view.displayWelcomeScreen();
 		String optionSelected = getUserInput("option3");		
 		

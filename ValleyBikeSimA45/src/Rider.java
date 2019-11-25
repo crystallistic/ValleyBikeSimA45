@@ -78,5 +78,9 @@ public class Rider extends User {
 		this.email = email;
 	}	
 	
+	@Override
+	public String toString() {
+		return "Rider [userName=" + super.getUserName() + ", password=" + super.getPassword() + ", fullname=" + fullName + ", phoneNumber=" + phoneNumber + ", address=" + address + ", email=" + email + "]";
+	}
 
 }

@@ -126,5 +126,14 @@ public class Station {
 	public void setStationName(String stationName) {
 		this.stationName = stationName;
 	}
+
+	@Override
+	public String toString() {
+		return "Station [stationId=" + stationId + ", stationName=" + stationName + ", address=" + address
+				+ ", numFreeDocks=" + numFreeDocks + ", capacity=" + capacity + ", maintenanceReqs=" + maintenanceReqs
+				+ ", hasKiosk=" + hasKiosk + "]";
+	}
+	
+	
 	
 }

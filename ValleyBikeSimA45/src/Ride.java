@@ -100,6 +100,10 @@ public class Ride {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Ride [bikeId=" + bikeId + ", startStation=" + startStation + ", endStation=" + endStation
+				+ ", startTime=" + startTime + ", endTime=" + endTime + "]";
+	}
 }

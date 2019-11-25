@@ -94,5 +94,11 @@ public class PaymentMethod {
 	public void setCvv(String cvv) {
 		this.cvv = cvv;
 	}
+
+	@Override
+	public String toString() {
+		return "PaymentMethod [billingName=" + billingName + ", cardNumber=" + cardNumber + ", billingAddress="
+				+ billingAddress + ", expiryDate=" + expiryDate + ", cvv=" + cvv + "]";
+	}
 	
 }

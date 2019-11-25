@@ -55,12 +55,15 @@ public class ValleyBikeSimModel {
 	public ValleyBikeSimModel() {
 		
 		stations = new HashMap<>();
+		bikes = new HashMap<>();
+		stationsBikes = new HashMap<>();
 		paymentMethods = new HashMap<>();
 		activeUser = null; // what's the default value here and when should it be initialized?
+		users = new HashMap<>();
 		tickets = new HashMap<>();
 		ridesCompleted = new HashMap<>();
 		ridesInProgress = new HashMap<>();
-		bikes = new HashMap<>();
+		emails = new HashMap<>();
 		memberships = new HashMap<>();
 	} 
 	
@@ -84,7 +87,6 @@ public class ValleyBikeSimModel {
 	private void readStationData() {
 		try {
 			String stationData = "data-files/station-data.csv";
-
 			
 			CSVReader stationDataReader = new CSVReader(new FileReader(stationData));
 
@@ -92,7 +94,6 @@ public class ValleyBikeSimModel {
 			/* read the CSV data row wise and map stations to station IDs */
 			List<String[]> allStationEntries = stationDataReader.readAll();
 			
-			System.out.println("");
 			int counter = 0;
 			for(String[] array : allStationEntries) {
 				if(counter != 0) {
@@ -127,7 +128,6 @@ public class ValleyBikeSimModel {
 			/* read the CSV data row wise and map bikes to station IDs */
 			List<String[]> allBikesEntries = bikesDataReader.readAll();
 			
-			System.out.println("");
 			int counter = 0;
 			for(String[] array : allBikesEntries) {
 				if(counter != 0) {
@@ -138,23 +138,24 @@ public class ValleyBikeSimModel {
 					Bike bike = new Bike(bikeId);
 					
 					// map bike object to bike ID
-					this.bikes.put(bikeId, bike);
+					bikes.put(bikeId, bike);
 					
 					// obtain station ID
 					int stationId = Integer.parseInt(array[1]);
-	
+					
 					// add bike ID to the set of bike IDs at this station
 					stationsBikes.putIfAbsent(stationId, new HashSet<Integer>());
-					stationsBikes.get(stationId).add(bikeId);			 
+					stationsBikes.get(stationId).add(bikeId);	
+					
+					
 				}
 				counter++;	
 			}
 			bikesDataReader.close();
-			
-			
 		} 
 		catch(Exception e) {
-			System.out.println(e.getMessage());
+		
+			System.out.println(e.getMessage()+ "error!");
 		}	
 	}
 	
@@ -169,7 +170,7 @@ public class ValleyBikeSimModel {
 			/* read the CSV data row wise and map bikes to station IDs */
 			List<String[]> allAdminEntries = adminDataReader.readAll();
 			
-			System.out.println("");
+			
 			int counter = 0;
 			for(String[] array : allAdminEntries) {
 				if(counter != 0) {
@@ -201,7 +202,7 @@ public class ValleyBikeSimModel {
 			/* read the CSV data row wise and map bikes to station IDs */
 			List<String[]> allRiderEntries = riderDataReader.readAll();
 			
-			System.out.println("");
+			
 			int counter = 0;
 			MembershipFactory membershipFactory = new MembershipFactory();
 			for(String[] array : allRiderEntries) {
@@ -230,8 +231,6 @@ public class ValleyBikeSimModel {
 		catch(Exception e) {
 			System.out.println(e.getMessage());
 		}	
-		
-		
 	}
 	
 	/**
@@ -245,7 +244,7 @@ public class ValleyBikeSimModel {
 			/* read the CSV data row wise and map bikes to station IDs */
 			List<String[]> allTicketEntries = ticketDataReader.readAll();
 			
-			System.out.println("");
+			
 			int counter = 0;
 		
 			for(String[] array : allTicketEntries) {
@@ -278,7 +277,7 @@ public class ValleyBikeSimModel {
 			CSVReader ridesCompletedDataReader = new CSVReader(new FileReader(ridesCompletedData));
 			
 			List<String[]> allRidesCompletedEntries = ridesCompletedDataReader.readAll();
-			System.out.println("");
+			
 			
 			int counter = 0;
 			for(String[] array : allRidesCompletedEntries) {
@@ -316,7 +315,7 @@ public class ValleyBikeSimModel {
 			CSVReader ridesInProgressDataReader = new CSVReader(new FileReader(ridesInProgressData));
 			
 			List<String[]> allRidesInProgressEntries = ridesInProgressDataReader.readAll();
-			System.out.println("");
+			
 			
 			int counter = 0;
 			for(String[] array : allRidesInProgressEntries) {
@@ -338,6 +337,8 @@ public class ValleyBikeSimModel {
 		catch (Exception e) {
 			System.out.println("\n" + e.getMessage());
 		}
+		
+		
 	}
 	
 	/**
@@ -349,7 +350,7 @@ public class ValleyBikeSimModel {
 			CSVReader paymentMethodsDataReader = new CSVReader(new FileReader(paymentMethodsData));
 			
 			List<String[]> allPaymentMethodsEntries = paymentMethodsDataReader.readAll();
-			System.out.println("");
+			
 			
 			int counter = 0;
 			for(String[] array : allPaymentMethodsEntries) {
@@ -527,7 +528,7 @@ public class ValleyBikeSimModel {
 	 * @throws ParseException 
 	 */
 	private static Date toDate(String s) throws ParseException {
-		Date dateTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(s);
+		Date dateTime = new SimpleDateFormat("MM/dd/yy HH:mm").parse(s);
 		return dateTime;
 	}
 }
