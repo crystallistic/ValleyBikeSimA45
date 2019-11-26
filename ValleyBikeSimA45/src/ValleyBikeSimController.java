@@ -407,7 +407,7 @@ public class ValleyBikeSimController {
 				System.out.println("Invalid input, please try again.");
 				userInput = view.prompt(userInputName);
 
-				// if input is a credit card number, clean up input to remove all non-digit
+				// if input is a credit card number or phone number, clean up input to remove all non-digit
 				// characters
 				if (userInputName.equals("creditCardNumber") || userInputName.equals("phoneNumber")) {
 					userInput.replaceAll("[^0-9]+", "");
