@@ -221,7 +221,7 @@ public class ValleyBikeSimView {
 				+ "6) View station list\n"
 				+ "7) Resolve ride\n"
 				+ "8) Create support ticket\n"
-				+ "9) Resolve ride\n"
+				+ "9) Save data\n"
 				+ "10) Log out");
 	}
 	

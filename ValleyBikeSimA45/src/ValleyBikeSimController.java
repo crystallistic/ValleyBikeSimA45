@@ -282,7 +282,10 @@ public class ValleyBikeSimController {
 			case 8:// 8) Create support ticket
 				//createSupportTicket();
 				break;
-			case 9:// 9) Log out
+			case 9: // ) saveData()
+				saveData();
+				break;
+			case 10:// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
@@ -318,10 +321,7 @@ public class ValleyBikeSimController {
 			case 9:// 9) Report issue
 				//reportIssue();
 				break;
-			case 10: // 10) saveData()
-				saveData();
-				break;
-			case 11:// 11) Log out
+			case 10:// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
