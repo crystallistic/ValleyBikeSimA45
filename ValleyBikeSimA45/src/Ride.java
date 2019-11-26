@@ -100,6 +100,16 @@ public class Ride {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
+	
+	/**
+	 * Calculates ride duration in milliseconds and returns it
+	 */
+	public long getRideDuration() {
+		if (endTime != null) {
+			return (endTime.getTime() - startTime.getTime());
+		}
+		return 0;
+	}
 
 	@Override
 	public String toString() {

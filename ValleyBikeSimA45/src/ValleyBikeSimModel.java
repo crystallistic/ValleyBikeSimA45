@@ -372,8 +372,51 @@ public class ValleyBikeSimModel {
 		} 
 		
 		catch (Exception e) {
-			System.out.println("\n" + e.getMessage());
+			System.out.println(e.getMessage());		
 		}
+	}
+	
+	/**
+	 * Reads a ride data file that contains all the rides for one day of service.
+	 * After processing the data, returns statistics for the day.
+	 * @return true if file is successfully read in, false if file cannot be read.
+	 */
+	public String readRidesDataFile(String fileName) {
+		String rideData = "data-files/" + fileName;
+		
+		try {
+			CSVReader rideDataReader = new CSVReader(new FileReader(rideData));
+			List<String[]> allRideEntries = rideDataReader.readAll();
+			long totalDuration = 0;
+			
+			int counter = 0;
+			for(String[] array : allRideEntries) {
+				if(counter == 0) {
+					
+				} else {
+					
+					Date startTime = toDate(array[4]);
+					Date endTime = toDate(array[5]);
+					totalDuration += endTime.getTime() - startTime.getTime();
+					
+				}
+				counter++;
+			} 
+			
+			rideDataReader.close();
+			
+			long calc = (totalDuration / (allRideEntries.size()-1))/60000;
+			int averageDuration = (int) calc;
+			return "The ride list contains " + (allRideEntries.size()-1) + " rides and the average ride time is " + averageDuration + " minutes.\n";
+			
+		} 
+		
+		catch (Exception e) {
+			//System.out.println("\n" + e.getMessage());
+			System.out.println("Invalid file name, please try again.");
+			
+		}
+		return "";
 	}
 	
 	/**
@@ -418,7 +461,6 @@ public class ValleyBikeSimModel {
 			matchRegex = r.matcher(userInput).find();
 			
 			// new station ID is valid if it's 2-digit and has not appeared in the system.
-			// TODO: test with non-numeric input
 			inputIsValid = (matchRegex && !stations.containsKey(Integer.parseInt(userInput)));
 			break;
 		case "newStationName":	

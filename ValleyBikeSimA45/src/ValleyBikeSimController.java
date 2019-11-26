@@ -109,6 +109,7 @@ public class ValleyBikeSimController {
 		regex.put("billingName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // billingName
 		regex.put("capacity",Pattern.compile("^[1-9][0-9]$"));
 		regex.put("hasKiosk", Pattern.compile("^(0|1)$"));
+		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$"));
 	}
 
 	/**
@@ -276,7 +277,7 @@ public class ValleyBikeSimController {
 				displayStationList();
 				break;
 			case 7:// 7) Resolve ride
-				//resolveRide();
+				resolveRide();
 				break;
 			case 8:// 8) Create support ticket
 				//createSupportTicket();
@@ -488,6 +489,25 @@ public class ValleyBikeSimController {
 	public void equalizeStations() {
 		model.equalizeStations();
 		view.displayEqualizationCompleted();
+	}
+	
+	/**
+	 * Reads a .csv ride data file that contains all the rides for one day of service.
+	 * After processing the data, returns statistics for the day.
+	 */
+	public void resolveRide() {
+		String fileName = getUserInput("fileName");
+		
+		String resolveRideResult = model.readRidesDataFile(fileName);
+		
+		while (resolveRideResult.length() == 0) {
+			view.displayInvalidFileName();
+			fileName = getUserInput("fileName");	
+			resolveRideResult = model.readRidesDataFile(fileName);
+		}
+		
+		view.displayResolveRide(resolveRideResult);
+		
 	}
 
 }

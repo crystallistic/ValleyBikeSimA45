@@ -167,6 +167,9 @@ public class ValleyBikeSimView {
 		case "hasKiosk":
 			System.out.println("Please enter 1 if the station has a kiosk, otherwise enter 0:");
 			break;
+		case "fileName":
+			System.out.println("Please enter the name of the data file, including the .csv extension. The file must be stored in the data-files folder:");
+			break;
 			
 			
 		default: // default is options for a menu
@@ -294,6 +297,23 @@ public class ValleyBikeSimView {
 	 */
 	public void displayEqualizationCompleted() {
 		System.out.println("Bikes redistributed successfully.");
+	}
+
+	/**
+	 * Display message notifying user of unsuccessful reading of file.
+	 */
+	public void displayInvalidFileName() {
+		System.out.println("The system has encountered an error while trying to read the file you entered. Please check for errors and try again.");	
+	}
+
+	/**
+	 * Display the result of calculations for resolveRide.
+	 * @param resolveRideResult 		Average stats for the day
+	 */
+	public void displayResolveRide(String resolveRideResult) {
+		System.out.println(resolveRideResult);
+		
+		
 	}
 	
 }
