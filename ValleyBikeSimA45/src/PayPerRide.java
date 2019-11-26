@@ -1,9 +1,3 @@
-import java.util.Date;
-
-/**
- * 
- */
-
 /**
  * @author maingo
  *
