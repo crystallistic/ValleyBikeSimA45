@@ -184,7 +184,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * 
+	 * Remind the user to end the current ride.
 	 */
 	public void remindEndRide() {
 		System.out.println("You have a ride currently in progress. Please check in your bike.");
@@ -211,6 +211,9 @@ public class ValleyBikeSimView {
 		}
 	}
 
+	/**
+	 * Displays an admin's main menu
+	 */
 	public void displayAdminMainMenu() {
 		System.out.println("Please enter a number corresponding to one of the actions below:\n"
 				+ "1) Add station\n"
@@ -225,6 +228,9 @@ public class ValleyBikeSimView {
 				+ "10) Log out");
 	}
 	
+	/**
+	 * Displays a rider's main menu
+	 */
 	public void displayRiderMainMenu() {
 		System.out.println("Please enter a number corresponding to one of the actions below:\n"
 				+ "1) View station list\n"

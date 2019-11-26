@@ -318,13 +318,13 @@ public class ValleyBikeSimModel {
 	 * Reads the rides in progress data file, record all the rides currently in progress
 	 */
 	private void readRidesInProgressData() {
+		
+		// file path
 		String ridesInProgressData = "data-files/rides-in-progress.csv";
 		
 		try {
 			CSVReader ridesInProgressDataReader = new CSVReader(new FileReader(ridesInProgressData));
-			
 			List<String[]> allRidesInProgressEntries = ridesInProgressDataReader.readAll();
-			
 			
 			int counter = 0;
 			for(String[] array : allRidesInProgressEntries) {
@@ -333,8 +333,11 @@ public class ValleyBikeSimModel {
 				} else {
 					// create new Ride object with endTime and endStation set to null
 					Date startTime = toDate(array[3]);
+					
+					// create Ride object
 					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
 					
+					// add ride to database of rides currently in progress
 					ridesInProgress.put(array[0], ride);
 				}
 				counter++;
@@ -404,6 +407,7 @@ public class ValleyBikeSimModel {
 					
 				} else {
 					
+					// add to the total duration
 					Date startTime = toDate(array[4]);
 					Date endTime = toDate(array[5]);
 					totalDuration += endTime.getTime() - startTime.getTime();
@@ -414,6 +418,7 @@ public class ValleyBikeSimModel {
 			
 			rideDataReader.close();
 			
+			// calculate the average duration of a ride
 			long calc = (totalDuration / (allRideEntries.size()-1))/60000;
 			int averageDuration = (int) calc;
 			return "The ride list contains " + (allRideEntries.size()-1) + " rides and the average ride time is " + averageDuration + " minutes.\n";
@@ -429,9 +434,10 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
+	 * Checks user input validity (check for formatting and membership)
 	 * @param userInputName 	the user's input type
 	 * @param userInput			the user's input
-	 * @return 
+	 * @return true if valid input, else false
 	 */
 	public boolean isValid(String userInputName, String userInput) {
 		
@@ -474,6 +480,7 @@ public class ValleyBikeSimModel {
 			break;
 		case "newStationName":	
 			
+			// new station name must not coincide with existing station names
 			for (Station station : stations.values()) {
 				if (station.getStationName() == userInput) {
 					inputIsValid = false;
@@ -482,6 +489,7 @@ public class ValleyBikeSimModel {
 			break;
 		case "newStationAddress":	
 			
+			// new station address must not coincide with existing station address
 			for (Station station : stations.values()) {
 				if (station.getAddress() == userInput) {
 					inputIsValid = false;
@@ -515,6 +523,10 @@ public class ValleyBikeSimModel {
 		return activeUser;
 	}
 
+	/**
+	 * Checks if bike is overdue by 24hrs
+	 * @return true if overdue, else false
+	 */
 	public boolean bikeIsOverdue() {
 		// retrieve the Ride in progress associated with the active user
 		Ride ride = ridesInProgress.get(activeUser.getUserName());

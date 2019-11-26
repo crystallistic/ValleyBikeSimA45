@@ -263,12 +263,15 @@ public class ValleyBikeSimController {
 				break;
 			case 2: // 2) Remove station
 				//removeStation();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 3:// 3) Add bikes
 				//addBike();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 4:// 4) Remove bikes
 				//removeBike();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 5:// 5) Redistribute bikes
 				equalizeStations();
@@ -281,6 +284,7 @@ public class ValleyBikeSimController {
 				break;
 			case 8:// 8) Create support ticket
 				//createSupportTicket();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 9: // ) saveData()
 				saveData();
@@ -305,21 +309,27 @@ public class ValleyBikeSimController {
 				break;
 			case 4:// 4) Edit profile
 				//editProfile();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 5:// 5) Edit payment method
 				//editPaymentMethod();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 6:// 6) Edit membership
 				//editMembership();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 7:// 7) View ride history
 				//displayRideHistory();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 8:// 8) View transaction history
 				//displayTransactionHistory();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 9:// 9) Report issue
 				//reportIssue();
+				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 10:// 10) Log out
 				view.displayLogout();
@@ -415,6 +425,8 @@ public class ValleyBikeSimController {
 	 */
 	public void startRide() {
 		boolean rideIsInProgress = model.isRideInProgress();
+		
+		// if the user already has a ride in progress, remind them to end ride
 		if (rideIsInProgress) {
 			view.remindEndRide();
 		} else {
@@ -427,13 +439,15 @@ public class ValleyBikeSimController {
 			model.startRide(bikeId, stationId); // Passes this info to startRide in Model
 			view.displayRideStart(); // print something like “Enjoy your ride!”
 		}
-		mainMenu(model.activeUserIsAdmin());
+		mainMenu(model.activeUserIsAdmin()); // back to menu
 	}
 	
 	/**
 	 * End a ride. Prompts the user for a valid station ID number.
 	 */
 	public void endRide() {
+		
+		// if the user doesn't have any currently active ride, display message and do nothing
 		if (!model.isRideInProgress()) {
 			view.displayNoActiveRide();
 			return;
@@ -445,10 +459,11 @@ public class ValleyBikeSimController {
 		
 		if (dockIsFull) {
 			view.displayFullDock();
-			//Maybe generate a ticket automatically about this full station?
+			//TODO Maybe generate a ticket automatically about this full station?
 			return;
 		}
 
+		// charge the user for this ride
 		float chargeAmount = model.endRide(stationId);
 		view.chargeUserForRide(chargeAmount);
 	}
@@ -468,8 +483,8 @@ public class ValleyBikeSimController {
 		
 		view.displayStationAdded(station.toString());
 		
-		//passes true to the main menu because the user calling this function must be an admin
-		mainMenu(true);
+		// return to main menu
+		mainMenu(model.activeUserIsAdmin());
 	}
 
 	/**
@@ -477,9 +492,11 @@ public class ValleyBikeSimController {
 	 */
 	public void displayStationList() {
 		
+		// get formatted station list from model
 		ArrayList<String> formattedStationList = model.getStationList();
-		view.displayStationList(formattedStationList);
 		
+		// display in view
+		view.displayStationList(formattedStationList);
 	}
 	
 	/**
@@ -487,7 +504,11 @@ public class ValleyBikeSimController {
 	 * to avoid stations being under- or over-occupied
 	 */
 	public void equalizeStations() {
+		
+		// equalizes stations in model
 		model.equalizeStations();
+		
+		// display confirmation
 		view.displayEqualizationCompleted();
 	}
 	
@@ -496,16 +517,22 @@ public class ValleyBikeSimController {
 	 * After processing the data, returns statistics for the day.
 	 */
 	public void resolveRide() {
+		
+		// get the file name from user
 		String fileName = getUserInput("fileName");
 		
+		
+		// model reads in file can calculate
 		String resolveRideResult = model.readRidesDataFile(fileName);
 		
+		// prompts the user for correct file name until file can be read successfully
 		while (resolveRideResult.length() == 0) {
 			view.displayInvalidFileName();
 			fileName = getUserInput("fileName");	
-			resolveRideResult = model.readRidesDataFile(fileName);
+			resolveRideResult = model.readRidesDataFile(fileName); // read in file and calculate
 		}
 		
+		// display results
 		view.displayResolveRide(resolveRideResult);
 		
 	}
@@ -515,7 +542,11 @@ public class ValleyBikeSimController {
 	 * Save all data in the system into .csv files.
 	 */
 	public void saveData() {
+		
+		// model saves data in files
 		model.saveData();
+		
+		// display confirmation
 		view.displaySaveData();
 	}
 
