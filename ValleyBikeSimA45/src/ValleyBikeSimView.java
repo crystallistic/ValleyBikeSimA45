@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Scanner;
  */
 public class ValleyBikeSimView {
 	
-	Scanner sc;
+	private Scanner sc;
 	/**
 	 * Constructor for the Valley Bike Simulator View.
 	 */
@@ -24,7 +25,7 @@ public class ValleyBikeSimView {
 	public void displayWelcomeScreen() {
 		
 		// show welcome message and options for sign up, login, and exit program
-		System.out.println("Welcome to Valley Bike!:\n"
+		System.out.println("Welcome to Valley Bike! Please enter a number corresponding to one of the options below:\n"
 				+ "1) Sign up\n"
 				+ "2) Login\n"
 				+ "3) Exit\n");
@@ -151,6 +152,23 @@ public class ValleyBikeSimView {
 		case "CVV":
 			System.out.println("Please enter your 3 or 4-digit security code on your credit card:");
 			break;
+		case "newStationId":
+			System.out.println("Please enter the station's ID number. It cannot be the same as one of the existing stations:");
+			break;
+		case "newStationName":
+			System.out.println("Please enter the station's name. It cannot be the same as one of the existing stations:");
+			break;
+		case "newStationAddress":
+			System.out.println("Please enter the station's address. It cannot be the same as one of the existing stations:");
+			break;
+		case "capacity":
+			System.out.println("Please enter the station's capacity (within the range of 10-99):");
+			break;
+		case "hasKiosk":
+			System.out.println("Please enter 1 if the station has a kiosk, otherwise enter 0:");
+			break;
+			
+			
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -200,7 +218,8 @@ public class ValleyBikeSimView {
 				+ "6) View station list\n"
 				+ "7) Resolve ride\n"
 				+ "8) Create support ticket\n"
-				+ "9) Log out");
+				+ "9) Resolve ride\n"
+				+ "10) Log out");
 	}
 	
 	public void displayRiderMainMenu() {
@@ -227,7 +246,7 @@ public class ValleyBikeSimView {
 	/**
 	 * Display a message confirming successful bike check-out and beginning of a ride.
 	 */
-	public void displayStationList(String[] stationList) {
+	public void displayStationList(ArrayList<String> stationList) {
 		for (String s : stationList) {
 			System.out.println(s);
 		}
@@ -238,6 +257,43 @@ public class ValleyBikeSimView {
 	 */
 	public void displayLogout() {
 		System.out.println("You have successfully logged out of your account. Come back soon!");
+	}
+
+	/**
+	 * Displays error message when the user tries to end a ride but they don't have any ride in progress.
+	 */
+	public void displayNoActiveRide() {
+		// TODO Auto-generated method stub
+		System.out.println("Sorry, action cannot be completed because you have no ride in progress.");
+	}
+
+	public void displayFullDock() {
+		System.out.println("Dock is full. Please return bike to another station");
+		
+	}
+
+	/**
+	 * Notifies the user that they have been charged the specified amount.
+	 * @param chargeAmount		amount charged to the user's account
+	 */
+	public void chargeUserForRide(float chargeAmount) {
+		System.out.printf("You have been charged $%.2f for your past ride.\n", chargeAmount);
+	}
+
+	/**
+	 * Displays message confirming successful addition of a new station.
+	 * @param stationInfo	Information of the newly added station.
+	 */
+	public void displayStationAdded(String stationInfo) {
+		System.out.println("You have successfully added a new station with the following information: \n ID\tBikes\tAvDocs\tMainReq\tCap\tKiosk\tName - Address\n" + stationInfo);
+		
+	}
+
+	/**
+	 * Confirms successful equalization of stations
+	 */
+	public void displayEqualizationCompleted() {
+		System.out.println("Bikes redistributed successfully.");
 	}
 	
 }

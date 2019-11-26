@@ -23,7 +23,7 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail" };
+		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress", };
 		// Set demonstration using HashSet Constructor
 		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
@@ -100,16 +100,15 @@ public class ValleyBikeSimController {
 
 		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$"));
 		regex.put("billingAddress", Pattern.compile(".*")); // we assume the user will enter a valid address
-		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$")); // expiry date of
-																									// credit card.
-																									// Regex source:
-																									// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
+		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$")); // expiry date of credit card. Regex source:																							// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
 		regex.put("CVV", Pattern.compile("^[0-9]{3,4}$")); // CVV of credit card. Regex source:
 															// https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
 		regex.put("fullName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // first and last name separated by space. Regex
 																	// source:
 																	// https://stackoverflow.com/questions/2385701/regular-expression-for-first-and-last-name
 		regex.put("billingName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // billingName
+		regex.put("capacity",Pattern.compile("^[1-9][0-9]$"));
+		regex.put("hasKiosk", Pattern.compile("^(0|1)$"));
 	}
 
 	/**
@@ -258,10 +257,10 @@ public class ValleyBikeSimController {
 		if (model.activeUserIsAdmin()) { // Deal with the Admin menu options
 			optionSelected = Integer.parseInt(getUserInput("option9"));
 			switch (optionSelected) {
-			case 1:// 1) Add station
-				//addStation();
+			case 1: // 1) Add station
+				addStation();
 				break;
-			case 2:// 2) Remove station
+			case 2: // 2) Remove station
 				//removeStation();
 				break;
 			case 3:// 3) Add bikes
@@ -271,10 +270,10 @@ public class ValleyBikeSimController {
 				//removeBike();
 				break;
 			case 5:// 5) Redistribute bikes
-				//redistributeBikes();
+				equalizeStations();
 				break;
 			case 6:// 6) View station list
-				//viewStationList();
+				displayStationList();
 				break;
 			case 7:// 7) Resolve ride
 				//resolveRide();
@@ -292,13 +291,13 @@ public class ValleyBikeSimController {
 			optionSelected = Integer.parseInt(getUserInput("option10"));
 			switch (optionSelected) {
 			case 1:// 1) View station list
-				//viewStationList();
+				displayStationList();
 				break;
 			case 2:// 2) Start ride
 				startRide();
 				break;
 			case 3:// 3) End ride
-				//endRide();
+				endRide();
 				break;
 			case 4:// 4) Edit profile
 				//editProfile();
@@ -318,13 +317,17 @@ public class ValleyBikeSimController {
 			case 9:// 9) Report issue
 				//reportIssue();
 				break;
-			case 10:// 10) Log out
+			case 10:
+				//resolveRide();
+				break;
+			case 11:// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
 				break;
 			}
 		}
+		mainMenu(userIsAdmin);
 	}
 
 	/**
@@ -357,7 +360,7 @@ public class ValleyBikeSimController {
 			inputIsValid = model.isValid(userInputName, userInput); //
 
 			while (!inputIsValid) {
-				System.out.println("Invalid " + userInputName + ", please try again.");
+				System.out.println("Invalid input, please follow the instructions and try again.");
 				userInput = view.prompt(userInputName);
 				inputIsValid = model.isValid(userInputName, userInput);
 			}
@@ -370,7 +373,7 @@ public class ValleyBikeSimController {
 			inputIsValid = (intUserInput <= range && intUserInput >= 1);
 
 			while (!inputIsValid) {
-				System.out.println("Invalid input, please try again.");
+				System.out.println("Invalid input, please follow the instructions and try again.");
 				intUserInput = Integer.parseInt(view.prompt(userInputName));
 				inputIsValid = (intUserInput <= range && intUserInput >= 1);
 			}
@@ -425,14 +428,66 @@ public class ValleyBikeSimController {
 		}
 		mainMenu(model.activeUserIsAdmin());
 	}
+	
+	/**
+	 * End a ride. Prompts the user for a valid station ID number.
+	 */
+	public void endRide() {
+		if (!model.isRideInProgress()) {
+			view.displayNoActiveRide();
+			return;
+		}
+		int stationId = Integer.parseInt(getUserInput("stationId"));
+		
+		//Check if dock is full
+		boolean dockIsFull = model.isStationDockFull(stationId);
+		
+		if (dockIsFull) {
+			view.displayFullDock();
+			//Maybe generate a ticket automatically about this full station?
+			return;
+		}
+
+		float chargeAmount = model.endRide(stationId);
+		view.chargeUserForRide(chargeAmount);
+	}
+	
+	/**
+	 * Asks the user for information to create a new station
+	 */
+	public void addStation() {
+		//Ask the user for station id, name, capacity, # of pedelecs, kiosk?, address (a lot of calls to the view, then verification with calls to the model for each piece of information)
+		int stationId = Integer.parseInt(getUserInput("newStationId"));
+		String stationName = getUserInput("newStationName");
+		String address = getUserInput("newStationAddress");
+		int capacity = Integer.parseInt(getUserInput("capacity"));
+		boolean hasKiosk = getUserInput("hasKiosk").contentEquals("1");
+		
+		Station station = model.addStation(stationId,stationName,address,capacity,hasKiosk);
+		
+		view.displayStationAdded(station.toString());
+		
+		//passes true to the main menu because the user calling this function must be an admin
+		mainMenu(true);
+	}
 
 	/**
 	 * Displays the full list of stations within the Valley Bike system.
 	 */
 	public void displayStationList() {
 		
-		String[] formattedStationList = model.getStationList();
+		ArrayList<String> formattedStationList = model.getStationList();
 		view.displayStationList(formattedStationList);
 		
 	}
+	
+	/**
+	 * Equally divides all the bikes between stations
+	 * to avoid stations being under- or over-occupied
+	 */
+	public void equalizeStations() {
+		model.equalizeStations();
+		view.displayEqualizationCompleted();
+	}
+
 }

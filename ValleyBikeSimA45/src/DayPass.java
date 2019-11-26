@@ -19,7 +19,7 @@ public class DayPass extends Membership {
 	@Override
 	public float getChargeForRide(int rideDurationInMinutes) {
 		
-		int totalAmount = 0;
+		float totalAmount = 0;
 		
 		// if the user's ride lasted 30 mins or more
 		if (rideDurationInMinutes >= 30) {

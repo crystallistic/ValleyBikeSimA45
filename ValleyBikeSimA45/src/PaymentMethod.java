@@ -101,4 +101,12 @@ public class PaymentMethod {
 				+ billingAddress + ", expiryDate=" + expiryDate + ", cvv=" + cvv + "]";
 	}
 	
+	/**
+	 * Charge the user the specified amount.
+	 * @param chargeAmount		Amount to be charged
+	 */
+	public void chargeCard(float chargeAmount) {
+		
+	}
+	
 }

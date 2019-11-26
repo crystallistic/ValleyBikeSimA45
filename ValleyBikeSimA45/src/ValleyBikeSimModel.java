@@ -100,7 +100,7 @@ public class ValleyBikeSimModel {
 					
 					// create new station object
 					Station station = new Station(Integer.parseInt(array[0]), array[1], 
-							array[8], Integer.parseInt(array[2]), Integer.parseInt(array[4]), 
+							array[8], Integer.parseInt(array[3]), Integer.parseInt(array[4]), 
 							Integer.parseInt(array[6]), Integer.parseInt(array[5]),(array[7].equals("1")));
 					
 					// map station to its ID number
@@ -383,7 +383,10 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean isValid(String userInputName, String userInput) {
 		
-		boolean inputIsValid = false;
+		boolean inputIsValid = true;
+		boolean matchRegex = true;
+		boolean notExistInSys = true;
+		Pattern r = null;
 		
 		switch (userInputName) {
 		case "stationId":			
@@ -402,14 +405,38 @@ public class ValleyBikeSimModel {
 			break;
 		case "newEmail":
 			// regex to validate email format
-			Pattern r = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"); 
+			r = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"); 
 			
 			// email is valid if it's in valid format and it does not belong to an existing user
-			boolean matchRegex = r.matcher(userInput).find();
-			boolean notExistInSys = !emails.containsKey(userInput);
+			matchRegex = r.matcher(userInput).find();
+			notExistInSys = !emails.containsKey(userInput);
 			inputIsValid = (matchRegex && notExistInSys);
 			break;
+		case "newStationId":	
+			// Assumption: Valley Bike's station IDs are two-digit and only within the 01-99 range.
+			r = Pattern.compile("^[0-9]{2}$"); 
+			matchRegex = r.matcher(userInput).find();
 			
+			// new station ID is valid if it's 2-digit and has not appeared in the system.
+			// TODO: test with non-numeric input
+			inputIsValid = (matchRegex && !stations.containsKey(Integer.parseInt(userInput)));
+			break;
+		case "newStationName":	
+			
+			for (Station station : stations.values()) {
+				if (station.getStationName() == userInput) {
+					inputIsValid = false;
+				}
+			}
+			break;
+		case "newStationAddress":	
+			
+			for (Station station : stations.values()) {
+				if (station.getAddress() == userInput) {
+					inputIsValid = false;
+				}
+			}
+			break;
 		} 	
 		return inputIsValid;
 	}
@@ -537,6 +564,155 @@ public class ValleyBikeSimModel {
 		ridesInProgress.put(activeUser.getUserName(), ride);
 	}
 
+	/**
+	 * Charges the user for the ride and updates the model to reflect
+	 * the bike being added to the end station
+	 * and the ride object being updated
+	 * @param stationId the id of the station that the bike is being returned to
+	 * @return the amount that the user has been charged
+	 */
+	public float endRide (int stationId) {
+		String activeUsername = activeUser.getUserName(); //active User's username
+		Membership membership = memberships.get(activeUsername); //user's membership
+		Date now = new Date(); //current time
+		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
+		PaymentMethod paymentMethod = paymentMethods.get(activeUsername).get(0); //active user's payment method
+		Station endStation = stations.get(stationId); //station where the bike is being returned
+		
+		//Charge user for the completed ride
+		int rideDuration = (int)(now.getTime() - ride.getStartTime().getTime()) / 60000;
+		float chargeAmount = membership.getChargeForRide(rideDuration);
+		paymentMethod.chargeCard(chargeAmount);
+		
+		//Update bike list at current Station
+		stationsBikes.get(stationId).add(ride.getBikeId());
+		endStation.setNumFreeDocks(endStation.getNumFreeDocks()-1);
+		
+		//Add end time and end station to Ride associated to User
+		ride.setEndTime(now);
+		ride.setEndStation(endStation);
+		
+		//Move the ride from ridesInProgress to ridesCompleted
+		if (ridesCompleted.containsKey(activeUsername)) {
+			ridesCompleted.get(activeUsername).add(ride);
+		} else {
+			HashSet<Ride> activeUserRides = new HashSet<>();
+			activeUserRides.add(ride);
+			ridesCompleted.put(activeUsername, activeUserRides);
+		}
+		ridesInProgress.remove(activeUsername);
+		
+		//Return the amount charged to the user's card
+		return chargeAmount;
+	}
+	
+	/**
+	 * Creates a new Station object and adds it to the list
+	 * @param stationId 	The station's ID
+	 * @param stationName	The station's name
+	 * @param address		The station's address
+	 * @param capacity		The station's capacity
+	 * @param hasKiosk		True if the station has a kiosk, else false
+	 */
+	public Station addStation(int stationId, String stationName, String address, int capacity, boolean hasKiosk) {
+		//creates a new station object
+		//passes in 0 for numBikes and maintenanceRequests
+		//passes in the capacity for numFreeDocks
+		Station station = new Station(stationId,stationName,address,0,capacity,capacity,0,hasKiosk);
+		
+		stations.put(stationId, station);
+		HashSet<Integer> bikes = new HashSet<Integer>();
+		stationsBikes.put(stationId,bikes);
+		return station;
+	}
+	
+	/**
+	 * Equally divides all the bikes between stations
+	 * to avoid stations being under- or over-occupied
+	 */
+	public void equalizeStations() {
+		int totalBikes = bikes.size();
+		int totalCapacity = 0;
+		Station[] stationArray = stations.values().toArray(new Station[0]);
+		
+		//maps station IDs to number of bikes needed (can be negative)
+		ArrayList<ArrayList<Integer>> needBikes = new ArrayList<ArrayList<Integer>>();
+		ArrayList<Integer> extraBikes = new ArrayList<Integer>();
+		
+		//Calculate the number of bikes that can be accommodated by the stations
+		for (Station station : stationArray) {
+			totalCapacity += station.getCapacity();
+		}
+		
+		//Loop through stations removing extra bikes and adding them to a list
+		for (Station station : stationArray) {
+			int stationId = station.getStationId();
+			int numBikesHere = stationsBikes.get(stationId).size();
+			int capacityHere = station.getCapacity();
+			int idealNumBikes = Math.round(capacityHere * totalBikes/totalCapacity);
+			
+			//If a station has too few bikes, store how many more are needed
+			if (numBikesHere < idealNumBikes) {
+				ArrayList<Integer> need = new ArrayList<Integer>();
+				need.add(stationId);
+				need.add(idealNumBikes - numBikesHere);
+				
+				//Add station and the number of bikes it needs to needBikes
+				needBikes.add(need);
+				
+			} 
+			
+			//If a station has too many bikes, remove the extras and store them
+			else if (numBikesHere > idealNumBikes) {
+				Integer[] bikeArray = stationsBikes.get(stationId).toArray(new Integer[0]);
+				int numBikesAboveIdeal = numBikesHere - idealNumBikes;
+				
+				for (int i=0; i<numBikesAboveIdeal; i++) {
+					Integer bikeId = bikeArray[i];
+					stationsBikes.get(stationId).remove(bikeId);
+					
+					//Add extra bike to extraBikes
+					
+					extraBikes.add(bikeId);
+				}
+				station.setNumBikes(idealNumBikes);
+	
+				//Update Station data to reflect loss
+				station.setNumFreeDocks(station.getNumFreeDocks() + numBikesAboveIdeal);
+			}
+		}
+		
+		System.out.println(extraBikes.size());
+		
+		//Loop through the stations in need, giving them extra bikes
+		for (ArrayList<Integer> need : needBikes) {
+			int stationId = need.get(0);
+			int numNeeded = need.get(1);
+			Station station = stations.get(stationId);
+			HashSet<Integer> bikeSet = stationsBikes.get(stationId);
+			
+			//Remove bikeIds from extraBikes and add them to the station's bikeSet
+			for (int i=0; i<numNeeded; i++) {
+				bikeSet.add(extraBikes.remove(0));
+			}
+			station.setNumBikes(station.getNumBikes() + numNeeded);
+			//Update Station data to reflect the gain
+			station.setNumFreeDocks(station.getNumFreeDocks() - numNeeded);
+		}
+		System.out.println(extraBikes.size());
+		
+		int indexStation = 0;
+		while (extraBikes.size() > 0) {
+			Station s = stationArray[indexStation];
+			s.setNumBikes(s.getNumBikes() + 1);
+			s.setNumFreeDocks(s.getNumFreeDocks() - 1);
+			stationsBikes.get(s.getStationId()).add(extraBikes.remove(0));
+			indexStation++;
+		}
+	}
+
+
+
 	
 	/*
 	 *
@@ -556,20 +732,28 @@ public class ValleyBikeSimModel {
 	/**
 	 * Returns the full list of all the stations within the Valley Bike system.
 	 */
-	public String[] getStationList() {
-		String[] formattedStationList = new String[stations.size()];
-		formattedStationList[0] = "ID \t Name \t Bikes \t AvDocs \tMainReq \t  Capacity \t Kiosk \t Address \n";
-		
-		Integer[] stationIds = (Integer[]) stations.keySet().toArray();
+	public ArrayList<String> getStationList() {
+		ArrayList<String> formattedStationList = new ArrayList<>();
+		formattedStationList.add("ID\tBikes\tAvDocs\tMainReq\tCap\tKiosk\tName - Address\n");
+		Object[] stationIds = stations.keySet().toArray();
 		Arrays.sort(stationIds);
-		int line = 1;
 		
-		for (Integer stationId : stationIds) {	
-			formattedStationList[line] = stations.get(stationId).toString();
-			line++;
+		for (Object stationId : stationIds) {	
+			formattedStationList.add(stations.get((Integer)stationId).toString());
 		}
 		
 		return formattedStationList;
+	}
+
+	/**
+	 * Check station to see if all the docks are full.
+	 * @param stationId		station ID
+	 * @return boolean 
+	 */
+	public boolean isStationDockFull(int stationId) {
+
+		Station station = stations.get(stationId);
+		return (station.getNumFreeDocks() == 0);
 	}
 	
 }

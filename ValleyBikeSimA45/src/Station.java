@@ -3,6 +3,10 @@
  *
  */
 
+/**
+ * @author maingo
+ *
+ */
 public class Station {
 	
 	
@@ -53,6 +57,22 @@ public class Station {
 	public void setStationId(int stationId) {
 		this.stationId = stationId;
 	}
+	
+	
+	/**
+	 * @return the numBikes
+	 */
+	public int getNumBikes() {
+		return numBikes;
+	}
+
+	/**
+	 * @param numBikes the numBikes to set
+	 */
+	public void setNumBikes(int numBikes) {
+		this.numBikes = numBikes;
+	}
+
 	/**
 	 * @return the address of the station
 	 */
@@ -131,9 +151,9 @@ public class Station {
 
 	@Override
 	public String toString() {
-		return stationId + "\t" + stationName + "\t" + numBikes + "\t" + address + "\t"
+		return stationId + "\t" + numBikes + "\t"
 				+ numFreeDocks + "\t" + maintenanceReqs + "\t" + capacity + "\t" +
-				hasKiosk + address + "\n";
+				(hasKiosk ? "Yes" : "No") + "\t" + stationName + " - " + address + "\n";
 	}
 	
 	

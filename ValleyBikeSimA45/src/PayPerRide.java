@@ -26,7 +26,7 @@ public class PayPerRide extends Membership {
 	public float getChargeForRide(int rideDurationInMinutes) {
 		
 		// user pays $2 for every ride, plus overtime fee if applicable
-		int totalAmount = 2;
+		float totalAmount = 2;
 		
 		// if the user's ride lasted 30 mins or more
 		if (rideDurationInMinutes >= 30) {
