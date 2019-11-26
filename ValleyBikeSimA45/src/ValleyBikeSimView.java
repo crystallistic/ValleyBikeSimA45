@@ -316,4 +316,11 @@ public class ValleyBikeSimView {
 		
 	}
 	
+	/**
+	 * Displays confirmation that all data in the system have been saved in .csv files.
+	 */
+	public void displaySaveData() {
+		System.out.println("All data have been saved successfully.");	
+	}
+	
 }

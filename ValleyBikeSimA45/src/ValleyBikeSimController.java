@@ -318,10 +318,10 @@ public class ValleyBikeSimController {
 			case 9:// 9) Report issue
 				//reportIssue();
 				break;
-			case 10:
-				//resolveRide();
+			case 10: // 10) saveData()
+				saveData();
 				break;
-			case 11:// 10) Log out
+			case 11:// 11) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
@@ -509,5 +509,15 @@ public class ValleyBikeSimController {
 		view.displayResolveRide(resolveRideResult);
 		
 	}
+
+	
+	/**
+	 * Save all data in the system into .csv files.
+	 */
+	public void saveData() {
+		model.saveData();
+		view.displaySaveData();
+	}
+
 
 }

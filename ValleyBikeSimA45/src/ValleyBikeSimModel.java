@@ -1,10 +1,13 @@
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 //import java.util.regex.Pattern;
 
 import com.opencsv.CSVReader;
+import com.opencsv.CSVWriter;
 
 import java.util.Date;
 import java.util.regex.Pattern;
@@ -48,6 +51,12 @@ public class ValleyBikeSimModel {
 
 	/** map all riders by username to their membership type */
 	private HashMap<String, Membership> memberships;
+	
+	/** used to write .csv files */
+	private FileWriter csvWriter;
+	
+	/** used to write .csv files */
+	private CSVWriter writer;
 	
 	/**
 	 * Constructor for the Valley Bike Simulator Model.
@@ -797,5 +806,375 @@ public class ValleyBikeSimModel {
 		Station station = stations.get(stationId);
 		return (station.getNumFreeDocks() == 0);
 	}
+	
+	public void saveData() {
+		saveStationList();
+		saveUserLists();
+		saveBikeList();
+		savePaymentMethodList();
+		saveTicketList();
+	}
+	
+	/**
+	 * Save the updated bike list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 */
+	public void saveTicketList() {     
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/ticket-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "ticketIds,description,username".split(",");
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Ticket[] ticketsArray = tickets.values().toArray(new Ticket[0]);	
+		//loops through and saves all paymentMethods
+		for (Ticket ticket : ticketsArray) {
+			saveAllTicket(ticket);
+		}
+	}
+	
+	/**
+	 * Ancillary function to assist the saveBikeList() function.
+	 */
+	private void saveAllTicket(Ticket ticket) {
+		try {
+			csvWriter = new FileWriter("data-files/ticket-data.csv",true);
+
+			//adding all the bike details into the csv
+			
+			csvWriter.append(""+ticket.getTicketId());
+			csvWriter.append(",");
+			csvWriter.append(ticket.getDescription());
+			csvWriter.append(",");
+			csvWriter.append(ticket.getUsername());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save the updated bike list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 */
+	public void savePaymentMethodList() {     
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/payment-methods-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "username,billingName,cardNumber,billingAddress,expiryDate,cvv".split(",");
+
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String[] usernamesArray = paymentMethods.keySet().toArray(new String[0]);	
+		//loops through and saves all paymentMethods
+		for (String username : usernamesArray) {
+			ArrayList<PaymentMethod> paymentMethodList = paymentMethods.get(username);
+			for (PaymentMethod paymentMethod : paymentMethodList) {
+				saveAllPaymentMethod(username, paymentMethod);
+			}
+		}
+	}
+	
+	/**
+	 * Ancillary function to assist the saveBikeList() function.
+	 */
+	private void saveAllPaymentMethod(String username, PaymentMethod paymentMethod) {
+		try {
+			csvWriter = new FileWriter("data-files/payment-methods-data.csv",true);
+
+			//adding all the bike details into the csv
+			
+			csvWriter.append(username);
+			csvWriter.append(",");
+			csvWriter.append(paymentMethod.getBillingName());
+			csvWriter.append(",");
+			csvWriter.append(paymentMethod.getCardNumber());
+			csvWriter.append(",");
+			csvWriter.append(paymentMethod.getAddress());
+			csvWriter.append(",");
+			csvWriter.append(paymentMethod.getExpiryDate());
+			csvWriter.append(",");
+			csvWriter.append(paymentMethod.getCvv());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save the updated bike list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 */
+	public void saveBikeList() {     
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/bike-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "bikeId,stationId".split(",");
+
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		Integer[] stationsArray = stationsBikes.keySet().toArray(new Integer[0]);	
+		//loops through and saves all stations
+		for (int stationId : stationsArray) {
+			HashSet<Integer> bikes = stationsBikes.get(stationId);
+			Integer[] bikesArray = bikes.toArray(new Integer[0]);
+			for (int bikeId : bikesArray) {
+				saveAllBike(bikeId, stationId);
+			}
+		}
+	}
+	
+	/**
+	 * Ancillary function to assist the saveBikeList() function.
+	 */
+	private void saveAllBike(int bikeId, int stationId) {
+		try {
+			csvWriter = new FileWriter("data-files/bike-data.csv",true);
+
+			//adding all the bike details into the csv
+			
+			csvWriter.append(Integer.toString(bikeId));
+			csvWriter.append(",");
+			csvWriter.append(Integer.toString(stationId));
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save the Admins and Riders to their respective files
+	 */
+	public void saveUserLists() {
+		User[] usersArray = users.values().toArray(new User[0]);
+		ArrayList<Admin> admins = new ArrayList<Admin>();
+		ArrayList<Rider> riders = new ArrayList<Rider>();
+		for (User user : usersArray) {
+			if (user instanceof Admin) {
+				admins.add((Admin)user);
+			} else {
+				riders.add((Rider)user);
+			}
+		}
+		saveAdminList(admins);
+		saveRiderList(riders);
+	}
+	
+	
+	private void saveRiderList(ArrayList<Rider> riders) {
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/rider-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
+		      
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//loops through and saves all stations
+		for (Rider rider : riders) {
+			saveAllRider(rider);
+		}
+		
+	}
+	
+	private void saveAdminList(ArrayList<Admin> admins) {
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/admins-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
+		      
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//loops through and saves all stations
+		for (Admin admin: admins) {
+			saveAllAdmin(admin);
+		}
+		
+	}
+	
+	/**
+	 * Ancillary function to assist the saveRiderList() function.
+	 */
+	private void saveAllRider(Rider rider) {
+		try {
+			csvWriter = new FileWriter("data-files/rider-data.csv",true);
+
+			//adding all the rider details into the csv
+			csvWriter.append(rider.getUserName());
+			csvWriter.append(",");
+			csvWriter.append(rider.getPassword());
+			csvWriter.append(",");
+			csvWriter.append(rider.getFullName());
+			csvWriter.append(",");
+			csvWriter.append(rider.getPhoneNumber());
+			csvWriter.append(",");
+			csvWriter.append(rider.getAddress());
+			csvWriter.append(",");
+			
+			String membershipType;
+			Membership membership = memberships.get(rider.getUserName());
+			if (membership instanceof DayPass) {
+				membershipType = "DayPass";
+			} else if (membership instanceof FoundingMember) {
+				membershipType = "FoundingMember";
+			} else if (membership instanceof Monthly) {
+				membershipType = "Monthly";
+			} else if (membership instanceof Yearly) {
+				membershipType = "Yearly";
+			} else {
+				membershipType = "PayPerRide";
+			}
+			
+			csvWriter.append(membershipType);
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Ancillary function to assist the saveAdminList() function.
+	 */
+	private void saveAllAdmin(Admin admin) {
+		try {
+			csvWriter = new FileWriter("data-files/admins-data.csv",true);
+
+			//adding all the admin details into the csv
+			csvWriter.append(admin.getUserName());
+			csvWriter.append(",");
+			csvWriter.append(admin.getPassword());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * Save the updated station list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 */
+	public void saveStationList() {     
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/station-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "ID,Name,Bikes,Pedelecs,Available Docks,Maintainence Request,Capacity,Kiosk,Address".split(",");
+
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		Station[] stationsArray = stations.values().toArray(new Station[0]);
+		//loops through and saves all stations
+		for (Station station : stationsArray) {
+			saveAllStation(station);
+		}
+	}
+	
+	/**
+	 * Ancillary function to assist the saveStationList() function.
+	 */
+	private void saveAllStation(Station station) {
+		try {
+			csvWriter = new FileWriter("data-files/station-data.csv",true);
+
+			//adding all the station details into the csv
+			csvWriter.append(Integer.toString(station.getStationId()));
+		    csvWriter.append(',');
+			csvWriter.append(station.getStationName());
+			csvWriter.append(',');
+			csvWriter.append("0");
+			csvWriter.append(',');
+			
+			int numBikes = stationsBikes.get(station.getStationId()).size();
+			csvWriter.append(Integer.toString(numBikes));
+			csvWriter.append(',');
+			
+			csvWriter.append(Integer.toString(station.getNumFreeDocks()));
+			csvWriter.append(',');
+			csvWriter.append(Integer.toString(station.getMaintenanceReqs()));
+			csvWriter.append(',');
+			csvWriter.append(Integer.toString(station.getCapacity()));
+			csvWriter.append(',');
+			
+			String kioskState;
+			if (station.isHasKiosk()) {
+				kioskState = "1";
+			} else {
+				kioskState = "0";
+			}
+			csvWriter.append(kioskState);
+			
+			
+			csvWriter.append(',');
+			csvWriter.append(station.getAddress());
+			
+			
+			csvWriter.append("\n");
+
+
+
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	
 }
