@@ -394,17 +394,20 @@ public class ValleyBikeSimModel {
 			break;
 		case "loginInfo":
 			String[] info = userInput.split(" ");
-			inputIsValid = (users.get(info[0]).getPassword().equals(info[1]));
+			
+			inputIsValid = (users.containsKey(info[0]) && users.get(info[0]).getPassword().equals(info[1]));
 			break;
 		case "newUsername":
 			inputIsValid = (!users.containsKey(userInput) && userInput.length() >= 6);
 			break;
 		case "newEmail":
 			// regex to validate email format
-			Pattern r = Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"); 
+			Pattern r = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"); 
 			
 			// email is valid if it's in valid format and it does not belong to an existing user
-			inputIsValid = (r.matcher(userInput).find() && !emails.containsKey(userInput));
+			boolean matchRegex = r.matcher(userInput).find();
+			boolean notExistInSys = !emails.containsKey(userInput);
+			inputIsValid = (matchRegex && notExistInSys);
 			break;
 			
 		} 	
@@ -463,15 +466,12 @@ public class ValleyBikeSimModel {
 	/**
 	 * @param activeUser the activeUser to set
 	 */
-	public void setActiveUser(User activeUser) {
-		this.activeUser = activeUser;
-	}
-	
-	/**
-	 * @param activeUser the activeUser to set
-	 */
 	public void setActiveUser(String activeUsername) {
-		this.activeUser = this.users.get(activeUsername);
+		if (activeUsername == null) {
+			this.activeUser = null;
+		} else {
+			this.activeUser = this.users.get(activeUsername);
+		}
 	}
 	
 	/**
@@ -516,6 +516,27 @@ public class ValleyBikeSimModel {
 		this.emails.put(email, rider);
 	}
 	
+	/**
+	 * Removes the checked out bike from the start station,
+	 * and creates a new ride for the user.
+	 * @param bikeId the id of the bike being checked out
+	 * @param stationId the id of the station the bike is being removed from
+	 */
+	public void startRide(int bikeId, int stationId) {
+		//Remove the bikeId from the HashSet of bikeIds associated to the station in stations HashMap
+		stationsBikes.get(stationId).remove(bikeId);
+		
+		//Update numFreeDocks in startStation to reflect one new free dock
+		Station startStation = stations.get(stationId);
+		startStation.setNumFreeDocks(startStation.getNumFreeDocks()+1);
+		
+		//Creates new Ride object with bikeId and start time --> get current time 
+		Ride ride = new Ride(bikeId, startStation, new Date() );
+		
+		//Add ride and activeUser to ridesInProgress
+		ridesInProgress.put(activeUser.getUserName(), ride);
+	}
+
 	
 	/*
 	 *
@@ -531,4 +552,24 @@ public class ValleyBikeSimModel {
 		Date dateTime = new SimpleDateFormat("MM/dd/yy HH:mm").parse(s);
 		return dateTime;
 	}
+	
+	/**
+	 * Returns the full list of all the stations within the Valley Bike system.
+	 */
+	public String[] getStationList() {
+		String[] formattedStationList = new String[stations.size()];
+		formattedStationList[0] = "ID \t Name \t Bikes \t AvDocs \tMainReq \t  Capacity \t Kiosk \t Address \n";
+		
+		Integer[] stationIds = (Integer[]) stations.keySet().toArray();
+		Arrays.sort(stationIds);
+		int line = 1;
+		
+		for (Integer stationId : stationIds) {	
+			formattedStationList[line] = stations.get(stationId).toString();
+			line++;
+		}
+		
+		return formattedStationList;
+	}
+	
 }

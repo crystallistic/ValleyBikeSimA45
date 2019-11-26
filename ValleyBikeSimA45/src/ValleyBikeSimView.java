@@ -10,12 +10,12 @@ import java.util.Scanner;
  */
 public class ValleyBikeSimView {
 	
-	
+	Scanner sc;
 	/**
 	 * Constructor for the Valley Bike Simulator View.
 	 */
 	public ValleyBikeSimView() {
-		
+		sc = new Scanner(System.in);
 	}
 	
 	/**
@@ -69,15 +69,15 @@ public class ValleyBikeSimView {
 	
 	/**
 	 * Displays message confirming new account creation and username.
-	 * @param newUserName 	username associated with newly created account
+	 * @param newUsername 	username associated with newly created account
 	 */
-	public void displayAccountCreationSuccess(String newUserName) {
-		System.out.println("Congratulations! You have successfully created an account with ValleyBike. Your username is " + newUserName + ".");
+	public void displayAccountCreationSuccess(String newUsername) {
+		System.out.println("Congratulations! You have successfully created an account with ValleyBike. Your username is " + newUsername + ".");
 	}
 	
 	/**
 	 * Displays message confirming successful login.
-	 * @param newUserName 	username associated with newly created account
+	 * @param newUsername 	username associated with newly created account
 	 */
 	public void displayLoginSuccess() {
 		System.out.println("You are now logged in.");
@@ -88,6 +88,7 @@ public class ValleyBikeSimView {
 	 */
 	public void displayExit() {
 		System.out.println("Thank you for using ValleyBike!");
+		sc.close(); // exit program, close scanner to stop taking in user input
 	}
 	
 	/**
@@ -97,60 +98,66 @@ public class ValleyBikeSimView {
 	public String prompt(String prompt) {
 		
 		String input = null;
-		Scanner sc = new Scanner(System.in);
 		
 		switch (prompt) {
 		case "email":
-			System.out.println("Please enter your email:\n");
+			System.out.println("Please enter your email:");
+			break;
+		case "stationId":
+			System.out.println("Please enter the 2-digit station ID:");
+			break;
+		case "bikeId":
+			System.out.println("Please enter the 3-digit bike ID:");
 			break;
 		case "welcome": // welcome screen, with 3 options for login, sign up, or exit
-			System.out.println("To start, please enter a number corresponding to one of the options below (1-3)\n");
+			System.out.println("To start, please enter a number corresponding to one of the options below (1-3)");
 			break;
 		case "username": // prompt for user name
-			System.out.println("Please enter your username: \n");
+			System.out.println("Please enter your username:");
 			break;
 		case "password": // prompt for password
-			System.out.println("Please enter your password: \n");
+			System.out.println("Please enter your password:");
 			break;
-		case "newUserName":
-			System.out.println("Please enter a username (at least 6 characters): \n");
+		case "newUsername":
+			System.out.println("Please enter a username (at least 6 characters):");
 			break;
 		case "newPassword":
-			System.out.println("Please enter a password (at least 6 characters): \n");
+			System.out.println("Please enter a password (at least 6 characters):");
+			break;
+		case "newEmail":
+			System.out.println("Please enter your email:");
 			break;
 		case "fullName":
-			System.out.println("Please enter your first and last name: \n");
+			System.out.println("Please enter your first and last name:");
 			break;
 		case "phoneNumber":
-			System.out.println("Please enter your 10-digit cellphone number: \n");
+			System.out.println("Please enter your 10-digit cellphone number:");
 			break;
 		case "address":
-			System.out.println("Please enter your address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":\n");
+			System.out.println("Please enter your address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":");
 			break;
 		case "billingName":
-			System.out.println("Please enter the full name on your credit card: \n");
+			System.out.println("Please enter the full name on your credit card:");
 			break;
 		case "billingAddress":
-			System.out.println("Please enter your billingaddress on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":\n");
+			System.out.println("Please enter your billing address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":");
 			break;
 		case "creditCardNumber":
-			System.out.println("Please enter your credit card number: \n");
+			System.out.println("Please enter your credit card number:");
 			break;
 		case "creditCardDate":
-			System.out.println("Please enter your credit card expiration date in one of the following formats - MM/YY or MM/YYYY: \n");
+			System.out.println("Please enter your credit card expiration date in one of the following formats - MM/YY or MM/YYYY:");
 			break;
 		case "CVV":
-			System.out.println("Please enter your 3 or 4-digit security code on your credit card: \n");
+			System.out.println("Please enter your 3 or 4-digit security code on your credit card:");
 			break;
 		default: // default is options for a menu
-			System.out.println("Please enter a number corresponding to your option: \n");
+			System.out.println("Please enter a number corresponding to your option:");
 			break;
 		
 		} 
 		
-		input = sc.nextLine().trim();
-		
-		sc.close();
+		input = sc.nextLine();
 		
 		return input;
 	}
@@ -192,7 +199,7 @@ public class ValleyBikeSimView {
 				+ "5) Redistribute bikes\n"
 				+ "6) View station list\n"
 				+ "7) Resolve ride\n"
-				+ "8) Create support ticket"
+				+ "8) Create support ticket\n"
 				+ "9) Log out");
 	}
 	
@@ -208,6 +215,29 @@ public class ValleyBikeSimView {
 				+ "8) View transaction history\n"
 				+ "9) Report issue\n"
 				+ "10) Log out\n");
+	}
+
+	/**
+	 * Display a message confirming successful bike check-out and beginning of a ride.
+	 */
+	public void displayRideStart() {
+		System.out.println("Enjoy your ride.");
+	}
+	
+	/**
+	 * Display a message confirming successful bike check-out and beginning of a ride.
+	 */
+	public void displayStationList(String[] stationList) {
+		for (String s : stationList) {
+			System.out.println(s);
+		}
+	}
+	
+	/**
+	 * Display message confirming that the user has logged out.
+	 */
+	public void displayLogout() {
+		System.out.println("You have successfully logged out of your account. Come back soon!");
 	}
 	
 }

@@ -8,6 +8,7 @@ public class Station {
 	
 	int stationId;
 	String stationName;
+	int numBikes;
 	String address;
 	int numFreeDocks;
 	int capacity;
@@ -30,6 +31,7 @@ public class Station {
 			int numFreeDocks, int capacity, int maintenanceReqs, boolean hasKiosk) {
 		this.stationId = stationId;
 		this.stationName = stationName;
+		this.numBikes = numBikes;
 		this.address = address;
 		this.numFreeDocks = numFreeDocks;
 		this.capacity = capacity;
@@ -129,9 +131,9 @@ public class Station {
 
 	@Override
 	public String toString() {
-		return "Station [stationId=" + stationId + ", stationName=" + stationName + ", address=" + address
-				+ ", numFreeDocks=" + numFreeDocks + ", capacity=" + capacity + ", maintenanceReqs=" + maintenanceReqs
-				+ ", hasKiosk=" + hasKiosk + "]";
+		return stationId + "\t" + stationName + "\t" + numBikes + "\t" + address + "\t"
+				+ numFreeDocks + "\t" + maintenanceReqs + "\t" + capacity + "\t" +
+				hasKiosk + address + "\n";
 	}
 	
 	
