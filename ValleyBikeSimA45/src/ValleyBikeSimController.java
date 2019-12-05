@@ -383,28 +383,41 @@ public class ValleyBikeSimController {
 		// validate the number the user enters to pick a menu option
 		else if (userInputName.contains("option")) {
 			
+			// remove all white spaces
+			userInput = userInput.replaceAll(" ", "");
+			
+			// check whether input is a number
 			boolean isValidInt = StringUtils.isNumeric(userInput);
 			
-			int intUserInput = 0;
-			int range = Integer.parseInt(userInputName.substring(6));
+			int intUserInput = 0; // variable to store the user's choice
+			int range = Integer.parseInt(userInputName.substring(6)); // obtain the valid range of options
+			
+			// only parse the user input if it is an int
 			if (isValidInt) {
 				intUserInput = Integer.parseInt(userInput);
 			}
-
+			
+			// input is valid if it is an integer within the range specified
 			inputIsValid = (isValidInt && intUserInput <= range && intUserInput >= 1);
 
 			while (!inputIsValid) {
 				System.out.println("Invalid input, please follow the instructions and try again.");
-				userInput = view.prompt(userInputName);
+				
+				// prompt user for input again and remove all white spaces 
+				userInput = view.prompt(userInputName).replaceAll(" ", "");
+				
+				// check to see if input is a parsable integer
 				isValidInt = StringUtils.isNumeric(userInput);
 				
 				if (isValidInt) {
 					intUserInput = Integer.parseInt(userInput);
 				}
 				
+				// input is valid if it is an integer within the range specified
 				inputIsValid = (isValidInt && intUserInput <= range && intUserInput >= 1);
 			}
-
+			
+			// convert user input to a string and return
 			userInput = Integer.toString(intUserInput);
 
 		} else {
@@ -456,6 +469,7 @@ public class ValleyBikeSimController {
 				else {
 					
 					// Assumption: The user will correctly enter the bike ID of a bike at this station
+					// TODO: catch errors if non-numeric input
 					int bikeId = Integer.parseInt(getUserInput("bikeId"));
 					int stationId = Integer.parseInt(getUserInput("stationId"));
 					
