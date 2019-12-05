@@ -1,6 +1,10 @@
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author maingo
@@ -63,7 +67,7 @@ public class ValleyBikeSimController {
 		regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
 		regex.put("newPassword", Pattern.compile(".{6}.*")); // password has to be at least 6 characters
 		regex.put("address", Pattern.compile(".*")); // we assume the user will enter a valid address
-		regex.put("phoneNumber", Pattern.compile("[1-9][0-9]{9}")); // phone number format
+		regex.put("phoneNumber", Pattern.compile("^[1-9][0-9]{9}$")); // phone number format
 
 		// credit card format, regex adapted from regular-expressions.com
 		// Source: https://www.regular-expressions.info/creditcard.html
@@ -100,7 +104,7 @@ public class ValleyBikeSimController {
 
 		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$"));
 		regex.put("billingAddress", Pattern.compile(".*")); // we assume the user will enter a valid address
-		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/?([0-9]{4}|[0-9]{2})$")); // expiry date of credit card. Regex source:																							// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
+		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/([0-9]{2})$")); // expiry date of credit card. Regex source:																							// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
 		regex.put("CVV", Pattern.compile("^[0-9]{3,4}$")); // CVV of credit card. Regex source:
 															// https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
 		regex.put("fullName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // first and last name separated by space. Regex
@@ -378,15 +382,27 @@ public class ValleyBikeSimController {
 		}
 		// validate the number the user enters to pick a menu option
 		else if (userInputName.contains("option")) {
-			int intUserInput = Integer.parseInt(userInput);
+			
+			boolean isValidInt = StringUtils.isNumeric(userInput);
+			
+			int intUserInput = 0;
 			int range = Integer.parseInt(userInputName.substring(6));
+			if (isValidInt) {
+				intUserInput = Integer.parseInt(userInput);
+			}
 
-			inputIsValid = (intUserInput <= range && intUserInput >= 1);
+			inputIsValid = (isValidInt && intUserInput <= range && intUserInput >= 1);
 
 			while (!inputIsValid) {
 				System.out.println("Invalid input, please follow the instructions and try again.");
-				intUserInput = Integer.parseInt(view.prompt(userInputName));
-				inputIsValid = (intUserInput <= range && intUserInput >= 1);
+				userInput = view.prompt(userInputName);
+				isValidInt = StringUtils.isNumeric(userInput);
+				
+				if (isValidInt) {
+					intUserInput = Integer.parseInt(userInput);
+				}
+				
+				inputIsValid = (isValidInt && intUserInput <= range && intUserInput >= 1);
 			}
 
 			userInput = Integer.toString(intUserInput);
@@ -397,7 +413,7 @@ public class ValleyBikeSimController {
 			// if input is supposed to be a string of digits, clean up input to remove all
 			// non-digit characters
 			if (userInputName.equals("creditCardNumber") || userInputName.equals("phoneNumber")) {
-				userInput.replaceAll("[^0-9]+", "");
+				userInput = userInput.replaceAll("[^0-9]+", "");
 			}
 
 			Matcher m = r.matcher(userInput);
@@ -410,7 +426,7 @@ public class ValleyBikeSimController {
 				// if input is a credit card number or phone number, clean up input to remove all non-digit
 				// characters
 				if (userInputName.equals("creditCardNumber") || userInputName.equals("phoneNumber")) {
-					userInput.replaceAll("[^0-9]+", "");
+					userInput = userInput.replaceAll("[^0-9]+", "");
 				}
 				m = r.matcher(userInput);
 				inputIsValid = m.find();
@@ -429,16 +445,31 @@ public class ValleyBikeSimController {
 		// if the user already has a ride in progress, remind them to end ride
 		if (rideIsInProgress) {
 			view.remindEndRide();
-		} else {
-			
-			// Assumption: The user will correctly enter the bike ID of a bike at this station
-			int bikeId = Integer.parseInt(getUserInput("bikeId"));
-			int stationId = Integer.parseInt(getUserInput("stationId"));
-			
-			// TODO for A5: check if bike is at this station
-			model.startRide(bikeId, stationId); // Passes this info to startRide in Model
-			view.displayRideStart(); // print something like “Enjoy your ride!”
-		}
+		} else
+			try {
+				
+				// if user's credit card expired, display error message
+				if (model.activeUserCreditCardExpired()) {
+					view.cardExpired();
+					// TODO: subsequent actions: prompt user for new payment method, or select from existing
+				}
+				else {
+					
+					// Assumption: The user will correctly enter the bike ID of a bike at this station
+					int bikeId = Integer.parseInt(getUserInput("bikeId"));
+					int stationId = Integer.parseInt(getUserInput("stationId"));
+					
+					// TODO for A5: check if bike is at this station
+					model.startRide(bikeId, stationId); // Passes this info to startRide in Model
+					view.displayRideStart(); // print something like “Enjoy your ride!”
+				}
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+				System.out.println("Error parsing bike ID or station ID.");
+			} catch (ParseException e) {
+				e.printStackTrace();
+				System.out.println("Error parsing creditcard expiration date.");
+			}
 		mainMenu(model.activeUserIsAdmin()); // back to menu
 	}
 	
@@ -549,6 +580,5 @@ public class ValleyBikeSimController {
 		// display confirmation
 		view.displaySaveData();
 	}
-
 
 }

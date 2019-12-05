@@ -5,10 +5,6 @@ import java.util.Scanner;
  * @author maingo
  *
  */
-/**
- * @author maingo
- *
- */
 public class ValleyBikeSimView {
 	
 	private Scanner sc;
@@ -144,7 +140,7 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your billing address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":");
 			break;
 		case "creditCardNumber":
-			System.out.println("Please enter your credit card number:");
+			System.out.println("Please enter your 16-digit credit card number:");
 			break;
 		case "creditCardDate":
 			System.out.println("Please enter your credit card expiration date in one of the following formats - MM/YY or MM/YYYY:");
@@ -169,9 +165,7 @@ public class ValleyBikeSimView {
 			break;
 		case "fileName":
 			System.out.println("Please enter the name of the data file, including the .csv extension. The file must be stored in the data-files folder:");
-			break;
-			
-			
+			break;		
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -327,6 +321,10 @@ public class ValleyBikeSimView {
 	 */
 	public void displaySaveData() {
 		System.out.println("All data have been saved successfully.");	
+	}
+
+	public void cardExpired() {
+		System.out.println("Your credit card has expired. Please select or enter a different payment method in order to continue with this action.");	
 	}
 	
 }

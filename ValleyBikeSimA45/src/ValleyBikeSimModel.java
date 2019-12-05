@@ -91,6 +91,13 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
+	 * 
+	 * 
+	 * ******************************* HELPER FUNCTIONS START HERE *********************************
+	 * 
+	 */
+	
+	/**
 	 * Read in the station data file and store stations in the model.
 	 */
 	private void readStationData() {
@@ -387,6 +394,35 @@ public class ValleyBikeSimModel {
 			System.out.println(e.getMessage());		
 		}
 	}
+	
+	
+	/**
+	 * Checks if a credit card is expired by comparing expiration date with current date.
+	 * @param expirationDate Expiration date on credit card, of MM/YY format
+	 * @return true if card is not expired, else false
+	 * @throws ParseException  
+	 */
+	public boolean activeUserCreditCardExpired() throws ParseException {
+		
+		// getting first credit card on file. TODO: Verify method to keep track of preferred payment method
+		PaymentMethod pm = paymentMethods.get(activeUser.getUserName()).get(0); 
+		Date date = new SimpleDateFormat("MM/yy").parse(pm.getExpiryDate());
+		Date now = new Date();
+		
+		return (now.getTime() - date.getTime() > 0);
+	}
+	
+	
+	/**
+	 * 
+	 * 
+	 * ******************************** END OF HELPER FUNCTIONS ************************************
+	 *
+	 *
+	 */
+	
+	
+	
 	
 	/**
 	 * Reads a ride data file that contains all the rides for one day of service.
