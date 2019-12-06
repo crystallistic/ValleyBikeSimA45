@@ -6,12 +6,15 @@ public class Bike {
 	
 	
 	private int bikeId; // the unique three-digit number associated with a bike
+	private String status; // working, OOO, or stolen
 
 	/**
 	 * @param bikeId
+	 * @param status
 	 */
-	public Bike(int bikeId) {
+	public Bike(int bikeId, String status) {
 		this.bikeId = bikeId;
+		this.status = status;
 	}
 
 	/**
@@ -31,6 +34,21 @@ public class Bike {
 	@Override
 	public String toString() {
 		return "Bike [bikeId=" + bikeId + "]";
+	}
+	
+	/**
+	 * @return the status
+	 */
+	public String getStatus() {
+		return status;
+	}
+	
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	
