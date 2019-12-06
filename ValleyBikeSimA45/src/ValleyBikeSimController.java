@@ -66,54 +66,30 @@ public class ValleyBikeSimController {
 	private void generateRegex() {
 		regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
 		regex.put("newPassword", Pattern.compile(".{6}.*")); // password has to be at least 6 characters
-		regex.put("address", Pattern.compile(".*")); // we assume the user will enter a valid address
+		regex.put("address", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
+											+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
+											+ "([a-zA-Z .'-]+)," // city
+											+ "([a-zA-Z0-9 .'\\/#-]+)," // state
+											+ " *([0-9]{5}) *," // zip code
+											+ " *([a-zA-Z .,'-]+)$"));  // country
 		regex.put("phoneNumber", Pattern.compile("^[1-9][0-9]{9}$")); // phone number format
-
-		// credit card format, regex adapted from regular-expressions.com
-		// Source: https://www.regular-expressions.info/creditcard.html
-		// In order: Visa, Mastercard, American Express, Diners Club, Discover, JCB
-		// - Visa: ^4[0-9]{12}(?:[0-9]{3})?$ All Visa card numbers start with a 4.
-		// New cards have 16 digits. Old cards have 13.
-		// - MasterCard:
-		// ^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$
-		// MasterCard numbers either start with the numbers 51 through 55 or with the
-		// numbers 2221 through 2720.
-		// All have 16 digits.
-		// - American Express: ^3[47][0-9]{13}$
-		// American Express card numbers start with 34 or 37 and have 15 digits.
-		// - Diners Club: ^3(?:0[0-5]|[68][0-9])[0-9]{11}$
-		// Diners Club card numbers begin with 300 through 305, 36 or 38.
-		// All have 14 digits. There are Diners Club cards that begin with 5 and have 16
-		// digits.
-		// These are a joint venture between Diners Club and MasterCard, and should be
-		// processed like a MasterCard.
-		// - Discover: ^6(?:011|5[0-9]{2})[0-9]{12}$
-		// Discover card numbers begin with 6011 or 65. All have 16 digits.
-		// - JCB: ^(?:2131|1800|35\d{3})\d{11}$
-		// JCB cards beginning with 2131 or 1800 have 15 digits. JCB cards beginning
-		// with 35 have 16 digits.
-
-		/**
-		 * regex.put("creditCardNumber", Pattern.compile("^(" +
-		 * "?:4[0-9]{12}(?:[0-9]{3})?|" +
-		 * "(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}|"
-		 * + "3[47][0-9]{13}|" + "3(?:0[0-5]|[68][0-9])[0-9]{11}|" +
-		 * "6(?:011|5[0-9]{2})[0-9]{12}|" + "(?:2131|1800|35\\d{3})\\d{11}" + ")$"));
-		 * 
-		 */
-
-		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$"));
-		regex.put("billingAddress", Pattern.compile(".*")); // we assume the user will enter a valid address
+		
+		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$")); // we're not supporting Amex, so all credit card numbers will be 16 digits minimum
+		regex.put("billingAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
+													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
+													+ "([a-zA-Z .'-]+)," // city
+													+ "([a-zA-Z0-9 .'\\/#-]+)," // state
+													+ " *([0-9]{5}) *," // zip code
+													+ " *([a-zA-Z .,'-]+)$")); // country
 		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/([0-9]{2})$")); // expiry date of credit card. Regex source:																							// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
 		regex.put("CVV", Pattern.compile("^[0-9]{3,4}$")); // CVV of credit card. Regex source:
 															// https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
-		regex.put("fullName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // first and last name separated by space. Regex
-																	// source:
+		regex.put("fullName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // first and last name separated by space. Regex source:
 																	// https://stackoverflow.com/questions/2385701/regular-expression-for-first-and-last-name
 		regex.put("billingName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // billingName
-		regex.put("capacity",Pattern.compile("^[1-9][0-9]$"));
-		regex.put("hasKiosk", Pattern.compile("^(0|1)$"));
-		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$"));
+		regex.put("capacity",Pattern.compile("^([1-9]|1[0-9]|2[0-7])$")); // max station has a capacity of 27 bikes
+		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
+		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$")); 
 	}
 
 	/**
@@ -124,6 +100,8 @@ public class ValleyBikeSimController {
 
 		// load data in model
 		model.readData();
+		
+		model.checkStolenBikes();
 
 		// show welcome screen with options to login, signup, or exit program
 		view.displayWelcomeScreen();
@@ -176,6 +154,9 @@ public class ValleyBikeSimController {
 		}
 
 		view.displayLoginSuccess();
+		if (model.activeUserStolenBike()) {
+			view.bikeStolen();
+		}
 		mainMenu(userIsAdmin); // show admin menu if user is admin, else show rider menu
 
 	}
@@ -422,25 +403,12 @@ public class ValleyBikeSimController {
 
 		} else {
 			Pattern r = regex.get(userInputName);
-
-			// if input is supposed to be a string of digits, clean up input to remove all
-			// non-digit characters
-			if (userInputName.equals("creditCardNumber") || userInputName.equals("phoneNumber")) {
-				userInput = userInput.replaceAll("[^0-9]+", "");
-			}
-
 			Matcher m = r.matcher(userInput);
 
 			inputIsValid = m.find();
 			while (!inputIsValid) {
 				System.out.println("Invalid input, please try again.");
 				userInput = view.prompt(userInputName);
-
-				// if input is a credit card number or phone number, clean up input to remove all non-digit
-				// characters
-				if (userInputName.equals("creditCardNumber") || userInputName.equals("phoneNumber")) {
-					userInput = userInput.replaceAll("[^0-9]+", "");
-				}
 				m = r.matcher(userInput);
 				inputIsValid = m.find();
 			}
@@ -465,6 +433,9 @@ public class ValleyBikeSimController {
 				if (model.activeUserCreditCardExpired()) {
 					view.cardExpired();
 					// TODO: subsequent actions: prompt user for new payment method, or select from existing
+				}
+				else if (model.activeUserStolenBike()) {
+					view.bikeStolen();
 				}
 				else {
 					
