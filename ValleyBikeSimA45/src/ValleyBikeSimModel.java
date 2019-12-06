@@ -28,7 +28,7 @@ public class ValleyBikeSimModel {
 	private HashMap<Integer, HashSet<Integer>> stationsBikes;
 
 	/** map each rider by username to their payment methods */
-	private HashMap<String, PaymentMethod> paymentMethods;
+	private HashMap<String, ArrayList<PaymentMethod>> paymentMethods;
 
 	/** the currently logged in user */
 	private User activeUser;
@@ -381,7 +381,8 @@ public class ValleyBikeSimModel {
 					
 					// map payment method to username of user
 					String username = array[0];
-					this.paymentMethods.putIfAbsent(username, pm);
+					this.paymentMethods.putIfAbsent(username, new ArrayList<>());
+					this.paymentMethods.get(username).add(pm);
 					
 				}
 				counter++;
@@ -404,7 +405,7 @@ public class ValleyBikeSimModel {
 	public boolean activeUserCreditCardExpired() throws ParseException {
 		
 		// getting first credit card on file. TODO: Verify method to keep track of preferred payment method
-		PaymentMethod pm = paymentMethods.get(activeUser.getUserName()); 
+		PaymentMethod pm = paymentMethods.get(activeUser.getUserName()).get(0); 
 		Date date = new SimpleDateFormat("MM/yy").parse(pm.getExpiryDate());
 		Date now = new Date();
 		
@@ -490,7 +491,8 @@ public class ValleyBikeSimModel {
 			break;
 		case "loginInfo":
 			String[] info = userInput.split(" ");
-			
+			System.out.println(info[0]);
+			System.out.println(info[1]);
 			inputIsValid = (users.containsKey(info[0]) && users.get(info[0]).getPassword().equals(info[1]));
 			break;
 		case "newUsername":
@@ -624,10 +626,10 @@ public class ValleyBikeSimModel {
 	 */
 	public void addPaymentMethod(String username, PaymentMethod paymentMethod) {
 		// create new list of payment methods if new user
-		this.paymentMethods.putIfAbsent(username, paymentMethod);
+		this.paymentMethods.putIfAbsent(username, new ArrayList<PaymentMethod>());
 		
 		// add payment method to list of payment methods associated with user
-		this.paymentMethods.put(username,paymentMethod);
+		this.paymentMethods.get(username).add(paymentMethod);
 	}
 	
 	/**
@@ -674,7 +676,7 @@ public class ValleyBikeSimModel {
 		Membership membership = memberships.get(activeUsername); //user's membership
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
-		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
+		PaymentMethod paymentMethod = paymentMethods.get(activeUsername).get(0); //active user's payment method
 		Station endStation = stations.get(stationId); //station where the bike is being returned
 		
 		//Charge user for the completed ride
@@ -911,7 +913,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Save the updated payment method list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 * Save the updated bike list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
 	 */
 	public void savePaymentMethodList() {     
 		try {
@@ -932,13 +934,15 @@ public class ValleyBikeSimModel {
 		String[] usernamesArray = paymentMethods.keySet().toArray(new String[0]);	
 		//loops through and saves all paymentMethods
 		for (String username : usernamesArray) {
-			PaymentMethod paymentMethod = paymentMethods.get(username);
-			saveAllPaymentMethod(username, paymentMethod);
+			ArrayList<PaymentMethod> paymentMethodList = paymentMethods.get(username);
+			for (PaymentMethod paymentMethod : paymentMethodList) {
+				saveAllPaymentMethod(username, paymentMethod);
+			}
 		}
 	}
 	
 	/**
-	 * Ancillary function to assist the savePaymentMethodList() function.
+	 * Ancillary function to assist the saveBikeList() function.
 	 */
 	private void saveAllPaymentMethod(String username, PaymentMethod paymentMethod) {
 		try {
