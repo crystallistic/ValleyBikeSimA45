@@ -48,6 +48,10 @@ public class ValleyBikeSimModel {
 
 	/** map all riders by username to the ride they currently have in progress */
 	private HashMap<String, Ride> ridesInProgress;
+	
+	/** map all riders by username to a ride with a stolen bike */
+	private HashMap<String, Ride> ridesOverdue;
+
 
 	/** map all riders by username to their membership type */
 	private HashMap<String, Membership> memberships;
@@ -72,6 +76,7 @@ public class ValleyBikeSimModel {
 		tickets = new HashMap<>();
 		ridesCompleted = new HashMap<>();
 		ridesInProgress = new HashMap<>();
+		ridesOverdue = new HashMap<>();
 		emails = new HashMap<>();
 		memberships = new HashMap<>();
 	} 
@@ -87,6 +92,7 @@ public class ValleyBikeSimModel {
 		readTicketData();
 		readRidesCompletedData();
 		readRidesInProgressData();
+		readRidesOverdueData();
 		readPaymentMethodData();
 	}
 	
@@ -149,9 +155,10 @@ public class ValleyBikeSimModel {
 				if(counter != 0) {
 					
 					int bikeId = Integer.parseInt(array[0]);
+					String status = array[2];
 					
 					// create new bike object
-					Bike bike = new Bike(bikeId);
+					Bike bike = new Bike(bikeId,status);
 					
 					// map bike object to bike ID
 					bikes.put(bikeId, bike);
@@ -358,6 +365,41 @@ public class ValleyBikeSimModel {
 		}
 		
 		
+	}
+	
+	/**
+	 * Reads the rides completed data file, record all the completed rides
+	 */
+	private void readRidesOverdueData() {
+		String ridesOverdueData = "data-files/rides-overdue.csv";
+		
+		try {
+			CSVReader ridesOverdueDataReader = new CSVReader(new FileReader(ridesOverdueData));
+			
+			List<String[]> allRidesOverdueEntries = ridesOverdueDataReader.readAll();
+			
+			
+			int counter = 0;
+			for(String[] array : allRidesOverdueEntries) {
+				if(counter == 0) {
+					
+				} else {
+					// create new Ride object
+					Date startTime = toDate(array[3]);
+					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
+					
+					// add ride to user's list of completed rides
+					String username = array[0];
+					ridesOverdue.put(username, ride);	
+				}
+				counter++;
+			} 
+			ridesOverdueDataReader.close();
+		} 
+		
+		catch (Exception e) {
+			System.out.println("\n" + e.getMessage());
+		}
 	}
 	
 	/**
@@ -1223,6 +1265,48 @@ public class ValleyBikeSimModel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Check all current rides for overdue/stolen bikes, and charge the users
+	 */
+	public void checkStolenBikes() {
+		ArrayList<String> overdueUsernames = new ArrayList<String>();
+		for (String username : ridesInProgress.keySet()) {
+			Ride ride = ridesInProgress.get(username);
+			Date currentTime = new Date(); // get current time
+			Date startTime = ride.getStartTime(); // get ride start time
+			long difference = (currentTime.getTime() - startTime.getTime()) / 1000; // difference in seconds
+			difference = difference/60/60; //difference in hours
+			
+			if (difference >= 24) {
+				//change bike status to stolen
+				int bikeId = ride.getBikeId();
+				Bike bike = bikes.get(bikeId);
+				bike.setStatus("stolen");
+				
+				overdueUsernames.add(username);
+				
+				//charge user for stolen bike
+				PaymentMethod paymentMethod = paymentMethods.get(username);
+				paymentMethod.chargeCard(2000);
+			}
+		}
+		for (int i=0; i<overdueUsernames.size(); i++) {
+			//move ride to ridesOverdue
+			String username = overdueUsernames.get(i);
+			ridesOverdue.put(username,ridesInProgress.get(username));
+			ridesInProgress.remove(username);
+		}
+		
+	}
+
+	/**
+	 * Checks whether the active suer has stolen a bike
+	 * @return true if the user has stolen a bike
+	 */
+	public boolean activeUserStolenBike() {
+		return ridesOverdue.containsKey(activeUser.getUserName());
 	}
 
 	
