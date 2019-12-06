@@ -152,12 +152,40 @@ class ValleyBikeSimModelTest {
 		
 	}
 	
+	/*
+	 * Tests isValid() to make sure username input is validated correctly
+	 *  and deals with edge cases
+	 */
 	@Test
 	void isValidNewUsername() {
-		assertTrue(model.isValid("newUsername", "Bob"));
-		
-		
+		model.readData();
+		assertTrue(model.isValid("newUsername", "BobSnel")); //Usernames must be a minimum of six characters and can't already exist
+		assertTrue(model.isValid("newUsername", "0101010"));
+		assertFalse(model.isValid("newUsername", "Bob")); //Less than six characters
+		assertFalse(model.isValid("newUsername", "")); //empty string
+		assertFalse(model.isValid("newUsername", " ")); //space
+		assertFalse(model.isValid("newUsername", "Bob Snel")); //username has a space
+		assertFalse(model.isValid("newUsername", "username1")); //username already exists
+	}
+	
+	/*
+	 * Tests isValid() to make sure new email input is validated correctly
+	 *  and deals with edge cases
+	 */
+	@Test
+	void isValidNewEmail() {
+		// email is valid if it's in valid format and it does not belong to an existing user
+		model.readData();
+		assertTrue(model.isValid("newEmail", "user@server.com"));
+		assertFalse(model.isValid("newEmail", "user.com"));
+		assertFalse(model.isValid("newEmail", "user@@server.com"));
+		assertFalse(model.isValid("newEmail", "user@server"));
+		assertFalse(model.isValid("newEmail", "user@server..com"));
+		assertFalse(model.isValid("newEmail", "user.com@"));
+		assertFalse(model.isValid("newEmail", "@server.com"));
+		assertFalse(model.isValid("newEmail", "hpotter@hogwarts.edu")); //email already exists in rider-data.csv
 		
 	}
+	
 	
 }
