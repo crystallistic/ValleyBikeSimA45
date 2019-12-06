@@ -131,19 +131,21 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your 10-digit cellphone number:");
 			break;
 		case "address":
-			System.out.println("Please enter your address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":");
+			System.out.println("Please enter your address on one line, in the following format:\n"
+					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\".");
 			break;
 		case "billingName":
 			System.out.println("Please enter the full name on your credit card:");
 			break;
 		case "billingAddress":
-			System.out.println("Please enter your billing address on one line, in the following format: \"Address line 1, Address line 2 (if applicable), City, State, Zipcode, Country\":");
+			System.out.println("Please enter your address on one line, in the following format:\n" 
+					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\".");
 			break;
 		case "creditCardNumber":
 			System.out.println("Please enter your 16-digit credit card number:");
 			break;
 		case "creditCardDate":
-			System.out.println("Please enter your credit card expiration date in one of the following formats - MM/YY or MM/YYYY:");
+			System.out.println("Please enter your credit card expiration date in the following formats - MM/YYYY:");
 			break;
 		case "CVV":
 			System.out.println("Please enter your 3 or 4-digit security code on your credit card:");
