@@ -100,6 +100,8 @@ public class ValleyBikeSimController {
 
 		// load data in model
 		model.readData();
+		
+		model.checkStolenBikes();
 
 		// show welcome screen with options to login, signup, or exit program
 		view.displayWelcomeScreen();
@@ -152,6 +154,9 @@ public class ValleyBikeSimController {
 		}
 
 		view.displayLoginSuccess();
+		if (model.activeUserStolenBike()) {
+			view.bikeStolen();
+		}
 		mainMenu(userIsAdmin); // show admin menu if user is admin, else show rider menu
 
 	}
@@ -428,6 +433,9 @@ public class ValleyBikeSimController {
 				if (model.activeUserCreditCardExpired()) {
 					view.cardExpired();
 					// TODO: subsequent actions: prompt user for new payment method, or select from existing
+				}
+				else if (model.activeUserStolenBike()) {
+					view.bikeStolen();
 				}
 				else {
 					

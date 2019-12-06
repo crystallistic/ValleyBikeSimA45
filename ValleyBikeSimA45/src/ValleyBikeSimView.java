@@ -328,5 +328,9 @@ public class ValleyBikeSimView {
 	public void cardExpired() {
 		System.out.println("Your credit card has expired. Please select or enter a different payment method in order to continue with this action.");	
 	}
+
+	public void bikeStolen() {
+		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000. Please contact ValleyBike for instructions for next steps");
+	}
 	
 }
