@@ -100,8 +100,6 @@ public class ValleyBikeSimController {
 
 		// load data in model
 		model.readData();
-		
-		model.checkStolenBikes();
 
 		// show welcome screen with options to login, signup, or exit program
 		view.displayWelcomeScreen();
@@ -125,6 +123,7 @@ public class ValleyBikeSimController {
 	 * system.
 	 */
 	public void login() {
+		model.checkStolenBikes();
 		view.displayLoginScreen();
 		String username = getUserInput("username");
 

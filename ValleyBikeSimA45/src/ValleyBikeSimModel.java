@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -98,7 +99,7 @@ public class ValleyBikeSimModel {
 		readRidesInProgressData();
 		readRidesOverdueData();
 		readPaymentMethodData();
-		//readTransactionData();
+		readTransactionData();
 	}
 	
 	/**
@@ -441,6 +442,50 @@ public class ValleyBikeSimModel {
 		}
 	}
 	
+	/**
+	 * Read in the transaction data file and store stations in the model.
+	 */
+	private void readTransactionData() {
+		try {
+			String transactionData = "data-files/transaction-data.csv";
+			
+			CSVReader transactionDataReader = new CSVReader(new FileReader(transactionData));
+			
+			/* read the CSV data row wise and map transactions to usernames */
+			List<String[]> allTransactionEntries = transactionDataReader.readAll();
+			
+			int counter = 0;
+			for(String[] array : allTransactionEntries) {
+				if(counter != 0) {
+					
+					// create new transaction object
+					String username = array[0];
+					BigDecimal amount = new BigDecimal(Integer.parseInt(array[1]));
+					Date time = toDate(array[2]);
+					String description = array[3];
+					
+					Transaction transaction = new Transaction(username,amount,time,description);
+					
+					// map transaction to its user
+					if (transactionsByUser.containsKey(username)) {
+						transactionsByUser.get(username).add(transaction);
+					} else {
+						ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+						transactions.add(transaction);
+						transactionsByUser.put(username, transactions); 
+					}
+				}
+				counter++;	
+			}
+			transactionDataReader.close();
+
+		} 
+		catch(Exception e) {
+			System.out.println(e.getMessage());
+		}	
+	}
+	
+	
 	
 	/**
 	 * Checks if a credit card is expired by comparing expiration date with current date.
@@ -706,15 +751,23 @@ public class ValleyBikeSimModel {
 		//Remove the bikeId from the HashSet of bikeIds associated to the station in stations HashMap
 		stationsBikes.get(stationId).remove(bikeId);
 		
-		//Update numFreeDocks in startStation to reflect one new free dock
+		//Update numFreeDocks in startStation to reflect one new free dock and one fewer bike
 		Station startStation = stations.get(stationId);
 		startStation.setNumFreeDocks(startStation.getNumFreeDocks()+1);
+		startStation.setNumBikes(startStation.getNumBikes()-1);
 		
 		//Creates new Ride object with bikeId and start time --> get current time 
 		Ride ride = new Ride(bikeId, startStation, new Date() );
 		
 		//Add ride and activeUser to ridesInProgress
 		ridesInProgress.put(activeUser.getUserName(), ride);
+		
+		//Updates bike file
+		saveBikeList();
+		//Updates station file
+		saveStationList();
+		//Appends to rides in progress
+		saveAllRideInProgress(ride,activeUser.getUserName());
 	}
 
 	/**
@@ -737,9 +790,16 @@ public class ValleyBikeSimModel {
 		BigDecimal chargeAmount = membership.getChargeForRide(rideDuration);
 		paymentMethod.chargeCard(chargeAmount);
 		
+		//Create new Transaction and add to list
+		Transaction transaction = new Transaction(activeUser.getUserName(),chargeAmount,now,"Ride");
+		transactionsByUser.get(activeUser.getUserName()).add(transaction);
+		
 		//Update bike list at current Station
 		stationsBikes.get(stationId).add(ride.getBikeId());
+		
+		//Update station information
 		endStation.setNumFreeDocks(endStation.getNumFreeDocks()-1);
+		endStation.setNumBikes(endStation.getNumBikes()+1);
 		
 		//Add end time and end station to Ride associated to User
 		ride.setEndTime(now);
@@ -755,10 +815,28 @@ public class ValleyBikeSimModel {
 		}
 		ridesInProgress.remove(activeUsername);
 		
+		//Update rides-in-progress file
+		saveRidesInProgressList();
+		
+		//Append to rides-completed file
+		saveAllRideCompleted(ride, activeUser.getUserName());
+		
+		//Update file for rides today
+		saveRideToday(ride);
+		
+		//Update bike file
+		saveBikeList();
+		
+		//Update station file
+		saveStationList();
+		
+		//Append to transactions file
+		saveAllTransaction(transaction);
+	
 		//Return the amount charged to the user's card
 		return chargeAmount;
 	}
-	
+
 	/**
 	 * Creates a new Station object and adds it to the list
 	 * @param stationId 	The station's ID
@@ -898,6 +976,8 @@ public class ValleyBikeSimModel {
 		
 		return formattedStationList;
 	}
+	
+	
 
 	/**
 	 * Check station to see if all the docks are full.
@@ -916,8 +996,217 @@ public class ValleyBikeSimModel {
 		saveBikeList();
 		savePaymentMethodList();
 		saveTicketList();
+		//saveRideLists();
+		//saveRidesToday();
 	}
 	
+	/**
+	 * Save a transaction to the CSV file
+	 * @param transaction
+	 */
+	private void saveAllTransaction(Transaction transaction) {
+		try {
+			csvWriter = new FileWriter("data-files/transaction-data.csv",true);
+
+			//adding all the ride details into the csv
+			
+			csvWriter.append(transaction.getUsername());
+			csvWriter.append(",");
+			csvWriter.append(""+transaction.getAmount());
+			csvWriter.append(",");
+			csvWriter.append(transaction.getTime().toString());
+			csvWriter.append(",");
+			csvWriter.append(transaction.getDescription());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save the updated ride lists to the CSV files, by overwriting all the entries and adding new entries for the new rides
+	 */
+	private void saveRideLists() {
+		// TODO Auto-generated method stub
+		saveRidesInProgressList();
+	}
+	
+	/**
+	 * Save the updated rides in progress lists to the CSV file, by overwriting all the entries and adding new entries for the new rides
+	 */
+	private void saveRidesInProgressList() {
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/rides-in-progress.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "username,bikeId,From,Start".split(",");
+		      writer.writeNext(record);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//loops through and saves all rides
+		for (String username: ridesInProgress.keySet()) {
+			Ride ride = ridesInProgress.get(username);
+			saveAllRideInProgress(ride, username);
+		}
+	}
+	
+	/**
+	 * Save a ride in progress to the CSV file
+	 * @param ride
+	 * @param username
+	 */
+	private void saveAllRideInProgress(Ride ride, String username) {
+		try {
+			csvWriter = new FileWriter("data-files/rides-in-progress.csv",true);
+
+			//adding all the ride details into the csv
+			
+			csvWriter.append(""+username);
+			csvWriter.append(",");
+			csvWriter.append(""+ride.getBikeId());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartTime().toString());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save a ride to the current daily rides file
+	 * @param ride
+	 */
+	private void saveRideToday(Ride ride) {
+		// Date format: dow mon dd hh:mm:ss zzz yyyy
+		Date now = new Date();
+		String month = now.toString().substring(4,7);
+		String day = now.toString().substring(8,10);
+		String year = now.toString().substring(24,28);
+		String filename = "rides-"+month+"-"+day+"-"+year+".csv";
+		File ridesToday = new File(filename);
+
+		//either adds the ride to the appropriate file or creates the file
+		if (!ridesToday.exists()) {
+			try {
+				//overwrites existing file with new data
+				csvWriter = new FileWriter(filename);
+				writer = new CSVWriter(csvWriter);
+				String [] record = "username,bikeId,From,To,Start,End".split(",");
+				writer.writeNext(record);
+
+				writer.close();
+					      
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		saveAllRideToday(ride, filename);
+	}
+	
+	/**
+	 * Save a current ride to the CSV file
+	 * @param ride
+	 * @param filename
+	 */
+	private void saveAllRideToday(Ride ride, String filename) {
+		try {
+			csvWriter = new FileWriter(filename,true);
+
+			//adding all the ride details into the csv
+			
+			csvWriter.append(""+activeUser.getUserName());
+			csvWriter.append(",");
+			csvWriter.append(""+ride.getBikeId());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(",");
+			csvWriter.append(ride.getEndStation().getStationName());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartTime().toString());
+			csvWriter.append(",");
+			csvWriter.append(ride.getEndTime().toString());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save an overdue ride to the CSV file
+	 * @param ride
+	 * @param username
+	 */
+	private void saveAllRideOverdue(Ride ride, String username) {
+		try {
+			csvWriter = new FileWriter("data-files/rides-overdue.csv",true);
+
+			//adding all the ride details into the csv
+			
+			csvWriter.append(""+username);
+			csvWriter.append(",");
+			csvWriter.append(""+ride.getBikeId());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartTime().toString());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Save a completed ride to the CSV file
+	 * @param ride
+	 * @param username
+	 */
+	private void saveAllRideCompleted(Ride ride, String username) {
+		try {
+			csvWriter = new FileWriter("data-files/rides-completed-data.csv",true);
+
+			//adding all the ride details into the csv
+			
+			csvWriter.append(""+username);
+			csvWriter.append(",");
+			csvWriter.append(""+ride.getBikeId());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(",");
+			csvWriter.append(ride.getEndStation().getStationName());
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartTime().toString());
+			csvWriter.append(",");
+			csvWriter.append(ride.getEndTime().toString());
+			csvWriter.append("\n");
+			csvWriter.flush();
+			csvWriter.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
 	 * Save the updated bike list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
 	 */
@@ -1040,12 +1329,23 @@ public class ValleyBikeSimModel {
 			e.printStackTrace();
 		}
 		
-		Integer[] stationsArray = stationsBikes.keySet().toArray(new Integer[0]);	
-		//loops through and saves all stations
-		for (int stationId : stationsArray) {
-			HashSet<Integer> bikes = stationsBikes.get(stationId);
-			Integer[] bikesArray = bikes.toArray(new Integer[0]);
-			for (int bikeId : bikesArray) {
+		//Save all bikes out of order with station -1
+		for (int bikeId : bikes.keySet()) {
+			Bike bike = bikes.get(bikeId);
+			if (bike.getStatus().equals("OOO")) {
+				saveAllBike(bikeId, -1);
+			}
+		}
+		
+		//Save all bikes currently being ridden with station 0
+		for (Ride ride : ridesInProgress.values()) {
+			int bikeId = ride.getBikeId();
+			saveAllBike(bikeId,0);
+		}
+		
+		//Save all bikes currently at a station
+		for (int stationId : stationsBikes.keySet()) {
+			for (int bikeId : stationsBikes.get(stationId)) {
 				saveAllBike(bikeId, stationId);
 			}
 		}
@@ -1290,10 +1590,9 @@ public class ValleyBikeSimModel {
 			difference = difference/60/60; //difference in hours
 			
 			if (difference >= 24) {
-				//change bike status to stolen
+				//remove bike from the database
 				int bikeId = ride.getBikeId();
-				Bike bike = bikes.get(bikeId);
-				bike.setStatus("stolen");
+				bikes.remove(bikeId);
 				
 				overdueUsernames.add(username);
 				
@@ -1305,8 +1604,7 @@ public class ValleyBikeSimModel {
 		for (int i=0; i<overdueUsernames.size(); i++) {
 			//move ride to ridesOverdue
 			String username = overdueUsernames.get(i);
-			ridesOverdue.put(username,ridesInProgress.get(username));
-			ridesInProgress.remove(username);
+			ridesOverdue.put(username,ridesInProgress.remove(username));
 		}
 		
 	}
