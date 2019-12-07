@@ -727,6 +727,7 @@ public class ValleyBikeSimModel {
 	public BigDecimal endRide (int stationId) {
 		String activeUsername = activeUser.getUserName(); //active User's username
 		Membership membership = memberships.get(activeUsername); //user's membership
+	
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
 		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
@@ -866,8 +867,6 @@ public class ValleyBikeSimModel {
 	}
 
 
-
-	
 	/*
 	 *
 	 * ********* HELPER FUNCTIONS START HERE: ***********
@@ -897,6 +896,13 @@ public class ValleyBikeSimModel {
 		}
 		
 		return formattedStationList;
+	}
+	
+	/*
+	 * Helper method for JUnit testing. Returns Station object corresponding to the id
+	 */
+	public Station getStation(int id) {
+		return stations.get(id);
 	}
 
 	/**
@@ -1312,7 +1318,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * Checks whether the active suer has stolen a bike
+	 * Checks whether the active user has stolen a bike
 	 * @return true if the user has stolen a bike
 	 */
 	public boolean activeUserStolenBike() {
