@@ -10,11 +10,11 @@ public class Rider extends User {
 	private String email;
 
 	/**
-	 * @param userName
+	 * @param Username
 	 * @param password
 	 */
-	public Rider(String userName, String password, String fullName, String email, String phoneNumber, String address) {
-		super(userName, password);
+	public Rider(String username, String password, String fullName, String email, String phoneNumber, String address) {
+		super(username, password);
 		this.fullName = fullName;
 		this.phoneNumber = phoneNumber;
 		this.address = address;
@@ -29,6 +29,14 @@ public class Rider extends User {
 		return fullName;
 	}
 
+	/**
+	 * 
+	 * @return the username
+	 */
+	public String getUsername() {
+		return super.getUsername();
+	}
+	
 	/**
 	 * @param fullName the fullName to set
 	 */
@@ -80,7 +88,7 @@ public class Rider extends User {
 	
 	@Override
 	public String toString() {
-		return "Rider [userName=" + super.getUserName() + ", password=" + super.getPassword() + ", fullname=" + fullName + ", phoneNumber=" + phoneNumber + ", address=" + address + ", email=" + email + "]";
+		return "Rider [Username=" + super.getUsername() + ", password=" + super.getPassword() + ", fullname=" + fullName + ", phoneNumber=" + phoneNumber + ", address=" + address + ", email=" + email + "]";
 	}
 
 }

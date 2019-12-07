@@ -460,7 +460,7 @@ public class ValleyBikeSimModel {
 					
 					// create new transaction object
 					String username = array[0];
-					BigDecimal amount = new BigDecimal(array[1]);
+					BigDecimal amount = new BigDecimal(Integer.parseInt(array[1]));
 					Date time = toDate(array[2]);
 					String description = array[3];
 					
@@ -491,7 +491,7 @@ public class ValleyBikeSimModel {
 	public boolean activeUserCreditCardExpired() throws ParseException {
 		
 		// getting first credit card on file. TODO: Verify method to keep track of preferred payment method
-		PaymentMethod pm = paymentMethods.get(activeUser.getUserName()); 
+		PaymentMethod pm = paymentMethods.get(activeUser.getUsername()); 
 		Date date = new SimpleDateFormat("MM/yy").parse(pm.getExpiryDate());
 		Date now = new Date();
 		
@@ -563,38 +563,25 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean isValid(String userInputName, String userInput) {
 		
-		boolean inputIsValid = false;
-		boolean matchRegex = false;
-		boolean existInSys = false;
+		boolean inputIsValid = true;
+		boolean matchRegex = true;
+		boolean notExistInSys = true;
 		Pattern r = null;
-		Pattern numeric = Pattern.compile("^[0-9]+$");
 		
 		switch (userInputName) {
-		case "stationId":	// valid if is numeric and exists in system	
-			matchRegex = numeric.matcher(userInput).find();
-			
-			if (matchRegex) {
-				existInSys = stations.containsKey(Integer.parseInt(userInput));
-			}
-			
-			inputIsValid = (matchRegex && existInSys);
+		case "stationId":			
+			inputIsValid = (stations.containsKey(Integer.parseInt(userInput)));
 			break;
-		case "bikeId":	// valid if is numeric and exists in system	
-			matchRegex = numeric.matcher(userInput).find();
-			
-			if (matchRegex) {
-				existInSys = bikes.containsKey(Integer.parseInt(userInput));
-			}
-			
-			inputIsValid = (matchRegex && existInSys);
+		case "bikeId":
+			inputIsValid = (bikes.containsKey(Integer.parseInt(userInput)));
 			break;
 		case "loginInfo":
 			String[] info = userInput.split(" ");
+			
 			inputIsValid = (users.containsKey(info[0]) && users.get(info[0]).getPassword().equals(info[1]));
 			break;
 		case "newUsername":
-			existInSys = users.containsKey(userInput);
-			inputIsValid = (!existInSys && userInput.length() >= 6);
+			inputIsValid = (!users.containsKey(userInput) && userInput.length() >= 6);
 			break;
 		case "newEmail":
 			// regex to validate email format
@@ -602,21 +589,16 @@ public class ValleyBikeSimModel {
 			
 			// email is valid if it's in valid format and it does not belong to an existing user
 			matchRegex = r.matcher(userInput).find();
-			existInSys = emails.containsKey(userInput);
-			inputIsValid = (matchRegex && !existInSys);
+			notExistInSys = !emails.containsKey(userInput);
+			inputIsValid = (matchRegex && notExistInSys);
 			break;
 		case "newStationId":	
 			// Assumption: Valley Bike's station IDs are two-digit and only within the 01-99 range.
 			r = Pattern.compile("^[0-9]{2}$"); 
 			matchRegex = r.matcher(userInput).find();
 			
-			// only check to see if the station ID exists in the system if input is numeric
-			if (matchRegex) {
-				existInSys = stations.containsKey(Integer.parseInt(userInput));
-			}
-			
 			// new station ID is valid if it's 2-digit and has not appeared in the system.
-			inputIsValid = (matchRegex && !existInSys);
+			inputIsValid = (matchRegex && !stations.containsKey(Integer.parseInt(userInput)));
 			break;
 		case "newStationName":	
 			
@@ -624,12 +606,9 @@ public class ValleyBikeSimModel {
 			// new station name must not coincide with existing station names
 			for (Station station : stations.values()) {
 				if (station.getStationName().equalsIgnoreCase(userInput)) {
-					existInSys = true;
+					inputIsValid = false;
 				}
 			}
-			
-			// a new station name is valid if it doesn't already exist in the system
-			inputIsValid = !existInSys;
 			break;
 		case "newStationAddress":	
 			r = Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
@@ -643,11 +622,11 @@ public class ValleyBikeSimModel {
 			// new station address must not coincide with existing station address
 			for (Station station : stations.values()) {
 				if (station.getAddress() == userInput) {
-					existInSys = true;
+					notExistInSys = false;
 				}
 			}
 			
-			inputIsValid = (matchRegex && !existInSys);
+			inputIsValid = (notExistInSys && matchRegex);
 			break;
 		} 	
 		return inputIsValid;
@@ -666,7 +645,7 @@ public class ValleyBikeSimModel {
 	 * @return 
 	 */
 	public boolean isRideInProgress() {
-		return ridesInProgress.containsKey(activeUser.getUserName());
+		return ridesInProgress.containsKey(activeUser.getUsername());
 	}
 	
 	/**
@@ -682,7 +661,7 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean bikeIsOverdue() {
 		// retrieve the Ride in progress associated with the active user
-		Ride ride = ridesInProgress.get(activeUser.getUserName());
+		Ride ride = ridesInProgress.get(activeUser.getUsername());
 		Date currentTime = new Date(); // get current time
 		Date startTime = ride.getStartTime(); // get ride start time
 		long difference = (currentTime.getTime() - startTime.getTime()) / 1000; // difference in seconds
@@ -732,7 +711,7 @@ public class ValleyBikeSimModel {
 	 * @param user the user to add
 	 */
 	public void addUser(User user) {
-		this.users.put(user.getUserName(), user);
+		this.users.put(user.getUsername(), user);
 	}
 	
 	/**
@@ -776,14 +755,14 @@ public class ValleyBikeSimModel {
 		Ride ride = new Ride(bikeId, startStation, new Date() );
 		
 		//Add ride and activeUser to ridesInProgress
-		ridesInProgress.put(activeUser.getUserName(), ride);
+		ridesInProgress.put(activeUser.getUsername(), ride);
 		
 		//Updates bike file
 		saveBikeList();
 		//Updates station file
 		saveStationList();
 		//Appends to rides in progress
-		saveAllRideInProgress(ride,activeUser.getUserName());
+		saveAllRideInProgress(ride,activeUser.getUsername());
 	}
 
 	/**
@@ -794,9 +773,8 @@ public class ValleyBikeSimModel {
 	 * @return the amount that the user has been charged
 	 */
 	public BigDecimal endRide (int stationId) {
-		String activeUsername = activeUser.getUserName(); //active User's username
+		String activeUsername = activeUser.getUsername(); //active User's username
 		Membership membership = memberships.get(activeUsername); //user's membership
-	
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
 		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
@@ -808,8 +786,8 @@ public class ValleyBikeSimModel {
 		paymentMethod.chargeCard(chargeAmount);
 		
 		//Create new Transaction and add to list
-		Transaction transaction = new Transaction(activeUser.getUserName(),chargeAmount,now,"Ride");
-		transactionsByUser.get(activeUser.getUserName()).add(transaction);
+		Transaction transaction = new Transaction(activeUser.getUsername(),chargeAmount,now,"Ride");
+		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
 		//Update bike list at current Station
 		stationsBikes.get(stationId).add(ride.getBikeId());
@@ -836,7 +814,7 @@ public class ValleyBikeSimModel {
 		saveRidesInProgressList();
 		
 		//Append to rides-completed file
-		saveAllRideCompleted(ride, activeUser.getUserName());
+		saveAllRideCompleted(ride, activeUser.getUsername());
 		
 		//Update file for rides today
 		saveRideToday(ride);
@@ -872,6 +850,10 @@ public class ValleyBikeSimModel {
 		stations.put(stationId, station);
 		HashSet<Integer> bikes = new HashSet<Integer>();
 		stationsBikes.put(stationId,bikes);
+		
+		//Add station to stations file
+		saveAllStation(station);
+		
 		return station;
 	}
 	
@@ -961,6 +943,8 @@ public class ValleyBikeSimModel {
 	}
 
 
+
+	
 	/*
 	 *
 	 * ********* HELPER FUNCTIONS START HERE: ***********
@@ -992,12 +976,12 @@ public class ValleyBikeSimModel {
 		return formattedStationList;
 	}
 	
-
-	/*
+	/**
 	 * Helper method for JUnit testing. Returns Station object corresponding to the id
+	 * @param the id of the station
 	 */
-	public Station getStation(int id) {
-		return stations.get(id);
+	public Station getStation(int stationId) {
+		return stations.get(stationId);
 	}
 
 	/**
@@ -1150,7 +1134,7 @@ public class ValleyBikeSimModel {
 
 			//adding all the ride details into the csv
 			
-			csvWriter.append(""+activeUser.getUserName());
+			csvWriter.append(""+activeUser.getUsername());
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
@@ -1466,7 +1450,7 @@ public class ValleyBikeSimModel {
 			csvWriter = new FileWriter("data-files/rider-data.csv",true);
 
 			//adding all the rider details into the csv
-			csvWriter.append(rider.getUserName());
+			csvWriter.append(rider.getUsername());
 			csvWriter.append(",");
 			csvWriter.append(rider.getPassword());
 			csvWriter.append(",");
@@ -1478,7 +1462,7 @@ public class ValleyBikeSimModel {
 			csvWriter.append(",");
 			
 			String membershipType;
-			Membership membership = memberships.get(rider.getUserName());
+			Membership membership = memberships.get(rider.getUsername());
 			if (membership instanceof DayPass) {
 				membershipType = "DayPass";
 			} else if (membership instanceof FoundingMember) {
@@ -1509,7 +1493,7 @@ public class ValleyBikeSimModel {
 			csvWriter = new FileWriter("data-files/admins-data.csv",true);
 
 			//adding all the admin details into the csv
-			csvWriter.append(admin.getUserName());
+			csvWriter.append(admin.getUsername());
 			csvWriter.append(",");
 			csvWriter.append(admin.getPassword());
 			csvWriter.append("\n");
@@ -1620,24 +1604,56 @@ public class ValleyBikeSimModel {
 				//charge user for stolen bike
 				PaymentMethod paymentMethod = paymentMethods.get(username);
 				paymentMethod.chargeCard(new BigDecimal(2000.00));
+				
+				//create new Transaction
+				Transaction transaction = new Transaction(username,new BigDecimal(2000),new Date(),"ValleyBike Stolen Bike Fee");
+			
+				//add new transaction to data structure
+				if (transactionsByUser.containsKey(username)) {
+					transactionsByUser.get(username).add(transaction);
+				} else {
+					ArrayList<Transaction> transactions = new ArrayList<Transaction>();
+					transactions.add(transaction);
+					transactionsByUser.put(username, transactions);
+				}
+				
+				//append transaction to data file
+				saveAllTransaction(transaction);
+				//update bike file
+				saveBikeList();
 			}
 		}
 		for (int i=0; i<overdueUsernames.size(); i++) {
 			//move ride to ridesOverdue
 			String username = overdueUsernames.get(i);
 			ridesOverdue.put(username,ridesInProgress.remove(username));
+			//append to rides overdue file
+			saveAllRideOverdue(ridesOverdue.get(username),username);
 		}
-		
+		//update rides in progress file
+		saveRidesInProgressList();
 	}
 
 	/**
-	 * Checks whether the active user has stolen a bike
+	 * Checks whether the active suer has stolen a bike
 	 * @return true if the user has stolen a bike
 	 */
 	public boolean activeUserStolenBike() {
-		return ridesOverdue.containsKey(activeUser.getUserName());
+		return ridesOverdue.containsKey(activeUser.getUsername());
 	}
-	
+
+	public void createNewRider(Rider rider, PaymentMethod paymentMethod, Membership membership) {
+		addUser(rider); // maps rider to username in system
+		addEmail(rider.getEmail(), rider); // map email address to rider in the system
+		addPaymentMethod(rider.getUsername(), paymentMethod); // add payment method to rider's account
+		setMembership(rider.getUsername(), membership); // set rider's membership
+		
+		//append rider to rider-file
+		saveAllRider(rider);
+		//append paymentMethod 
+		saveAllPaymentMethod(rider.getUsername(),paymentMethod);
+	}
+
 	/**
 	 * Checks whether the station list is empty
 	 * @return true if the station list is empty, else false
@@ -1663,10 +1679,6 @@ public class ValleyBikeSimModel {
 		stations.remove(stationId);
 		
 		// update stations data file to reflect the change
-		saveStationList();
-		
-		
+		saveStationList();		
 	}
-
-	
 }

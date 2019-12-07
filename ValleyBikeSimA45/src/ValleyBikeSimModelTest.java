@@ -13,7 +13,7 @@ class ValleyBikeSimModelTest {
 	void addUserTest() {
 		model.addUser(user);
 		model.setActiveUser("username");
-		assertEquals("username", model.getActiveUser().getUserName());
+		assertEquals("username", model.getActiveUser().getUsername());
 	}
 	
 	//Tests if readRidesDataFile works and ride data is accurate

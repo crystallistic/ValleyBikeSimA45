@@ -215,11 +215,7 @@ public class ValleyBikeSimController {
 
 		Rider rider = new Rider(newUsername, password, fullName, email, phoneNumber, address);
 
-		model.addUser(rider); // maps rider to username in system
-		model.addEmail(email, rider); // map email address to rider in the system
-		model.addPaymentMethod(newUsername, paymentMethod); // add payment method to rider's account
-		model.setMembership(newUsername, membership); // set rider's membership
-
+		model.createNewRider(rider,paymentMethod,membership);
 		model.setActiveUser(newUsername); // set rider as currently active user
 		mainMenu(false); // show rider menu (userIsAdmin = false)
 	}
