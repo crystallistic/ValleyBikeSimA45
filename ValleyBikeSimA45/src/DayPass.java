@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 /**
  * @author maingo
  *
@@ -9,7 +11,7 @@ public class DayPass extends Membership {
 	 */
 	public DayPass() {
 		membershipType = "Day Pass";
-		baseRate = 6;
+		baseRate = new BigDecimal(6.00);
 		rideDurationLimit = 30;
 	}
 	
@@ -17,9 +19,9 @@ public class DayPass extends Membership {
 	 *
 	 */
 	@Override
-	public float getChargeForRide(int rideDurationInMinutes) {
+	public BigDecimal getChargeForRide(int rideDurationInMinutes) {
 		
-		float totalAmount = 0;
+		BigDecimal totalAmount = new BigDecimal(0.00);
 		
 		// if the user's ride lasted 30 mins or more
 		if (rideDurationInMinutes >= 30) {
@@ -27,7 +29,7 @@ public class DayPass extends Membership {
 			// charge $0.15 for every minute, rounding up to the next minute. 
 			// If the user's ride lasted 36mins15sec, 
 			// they would be charged for 37mins
-			totalAmount += (1 + (rideDurationInMinutes - 30)) * 0.15;
+			totalAmount = totalAmount.add(new BigDecimal((1 + (rideDurationInMinutes - 30)) * 0.15));
 		}
 		return totalAmount;
 		

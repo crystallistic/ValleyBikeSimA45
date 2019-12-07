@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -480,7 +481,7 @@ public class ValleyBikeSimController {
 		}
 
 		// charge the user for this ride
-		float chargeAmount = model.endRide(stationId);
+		BigDecimal chargeAmount = model.endRide(stationId);
 		view.chargeUserForRide(chargeAmount);
 	}
 	

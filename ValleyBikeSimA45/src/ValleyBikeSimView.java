@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -60,8 +61,8 @@ public class ValleyBikeSimView {
 	 * @param membershipType	the type of the membership
 	 * @param baseRate			the amount initially charged to the user's account (i.e. does not include overtime fee for rides)
 	 */
-	public void displayPurchaseMembershipSuccess(String membershipType, int baseRate) {
-		System.out.println("You have successfully purchased the " + membershipType + " membership. Your credit card has been charged in the amount of $" + Integer.toString(baseRate));
+	public void displayPurchaseMembershipSuccess(String membershipType, BigDecimal baseRate) {
+		System.out.println("You have successfully purchased the " + membershipType + " membership. Your credit card has been charged in the amount of $" + baseRate.toString());
 	}
 	
 	/**
@@ -281,8 +282,8 @@ public class ValleyBikeSimView {
 	 * Notifies the user that they have been charged the specified amount.
 	 * @param chargeAmount		amount charged to the user's account
 	 */
-	public void chargeUserForRide(float chargeAmount) {
-		System.out.printf("You have been charged $%.2f for your past ride.\n", chargeAmount);
+	public void chargeUserForRide(BigDecimal chargeAmount) {
+		System.out.printf("You have been charged " + chargeAmount.toString() + " for your past ride.\n");
 	}
 
 	/**

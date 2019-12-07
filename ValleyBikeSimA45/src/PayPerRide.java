@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 /**
  * @author maingo
  *
@@ -9,7 +11,7 @@ public class PayPerRide extends Membership {
 	 */
 	public PayPerRide() {
 		membershipType = "Pay Per Ride";
-		baseRate = 2;
+		baseRate = new BigDecimal(2.00);
 		rideDurationLimit = 30;
 	}
 	
@@ -17,10 +19,10 @@ public class PayPerRide extends Membership {
 	 *
 	 */
 	@Override
-	public float getChargeForRide(int rideDurationInMinutes) {
+	public BigDecimal getChargeForRide(int rideDurationInMinutes) {
 		
 		// user pays $2 for every ride, plus overtime fee if applicable
-		float totalAmount = 2;
+		BigDecimal totalAmount = new BigDecimal(2.00);
 		
 		// if the user's ride lasted 30 mins or more
 		if (rideDurationInMinutes >= 30) {
@@ -28,7 +30,7 @@ public class PayPerRide extends Membership {
 			// charge $0.15 for every minute, rounding up to the next minute. 
 			// If the user's ride lasted 32mins15sec, 
 			// they would be charged for 33mins
-			totalAmount += (1 + (rideDurationInMinutes - 30)) * 0.15;
+			totalAmount = totalAmount.add(new BigDecimal((1 + (rideDurationInMinutes - 30)) * 0.15));
 		}
 		return totalAmount;
 		

@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 /**
  * @author maingo
  *
@@ -105,7 +107,7 @@ public class PaymentMethod {
 	 * Charge the user the specified amount.
 	 * @param chargeAmount		Amount to be charged
 	 */
-	public void chargeCard(float chargeAmount) {
+	public void chargeCard(BigDecimal chargeAmount) {
 		
 	}
 	

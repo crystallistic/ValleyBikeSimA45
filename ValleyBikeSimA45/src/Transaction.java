@@ -1,3 +1,4 @@
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -12,7 +13,7 @@ public class Transaction {
 	private String username;
 	
 	/** the transaction amount */
-	private float amount;
+	private BigDecimal amount;
 	
 	/** transaction timestamp */
 	private Date time;
@@ -27,7 +28,7 @@ public class Transaction {
 	 * @param time
 	 * @param description
 	 */
-	public Transaction(String username, int amount, Date time, String description) {
+	public Transaction(String username, BigDecimal amount, Date time, String description) {
 		this.username = username;
 		this.amount = amount;
 		this.time = time;
@@ -49,13 +50,13 @@ public class Transaction {
 	/**
 	 * @return the amount
 	 */
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 	/**
 	 * @param amount the amount to set
 	 */
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	/**

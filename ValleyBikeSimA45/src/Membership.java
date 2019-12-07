@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 /**
  * @author maingo
  *
@@ -5,7 +7,7 @@
 public abstract class Membership {
 	
 	public String membershipType;
-	public int baseRate;
+	public BigDecimal baseRate;
 	public int rideDurationLimit;
 	
 	/** get the duration limit for a ride before the user gets charged overtime fees,
@@ -15,19 +17,19 @@ public abstract class Membership {
 	};
 	
 	/** given the ride duration, calculate the amount the user would be charged for the ride */
-	public abstract float getChargeForRide(int rideDurationInMinutes);
+	public abstract BigDecimal getChargeForRide(int rideDurationInMinutes);
 	
 	/**
 	 * @return the baseRate
 	 */
-	public int getBaseRate() {
+	public BigDecimal getBaseRate() {
 		return baseRate;
 	}
 
 	/**
 	 * @param baseRate the baseRate to set
 	 */
-	public void setBaseRate(int baseRate) {
+	public void setBaseRate(BigDecimal baseRate) {
 		this.baseRate = baseRate;
 	}
 

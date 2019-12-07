@@ -1,6 +1,7 @@
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -713,7 +714,7 @@ public class ValleyBikeSimModel {
 	 * @param stationId the id of the station that the bike is being returned to
 	 * @return the amount that the user has been charged
 	 */
-	public float endRide (int stationId) {
+	public BigDecimal endRide (int stationId) {
 		String activeUsername = activeUser.getUserName(); //active User's username
 		Membership membership = memberships.get(activeUsername); //user's membership
 		Date now = new Date(); //current time
@@ -723,7 +724,7 @@ public class ValleyBikeSimModel {
 		
 		//Charge user for the completed ride
 		int rideDuration = (int)(now.getTime() - ride.getStartTime().getTime()) / 60000;
-		float chargeAmount = membership.getChargeForRide(rideDuration);
+		BigDecimal chargeAmount = membership.getChargeForRide(rideDuration);
 		paymentMethod.chargeCard(chargeAmount);
 		
 		//Update bike list at current Station
@@ -1287,7 +1288,7 @@ public class ValleyBikeSimModel {
 				
 				//charge user for stolen bike
 				PaymentMethod paymentMethod = paymentMethods.get(username);
-				paymentMethod.chargeCard(2000);
+				paymentMethod.chargeCard(new BigDecimal(2000.00));
 			}
 		}
 		for (int i=0; i<overdueUsernames.size(); i++) {

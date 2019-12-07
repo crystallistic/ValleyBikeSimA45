@@ -1,3 +1,5 @@
+import java.math.BigDecimal;
+
 /**
  * 
  */
@@ -7,5 +9,5 @@
  *
  */
 public interface Subscription {
-	public int getChargeForPayPeriod();
+	public BigDecimal getChargeForPayPeriod();
 }
