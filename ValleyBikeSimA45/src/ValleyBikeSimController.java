@@ -65,7 +65,7 @@ public class ValleyBikeSimController {
 	 */
 	private void generateRegex() {
 		regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
-		regex.put("newPassword", Pattern.compile(".{6}.*")); // password has to be at least 6 characters
+		regex.put("newPassword", Pattern.compile("^[a-zA-Z0-9]{6,}$")); // password has to be at least 6 characters
 		regex.put("address", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 											+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
 											+ "([a-zA-Z .'-]+)," // city
@@ -245,7 +245,7 @@ public class ValleyBikeSimController {
 			optionSelected = Integer.parseInt(getUserInput("option9"));
 			switch (optionSelected) {
 			case 1: // 1) Add station
-				addStation();
+				addStation(); 
 				break;
 			case 2: // 2) Remove station
 				//removeStation();
@@ -256,7 +256,7 @@ public class ValleyBikeSimController {
 				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 4:// 4) Remove bikes
-				//removeBike();
+				//removeBike(); //
 				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 5:// 5) Redistribute bikes
