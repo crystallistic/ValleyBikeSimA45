@@ -4,11 +4,11 @@
  */
 public class PaymentMethod {
 	
-	String billingName;
-	String cardNumber;
-	String billingAddress;
-	String expiryDate;
-	String cvv;
+	private String billingName;
+	private String cardNumber;
+	private String billingAddress;
+	private String expiryDate;
+	private String cvv;
 	
 	/**
 	 * @param billingName

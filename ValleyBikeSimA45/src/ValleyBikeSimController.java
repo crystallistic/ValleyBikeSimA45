@@ -1,5 +1,4 @@
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -199,7 +198,7 @@ public class ValleyBikeSimController {
 			break;
 		}
 
-		// get credit card information
+		// get credit card information, add to user account
 		String billingName = getUserInput("billingName");
 		String creditCardNumber = getUserInput("creditCardNumber");
 		String billingAddress = getUserInput("billingAddress");
@@ -208,7 +207,8 @@ public class ValleyBikeSimController {
 
 		PaymentMethod paymentMethod = new PaymentMethod(billingName, creditCardNumber, billingAddress, creditCardDate,
 				cvv);
-
+		model.addPaymentMethod(newUsername, paymentMethod);
+		
 		// Charge user's credit card. To simplify process: we assume for now that all
 		// credit card payments go through
 		view.displayPurchaseMembershipSuccess(membership.getMembershipType(), membership.getBaseRate());
