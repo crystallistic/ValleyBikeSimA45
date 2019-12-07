@@ -427,7 +427,7 @@ public class ValleyBikeSimModel {
 					
 					// map payment method to username of user
 					String username = array[0];
-					this.paymentMethods.putIfAbsent(username, pm);
+					this.paymentMethods.put(username, pm);
 					
 				}
 				counter++;
