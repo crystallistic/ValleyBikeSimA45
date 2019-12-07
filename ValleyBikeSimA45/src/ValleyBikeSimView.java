@@ -361,5 +361,17 @@ public class ValleyBikeSimView {
 				+ "Please follow the instructions and try again.");
 		
 	}
+
+	/**
+	 * Display the formatted ride list
+	 * @param formattedRideList
+	 */
+	public void displayRideList(ArrayList<String> formattedRideList) {
+		System.out.println("You have completed "+(formattedRideList.size()-1)+" rides since joing ValleyBike:\n");
+		for (String rideInfo: formattedRideList) {
+			System.out.println(rideInfo);
+		}
+		System.out.println("\nThank you for using ValleyBike!\n");
+	}
 	
 }
