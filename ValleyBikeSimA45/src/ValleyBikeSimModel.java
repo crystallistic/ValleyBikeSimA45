@@ -460,20 +460,15 @@ public class ValleyBikeSimModel {
 					
 					// create new transaction object
 					String username = array[0];
-					BigDecimal amount = new BigDecimal(Integer.parseInt(array[1]));
+					BigDecimal amount = new BigDecimal(array[1]);
 					Date time = toDate(array[2]);
 					String description = array[3];
 					
 					Transaction transaction = new Transaction(username,amount,time,description);
 					
 					// map transaction to its user
-					if (transactionsByUser.containsKey(username)) {
-						transactionsByUser.get(username).add(transaction);
-					} else {
-						ArrayList<Transaction> transactions = new ArrayList<Transaction>();
-						transactions.add(transaction);
-						transactionsByUser.put(username, transactions); 
-					}
+					transactionsByUser.putIfAbsent(username, new ArrayList<Transaction>());
+					transactionsByUser.get(username).add(transaction);
 				}
 				counter++;	
 			}
