@@ -102,10 +102,10 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your email:");
 			break;
 		case "stationId":
-			System.out.println("Please enter the 2-digit station ID:");
+			System.out.println("Please enter the 2-digit station ID. The station ID has to exist in the system:");
 			break;
 		case "bikeId":
-			System.out.println("Please enter the 3-digit bike ID:");
+			System.out.println("Please enter the 3-digit bike ID. The bike ID has to exist in the system:");
 			break;
 		case "welcome": // welcome screen, with 3 options for login, sign up, or exit
 			System.out.println("To start, please enter a number corresponding to one of the options below (1-3)");
@@ -123,7 +123,7 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter a password (at least 6 characters):");
 			break;
 		case "newEmail":
-			System.out.println("Please enter your email.");
+			System.out.println("Please enter your email. You should not use an email that is already registered to another ValleyBike user.");
 			break;
 		case "fullName":
 			System.out.println("Please enter your first and last name:");
@@ -194,7 +194,7 @@ public class ValleyBikeSimView {
 	 * 
 	 * @param amountCharged
 	 */
-	public void notifyOverdue(int amountCharged) {
+	public void notifyOverdue() {
 		System.out.println("You have an overdue bike. You have been charged a stolen bike fee in the amount of $2000.");
 	}
 	
@@ -224,8 +224,7 @@ public class ValleyBikeSimView {
 				+ "6) View station list\n"
 				+ "7) Resolve ride\n"
 				+ "8) Create support ticket\n"
-				+ "9) Save data\n"
-				+ "10) Log out");
+				+ "9) Log out");
 	}
 	
 	/**
@@ -272,8 +271,8 @@ public class ValleyBikeSimView {
 	 * Displays error message when the user tries to end a ride but they don't have any ride in progress.
 	 */
 	public void displayNoActiveRide() {
-		// TODO Auto-generated method stub
-		System.out.println("Sorry, action cannot be completed because you have no ride in progress.");
+		System.out.println("Sorry, action cannot be completed because you have no ride in progress.\n"
+				+ "If you are trying to return a bike that is not yours, please submit a maintenance request.");
 	}
 
 	public void displayFullDock() {
@@ -318,8 +317,6 @@ public class ValleyBikeSimView {
 	 */
 	public void displayResolveRide(String resolveRideResult) {
 		System.out.println(resolveRideResult);
-		
-		
 	}
 	
 	/**
@@ -329,12 +326,40 @@ public class ValleyBikeSimView {
 		System.out.println("All data have been saved successfully.");	
 	}
 
+	/**
+	 * Notifies user that their credit card has expired.
+	 */
 	public void cardExpired() {
 		System.out.println("Your credit card has expired. Please select or enter a different payment method in order to continue with this action.");	
 	}
 
+	/**
+	 * Notifies user of stolen bike charge.
+	 */
 	public void bikeStolen() {
 		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000. Please contact ValleyBike for instructions for next steps");
+	}
+
+	/**
+	 * Notifies user that no station currently exists in the system.
+	 */
+	public void displayNoStationExistsError() {
+		System.out.println("Action cannot be completed because no station currently exists in the system.");
+		
+	}
+
+	/**
+	 * Confirm removal of station from system
+	 * @param stationId
+	 */
+	public void removeStationSuccess(int stationId) {
+		System.out.println("Station " + Integer.toString(stationId) + " has been successfully removed from the system.");
+	}
+
+	public void displayInvalidInput() {
+		System.out.println("Invalid input - wrong input format, or there has been some conflict with existing data in the system.\n"
+				+ "Please follow the instructions and try again.");
+		
 	}
 	
 }

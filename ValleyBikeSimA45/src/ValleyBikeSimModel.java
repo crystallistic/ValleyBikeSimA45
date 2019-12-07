@@ -29,35 +29,35 @@ public class ValleyBikeSimModel {
 	/** map each station to its list of bike IDs */
 	private HashMap<Integer, HashSet<Integer>> stationsBikes;
 
-	/** map each rider by Username to their payment methods */
+	/** map each rider by username to their payment methods */
 	private HashMap<String, PaymentMethod> paymentMethods;
 
 	/** the currently logged in user */
 	private User activeUser;
 
-	/** map all Usernames to technical support tickets */
+	/** map all usernames to technical support tickets */
 	private HashMap<String, Ticket> tickets;
 
 	/** map all users to their user names. The HashMap contains Admin and Rider objects, 
 	 * and requires casting to the proper child class at retrieval. */
 	private HashMap<String, User> users;
 
-	/** map all users by Username to their emails */
+	/** map all users by username to their emails */
 	private HashMap<String, Rider> emails;
 
-	/** map all riders by Username to the rides they have completed */
+	/** map all riders by username to the rides they have completed */
 	private HashMap<String, HashSet<Ride>> ridesCompleted;
 
-	/** map all riders by Username to the ride they currently have in progress */
+	/** map all riders by username to the ride they currently have in progress */
 	private HashMap<String, Ride> ridesInProgress;
 	
-	/** map all riders by Username to a ride with a stolen bike */
+	/** map all riders by username to a ride with a stolen bike */
 	private HashMap<String, Ride> ridesOverdue;
 
-	/** map all riders by Username to their membership type */
+	/** map all riders by username to their membership type */
 	private HashMap<String, Membership> memberships;
 	
-	/** map all users by Username to ArrayList of all the transactions they've made */
+	/** map all users by username to ArrayList of all the transactions they've made */
 	private HashMap<String, ArrayList<Transaction>> transactionsByUser;
 	
 	/** used to write .csv files */
@@ -207,7 +207,7 @@ public class ValleyBikeSimModel {
 					// create new Admin object
 					Admin admin = new Admin(array[0], array[1]);
 					
-					// map rider object to Username
+					// map rider object to username
 					this.users.put(array[0], admin);
 				}
 				counter++;	
@@ -243,7 +243,7 @@ public class ValleyBikeSimModel {
 					// create membership object
 					Membership membership = membershipFactory.getMembership(array[6]);
 					
-					// map rider object to Username
+					// map rider object to username
 					this.users.put(array[0], rider);
 					
 					// map email to rider object
@@ -320,9 +320,9 @@ public class ValleyBikeSimModel {
 					ride.setEndTime(toDate(array[5]));
 					
 					// add ride to user's list of completed rides
-					String Username = array[0];
-					ridesCompleted.putIfAbsent(Username, new HashSet<>());
-					ridesCompleted.get(Username).add(ride);
+					String username = array[0];
+					ridesCompleted.putIfAbsent(username, new HashSet<>());
+					ridesCompleted.get(username).add(ride);
 				}
 				counter++;
 			} 
@@ -395,8 +395,8 @@ public class ValleyBikeSimModel {
 					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
 					
 					// add ride to user's list of completed rides
-					String Username = array[0];
-					ridesOverdue.put(Username, ride);	
+					String username = array[0];
+					ridesOverdue.put(username, ride);	
 				}
 				counter++;
 			} 
@@ -427,9 +427,9 @@ public class ValleyBikeSimModel {
 					// create new PaymentMethod object
 					PaymentMethod pm = new PaymentMethod(array[1], array[2], array[3], array[4], array[5]);
 					
-					// map payment method to Username of user
-					String Username = array[0];
-					this.paymentMethods.put(Username, pm);
+					// map payment method to username of user
+					String username = array[0];
+					this.paymentMethods.put(username, pm);
 					
 				}
 				counter++;
@@ -451,7 +451,7 @@ public class ValleyBikeSimModel {
 			
 			CSVReader transactionDataReader = new CSVReader(new FileReader(transactionData));
 			
-			/* read the CSV data row wise and map transactions to Usernames */
+			/* read the CSV data row wise and map transactions to usernames */
 			List<String[]> allTransactionEntries = transactionDataReader.readAll();
 			
 			int counter = 0;
@@ -459,21 +459,16 @@ public class ValleyBikeSimModel {
 				if(counter != 0) {
 					
 					// create new transaction object
-					String Username = array[0];
+					String username = array[0];
 					BigDecimal amount = new BigDecimal(Integer.parseInt(array[1]));
 					Date time = toDate(array[2]);
 					String description = array[3];
 					
-					Transaction transaction = new Transaction(Username,amount,time,description);
+					Transaction transaction = new Transaction(username,amount,time,description);
 					
 					// map transaction to its user
-					if (transactionsByUser.containsKey(Username)) {
-						transactionsByUser.get(Username).add(transaction);
-					} else {
-						ArrayList<Transaction> transactions = new ArrayList<Transaction>();
-						transactions.add(transaction);
-						transactionsByUser.put(Username, transactions); 
-					}
+					transactionsByUser.putIfAbsent(username, new ArrayList<Transaction>());
+					transactionsByUser.get(username).add(transaction);
 				}
 				counter++;	
 			}
@@ -675,15 +670,15 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Charges the user the $2000 lost bike fee + overtime fee, and return this total.
+	 * Charges the user the $2000.00 lost bike fee + overtime fee, and return this total.
 	 * @return the total amount billed to the user account
 	 */
-	public int chargeUser() {
+	public BigDecimal chargeOverdue() {
 		
-		int amountCharged = 2000;
+		BigDecimal amountCharged = new BigDecimal("2000.00");
 		
 		// calculate overtime
-		
+		// TODO: 
 		
 		// charge the user
 		
@@ -707,12 +702,12 @@ public class ValleyBikeSimModel {
 	 * @param rider			The rider
 	 * @param membership	The rider's membership
 	 */
-	public void setMembership(String Username, Membership membership) {
-		this.memberships.put(Username, membership);
+	public void setMembership(String username, Membership membership) {
+		this.memberships.put(username, membership);
 	}
 	
 	/**
-	 * Map the user to the associated Username.
+	 * Map the user to the associated username.
 	 * @param user the user to add
 	 */
 	public void addUser(User user) {
@@ -724,10 +719,10 @@ public class ValleyBikeSimModel {
 	 * @param rider			The rider
 	 * @param paymentMethod	The rider's payment method
 	 */
-	public void addPaymentMethod(String Username, PaymentMethod paymentMethod) {
+	public void addPaymentMethod(String username, PaymentMethod paymentMethod) {
 
 		// associate payment method with user
-		this.paymentMethods.put(Username,paymentMethod);
+		this.paymentMethods.put(username,paymentMethod);
 	}
 	
 	/**
@@ -778,7 +773,7 @@ public class ValleyBikeSimModel {
 	 * @return the amount that the user has been charged
 	 */
 	public BigDecimal endRide (int stationId) {
-		String activeUsername = activeUser.getUsername(); //active User's Username
+		String activeUsername = activeUser.getUsername(); //active User's username
 		Membership membership = memberships.get(activeUsername); //user's membership
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
@@ -981,7 +976,13 @@ public class ValleyBikeSimModel {
 		return formattedStationList;
 	}
 	
-	
+	/**
+	 * Helper method for JUnit testing. Returns Station object corresponding to the id
+	 * @param the id of the station
+	 */
+	public Station getStation(int stationId) {
+		return stations.get(stationId);
+	}
 
 	/**
 	 * Check station to see if all the docks are full.
@@ -1046,7 +1047,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/rides-in-progress.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "Username,bikeId,From,Start".split(",");
+		      String [] record = "username,bikeId,From,Start".split(",");
 		      writer.writeNext(record);
 
 		      writer.close();
@@ -1057,24 +1058,24 @@ public class ValleyBikeSimModel {
 		}
 		
 		//loops through and saves all rides
-		for (String Username: ridesInProgress.keySet()) {
-			Ride ride = ridesInProgress.get(Username);
-			saveAllRideInProgress(ride, Username);
+		for (String username: ridesInProgress.keySet()) {
+			Ride ride = ridesInProgress.get(username);
+			saveAllRideInProgress(ride, username);
 		}
 	}
 	
 	/**
 	 * Save a ride in progress to the CSV file
 	 * @param ride
-	 * @param Username
+	 * @param username
 	 */
-	private void saveAllRideInProgress(Ride ride, String Username) {
+	private void saveAllRideInProgress(Ride ride, String username) {
 		try {
 			csvWriter = new FileWriter("data-files/rides-in-progress.csv",true);
 
 			//adding all the ride details into the csv
 			
-			csvWriter.append(""+Username);
+			csvWriter.append(""+username);
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
@@ -1109,7 +1110,7 @@ public class ValleyBikeSimModel {
 				//overwrites existing file with new data
 				csvWriter = new FileWriter(filename);
 				writer = new CSVWriter(csvWriter);
-				String [] record = "Username,bikeId,From,To,Start,End".split(",");
+				String [] record = "username,bikeId,From,To,Start,End".split(",");
 				writer.writeNext(record);
 
 				writer.close();
@@ -1156,15 +1157,15 @@ public class ValleyBikeSimModel {
 	/**
 	 * Save an overdue ride to the CSV file
 	 * @param ride
-	 * @param Username
+	 * @param username
 	 */
-	private void saveAllRideOverdue(Ride ride, String Username) {
+	private void saveAllRideOverdue(Ride ride, String username) {
 		try {
 			csvWriter = new FileWriter("data-files/rides-overdue.csv",true);
 
 			//adding all the ride details into the csv
 			
-			csvWriter.append(""+Username);
+			csvWriter.append(""+username);
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
@@ -1183,15 +1184,15 @@ public class ValleyBikeSimModel {
 	/**
 	 * Save a completed ride to the CSV file
 	 * @param ride
-	 * @param Username
+	 * @param username
 	 */
-	private void saveAllRideCompleted(Ride ride, String Username) {
+	private void saveAllRideCompleted(Ride ride, String username) {
 		try {
 			csvWriter = new FileWriter("data-files/rides-completed-data.csv",true);
 
 			//adding all the ride details into the csv
 			
-			csvWriter.append(""+Username);
+			csvWriter.append(""+username);
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
@@ -1219,7 +1220,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/ticket-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "ticketIds,description,Username".split(",");
+		      String [] record = "ticketIds,description,username".split(",");
 		      writer.writeNext(record);
 
 		      writer.close();
@@ -1267,7 +1268,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/payment-methods-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "Username,billingName,cardNumber,billingAddress,expiryDate,cvv".split(",");
+		      String [] record = "username,billingName,cardNumber,billingAddress,expiryDate,cvv".split(",");
 
 		      writer.writeNext(record);
 
@@ -1278,24 +1279,24 @@ public class ValleyBikeSimModel {
 			e.printStackTrace();
 		}
 		
-		String[] UsernamesArray = paymentMethods.keySet().toArray(new String[0]);	
+		String[] usernamesArray = paymentMethods.keySet().toArray(new String[0]);	
 		//loops through and saves all paymentMethods
-		for (String Username : UsernamesArray) {
-			PaymentMethod paymentMethod = paymentMethods.get(Username);
-			saveAllPaymentMethod(Username, paymentMethod);
+		for (String username : usernamesArray) {
+			PaymentMethod paymentMethod = paymentMethods.get(username);
+			saveAllPaymentMethod(username, paymentMethod);
 		}
 	}
 	
 	/**
 	 * Ancillary function to assist the savePaymentMethodList() function.
 	 */
-	private void saveAllPaymentMethod(String Username, PaymentMethod paymentMethod) {
+	private void saveAllPaymentMethod(String username, PaymentMethod paymentMethod) {
 		try {
 			csvWriter = new FileWriter("data-files/payment-methods-data.csv",true);
 
 			//adding all the bike details into the csv
 			
-			csvWriter.append(Username);
+			csvWriter.append(username);
 			csvWriter.append(",");
 			csvWriter.append(paymentMethod.getBillingName());
 			csvWriter.append(",");
@@ -1400,7 +1401,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/rider-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "Username,password,fullname,email,phoneNumber,address,membershipType".split(",");
+		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
 		      
 		      writer.writeNext(record);
 
@@ -1423,7 +1424,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/admins-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "Username,password,fullname,email,phoneNumber,address,membershipType".split(",");
+		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
 		      
 		      writer.writeNext(record);
 
@@ -1586,8 +1587,8 @@ public class ValleyBikeSimModel {
 	 */
 	public void checkStolenBikes() {
 		ArrayList<String> overdueUsernames = new ArrayList<String>();
-		for (String Username : ridesInProgress.keySet()) {
-			Ride ride = ridesInProgress.get(Username);
+		for (String username : ridesInProgress.keySet()) {
+			Ride ride = ridesInProgress.get(username);
 			Date currentTime = new Date(); // get current time
 			Date startTime = ride.getStartTime(); // get ride start time
 			long difference = (currentTime.getTime() - startTime.getTime()) / 1000; // difference in seconds
@@ -1598,22 +1599,22 @@ public class ValleyBikeSimModel {
 				int bikeId = ride.getBikeId();
 				bikes.remove(bikeId);
 				
-				overdueUsernames.add(Username);
+				overdueUsernames.add(username);
 				
 				//charge user for stolen bike
-				PaymentMethod paymentMethod = paymentMethods.get(Username);
+				PaymentMethod paymentMethod = paymentMethods.get(username);
 				paymentMethod.chargeCard(new BigDecimal(2000.00));
 				
 				//create new Transaction
-				Transaction transaction = new Transaction(Username,new BigDecimal(2000),new Date(),"ValleyBike Stolen Bike Fee");
+				Transaction transaction = new Transaction(username,new BigDecimal(2000),new Date(),"ValleyBike Stolen Bike Fee");
 			
 				//add new transaction to data structure
-				if (transactionsByUser.containsKey(Username)) {
-					transactionsByUser.get(Username).add(transaction);
+				if (transactionsByUser.containsKey(username)) {
+					transactionsByUser.get(username).add(transaction);
 				} else {
 					ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 					transactions.add(transaction);
-					transactionsByUser.put(Username, transactions);
+					transactionsByUser.put(username, transactions);
 				}
 				
 				//append transaction to data file
@@ -1624,10 +1625,10 @@ public class ValleyBikeSimModel {
 		}
 		for (int i=0; i<overdueUsernames.size(); i++) {
 			//move ride to ridesOverdue
-			String Username = overdueUsernames.get(i);
-			ridesOverdue.put(Username,ridesInProgress.remove(Username));
+			String username = overdueUsernames.get(i);
+			ridesOverdue.put(username,ridesInProgress.remove(username));
 			//append to rides overdue file
-			saveAllRideOverdue(ridesOverdue.get(Username),Username);
+			saveAllRideOverdue(ridesOverdue.get(username),username);
 		}
 		//update rides in progress file
 		saveRidesInProgressList();
@@ -1642,7 +1643,7 @@ public class ValleyBikeSimModel {
 	}
 
 	public void createNewRider(Rider rider, PaymentMethod paymentMethod, Membership membership) {
-		addUser(rider); // maps rider to Username in system
+		addUser(rider); // maps rider to username in system
 		addEmail(rider.getEmail(), rider); // map email address to rider in the system
 		addPaymentMethod(rider.getUsername(), paymentMethod); // add payment method to rider's account
 		setMembership(rider.getUsername(), membership); // set rider's membership
@@ -1653,5 +1654,31 @@ public class ValleyBikeSimModel {
 		saveAllPaymentMethod(rider.getUsername(),paymentMethod);
 	}
 
-	
+	/**
+	 * Checks whether the station list is empty
+	 * @return true if the station list is empty, else false
+	 */
+	public boolean noStationInSys() {
+		return (stations.size() == 0);
+	}
+
+	/**
+	 * Removes a station from the system, moves all bikes from this station to storage, 
+	 * and updates data file accordingly.
+	 * @param stationId The ID of the station to be removed. 
+	 */
+	public void removeStation(int stationId) {
+		
+		// move all bikes at this station to storage
+		HashSet<Integer> bikeIdsAtStation = stationsBikes.get(stationId);
+		for (Integer bikeId : bikeIdsAtStation) {
+			bikes.get(bikeId).setStatus("inStorage");
+		}
+		
+		// remove station from station list
+		stations.remove(stationId);
+		
+		// update stations data file to reflect the change
+		saveStationList();		
+	}
 }

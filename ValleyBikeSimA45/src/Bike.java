@@ -45,7 +45,7 @@ public class Bike {
 	
 
 	/**
-	 * @param status the status to set
+	 * @param status the status to set. Available statuses: working, inStorage, OOO, stolen
 	 */
 	public void setStatus(String status) {
 		this.status = status;
