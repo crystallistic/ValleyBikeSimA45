@@ -5,30 +5,30 @@
  */
 public class User {
 
-	private String userName;
+	private String username;
 	private String password;
 	
 	/**
-	 * @param userName
+	 * @param username
 	 * @param password
 	 */
-	public User(String userName, String password) {
-		this.userName = userName;
+	public User(String username, String password) {
+		this.username = username;
 		this.password = password;
 	}
 
 	/**
-	 * @return the userName
+	 * @return the username
 	 */
-	public String getUserName() {
-		return userName;
+	public String getUsername() {
+		return username;
 	}
 
 	/**
-	 * @param userName the userName to set
+	 * @param username the username to set
 	 */
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUsername(String username) {
+		this.username = username;
 	}
 
 	/**
@@ -47,7 +47,7 @@ public class User {
 
 	@Override
 	public String toString() {
-		return "User [userName=" + userName + ", password=" + password + "]";
+		return "User [username=" + username + ", password=" + password + "]";
 	}
 	
 }
