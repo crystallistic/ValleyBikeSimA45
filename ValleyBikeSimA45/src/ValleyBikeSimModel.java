@@ -997,16 +997,13 @@ public class ValleyBikeSimModel {
 		return formattedStationList;
 	}
 	
-<<<<<<< HEAD
+
 	/*
 	 * Helper method for JUnit testing. Returns Station object corresponding to the id
 	 */
 	public Station getStation(int id) {
 		return stations.get(id);
 	}
-=======
-	
->>>>>>> branch 'master' of https://github.com/crystallistic/ValleyBikeSimA45.git
 
 	/**
 	 * Check station to see if all the docks are full.
