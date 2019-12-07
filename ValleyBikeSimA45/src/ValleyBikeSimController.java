@@ -357,7 +357,8 @@ public class ValleyBikeSimController {
 			inputIsValid = model.isValid(userInputName, userInput); //
 
 			while (!inputIsValid) {
-				System.out.println("Invalid input, please follow the instructions and try again.");
+				System.out.println("Invalid input - wrong input format, or data already exists in the system.\n"
+						+ "Please follow the instructions and try again.");
 				userInput = view.prompt(userInputName);
 				inputIsValid = model.isValid(userInputName, userInput);
 			}

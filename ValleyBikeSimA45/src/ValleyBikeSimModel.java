@@ -562,21 +562,31 @@ public class ValleyBikeSimModel {
 			break;
 		case "newStationName":	
 			
+			userInput = userInput.trim();
 			// new station name must not coincide with existing station names
 			for (Station station : stations.values()) {
-				if (station.getStationName() == userInput) {
+				if (station.getStationName().equalsIgnoreCase(userInput)) {
 					inputIsValid = false;
 				}
 			}
 			break;
 		case "newStationAddress":	
+			r = Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
+								+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
+								+ "([a-zA-Z .'-]+)," // city
+								+ "([a-zA-Z0-9 .'\\/#-]+)," // state
+								+ " *([0-9]{5}) *," // zip code
+								+ " *([a-zA-Z .,'-]+)$");  // country)
+			matchRegex = r.matcher(userInput).find();
 			
 			// new station address must not coincide with existing station address
 			for (Station station : stations.values()) {
 				if (station.getAddress() == userInput) {
-					inputIsValid = false;
+					notExistInSys = false;
 				}
 			}
+			
+			inputIsValid = (notExistInSys && matchRegex);
 			break;
 		} 	
 		return inputIsValid;
@@ -761,6 +771,7 @@ public class ValleyBikeSimModel {
 		//creates a new station object
 		//passes in 0 for numBikes and maintenanceRequests
 		//passes in the capacity for numFreeDocks
+		
 		Station station = new Station(stationId,stationName,address,0,capacity,capacity,0,hasKiosk);
 		
 		stations.put(stationId, station);

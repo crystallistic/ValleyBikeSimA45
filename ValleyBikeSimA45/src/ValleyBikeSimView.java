@@ -123,7 +123,7 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter a password (at least 6 characters):");
 			break;
 		case "newEmail":
-			System.out.println("Please enter your email:");
+			System.out.println("Please enter your email.");
 			break;
 		case "fullName":
 			System.out.println("Please enter your first and last name:");
@@ -152,16 +152,19 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your 3-digit security code on your credit card:");
 			break;
 		case "newStationId":
-			System.out.println("Please enter the station's ID number. It cannot be the same as one of the existing stations:");
+			System.out.println("Please enter the station's ID number. It cannot be the same as one of the existing stations,\n"
+					+ "and has to be within the range (01-99):");
 			break;
 		case "newStationName":
 			System.out.println("Please enter the station's name. It cannot be the same as one of the existing stations:");
 			break;
 		case "newStationAddress":
-			System.out.println("Please enter the station's address. It cannot be the same as one of the existing stations:");
+			System.out.println("Please enter the station's address. It cannot be the same as one of the existing stations\n"
+					+ "and must follow the following format:\n"
+					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
 			break;
 		case "capacity":
-			System.out.println("Please enter the station's capacity (within the range of 10-99):");
+			System.out.println("Please enter the station's capacity (within the range of 01-27):");
 			break;
 		case "hasKiosk":
 			System.out.println("Please enter 1 if the station has a kiosk, otherwise enter 0:");
