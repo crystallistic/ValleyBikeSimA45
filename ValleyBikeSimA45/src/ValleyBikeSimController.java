@@ -64,9 +64,9 @@ public class ValleyBikeSimController {
 	 * Generate all the regular expressions needed to validate user input.
 	 */
 	private void generateRegex() {
-		regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
+		//regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
 		regex.put("newPassword", Pattern.compile("^[a-zA-Z0-9]{6,}$")); // password has to be at least 6 characters
-		regex.put("address", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
+		regex.put("riderAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 											+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
 											+ "([a-zA-Z .'-]+)," // city
 											+ "([a-zA-Z0-9 .'\\/#-]+)," // state
@@ -84,9 +84,8 @@ public class ValleyBikeSimController {
 		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/([0-9]{2})$")); // expiry date of credit card. Regex source:																							// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
 		regex.put("CVV", Pattern.compile("^[0-9]{3,4}$")); // CVV of credit card. Regex source:
 															// https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
-		regex.put("fullName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // first and last name separated by space. Regex source:
-																	// https://stackoverflow.com/questions/2385701/regular-expression-for-first-and-last-name
-		regex.put("billingName", Pattern.compile("^[a-zA-Z ,.'-]+$")); // billingName
+		regex.put("fullName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // first and last name separated by space.
+		regex.put("billingName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // billingName, first name and last name separated by space
 		regex.put("capacity",Pattern.compile("^([1-9]|1[0-9]|2[0-7])$")); // max station has a capacity of 27 bikes
 		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
 		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$")); 
@@ -100,8 +99,6 @@ public class ValleyBikeSimController {
 
 		// load data in model
 		model.readData();
-		
-		model.checkStolenBikes();
 
 		// show welcome screen with options to login, signup, or exit program
 		view.displayWelcomeScreen();
@@ -125,6 +122,7 @@ public class ValleyBikeSimController {
 	 * system.
 	 */
 	public void login() {
+		model.checkStolenBikes();
 		view.displayLoginScreen();
 		String username = getUserInput("username");
 
@@ -172,7 +170,7 @@ public class ValleyBikeSimController {
 		String password = getUserInput("newPassword");
 		String fullName = getUserInput("fullName");
 		String email = getUserInput("newEmail");
-		String address = getUserInput("address");
+		String address = getUserInput("riderAddress");
 		String phoneNumber = getUserInput("phoneNumber");
 
 		view.displayMembershipOptions();
@@ -248,8 +246,8 @@ public class ValleyBikeSimController {
 				addStation(); 
 				break;
 			case 2: // 2) Remove station
-				//removeStation();
-				System.out.println("Feature not yet available, check back soon!");
+				removeStation();
+				//System.out.println("Feature not yet available, check back soon!");
 				break;
 			case 3:// 3) Add bikes
 				//addBike();
@@ -272,10 +270,7 @@ public class ValleyBikeSimController {
 				//createSupportTicket();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 9: // ) saveData()
-				saveData();
-				break;
-			case 10:// 10) Log out
+			case 9:// 9) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
@@ -357,8 +352,7 @@ public class ValleyBikeSimController {
 			inputIsValid = model.isValid(userInputName, userInput); //
 
 			while (!inputIsValid) {
-				System.out.println("Invalid input - wrong input format, or data already exists in the system.\n"
-						+ "Please follow the instructions and try again.");
+				view.displayInvalidInput();
 				userInput = view.prompt(userInputName);
 				inputIsValid = model.isValid(userInputName, userInput);
 			}
@@ -491,6 +485,7 @@ public class ValleyBikeSimController {
 	 */
 	public void addStation() {
 		//Ask the user for station id, name, capacity, # of pedelecs, kiosk?, address (a lot of calls to the view, then verification with calls to the model for each piece of information)
+		
 		int stationId = Integer.parseInt(getUserInput("newStationId"));
 		String stationName = getUserInput("newStationName");
 		String address = getUserInput("newStationAddress");
@@ -500,9 +495,7 @@ public class ValleyBikeSimController {
 		Station station = model.addStation(stationId,stationName,address,capacity,hasKiosk);
 		
 		view.displayStationAdded(station.toString());
-		
-		// return to main menu
-		mainMenu(model.activeUserIsAdmin());
+	
 	}
 
 	/**
@@ -555,6 +548,26 @@ public class ValleyBikeSimController {
 		
 	}
 
+	/**
+	 * Remove a station from the system.
+	 */
+	public void removeStation() {
+		
+		if (model.noStationInSys()) {
+			view.displayNoStationExistsError();
+			return;
+		}
+		
+		// TODO: fix getUserInput to only take in numeric input, but still return a string
+		int stationId = Integer.parseInt(getUserInput("stationId"));
+		
+		// remove station from database and move all bikes at this station to storage.
+		model.removeStation(stationId);
+		
+		// notify user of successful removal of station
+		view.removeStationSuccess(stationId);
+	}
+			
 	
 	/**
 	 * Save all data in the system into .csv files.
