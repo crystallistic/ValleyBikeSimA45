@@ -194,7 +194,7 @@ public class ValleyBikeSimView {
 	 * 
 	 * @param amountCharged
 	 */
-	public void notifyOverdue(int amountCharged) {
+	public void notifyOverdue() {
 		System.out.println("You have an overdue bike. You have been charged a stolen bike fee in the amount of $2000.");
 	}
 	

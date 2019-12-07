@@ -691,15 +691,15 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Charges the user the $2000 lost bike fee + overtime fee, and return this total.
+	 * Charges the user the $2000.00 lost bike fee + overtime fee, and return this total.
 	 * @return the total amount billed to the user account
 	 */
-	public int chargeUser() {
+	public BigDecimal chargeOverdue() {
 		
-		int amountCharged = 2000;
+		BigDecimal amountCharged = new BigDecimal("2000.00");
 		
 		// calculate overtime
-		
+		// TODO: 
 		
 		// charge the user
 		

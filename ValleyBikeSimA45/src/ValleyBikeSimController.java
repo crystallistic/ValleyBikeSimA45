@@ -145,8 +145,8 @@ public class ValleyBikeSimController {
 
 				// if bike is overdue
 				if (isOverdue) {
-					int amountCharged = model.chargeUser(); // charge user $2000 overdue bike
-					view.notifyOverdue(amountCharged); // notify user of charge
+					BigDecimal amountCharged = model.chargeOverdue(); // charge user $2000 overdue bike
+					view.notifyOverdue(); // notify user of overdue charge
 				}
 			}
 		}
