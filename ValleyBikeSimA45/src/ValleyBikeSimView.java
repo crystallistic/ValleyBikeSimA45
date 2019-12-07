@@ -132,33 +132,20 @@ public class ValleyBikeSimView {
 			break;
 		case "address":
 			System.out.println("Please enter your address on one line, in the following format:\n"
-<<<<<<< HEAD
 					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
-=======
-					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\".");
->>>>>>> branch 'master' of https://github.com/crystallistic/ValleyBikeSimA45.git
 			break;
 		case "billingName":
 			System.out.println("Please enter the full name on your credit card:");
 			break;
 		case "billingAddress":
-<<<<<<< HEAD
 			System.out.println("Please enter your billing address on one line, in the following format:\n" 
 					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
-=======
-			System.out.println("Please enter your address on one line, in the following format:\n" 
-					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\".");
->>>>>>> branch 'master' of https://github.com/crystallistic/ValleyBikeSimA45.git
 			break;
 		case "creditCardNumber":
 			System.out.println("Please enter your 16-digit credit card number:");
 			break;
 		case "creditCardDate":
-<<<<<<< HEAD
 			System.out.println("Please enter your credit card expiration date in the following formats - MM/YY:");
-=======
-			System.out.println("Please enter your credit card expiration date in the following formats - MM/YYYY:");
->>>>>>> branch 'master' of https://github.com/crystallistic/ValleyBikeSimA45.git
 			break;
 		case "CVV":
 			System.out.println("Please enter your 3-digit security code on your credit card:");
