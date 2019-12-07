@@ -247,13 +247,12 @@ public class ValleyBikeSimController {
 				break;
 			case 2: // 2) Remove station
 				removeStation();
-				//System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 3:// 3) Add bikes
+			case 3:// 3) Add bike
 				//addBike();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 4:// 4) Remove bikes
+			case 4:// 4) Remove bike
 				//removeBike(); //
 				System.out.println("Feature not yet available, check back soon!");
 				break;
