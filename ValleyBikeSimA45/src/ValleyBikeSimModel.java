@@ -12,6 +12,7 @@ import java.util.*;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
+import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -573,17 +574,31 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean isValid(String userInputName, String userInput) {
 		
-		boolean inputIsValid = true;
-		boolean matchRegex = true;
-		boolean notExistInSys = true;
+		boolean inputIsValid = false;
+		boolean matchRegex = false;
+		boolean existInSys = false;
 		Pattern r = null;
+		Pattern numeric = Pattern.compile("^[0-9]+$");
+		
 		
 		switch (userInputName) {
-		case "stationId":			
-			inputIsValid = (stations.containsKey(Integer.parseInt(userInput)));
+		case "stationId":	// valid if is numeric and exists in system	
+			matchRegex = numeric.matcher(userInput).find();
+			
+			if (matchRegex) {
+				existInSys = stations.containsKey(Integer.parseInt(userInput));
+			}
+			
+			inputIsValid = (matchRegex && existInSys);
 			break;
-		case "bikeId":
-			inputIsValid = (bikes.containsKey(Integer.parseInt(userInput)));
+		case "bikeId":	// valid if is numeric and exists in system	
+			matchRegex = numeric.matcher(userInput).find();
+			
+			if (matchRegex) {
+				existInSys = bikes.containsKey(Integer.parseInt(userInput));
+			}
+			
+			inputIsValid = (matchRegex && existInSys);
 			break;
 		case "loginInfo":
 			String[] info = userInput.split(" ");
@@ -591,7 +606,8 @@ public class ValleyBikeSimModel {
 			inputIsValid = (users.containsKey(info[0]) && users.get(info[0]).getPassword().equals(info[1]));
 			break;
 		case "newUsername":
-			inputIsValid = (!users.containsKey(userInput) && userInput.length() >= 6);
+			existInSys = users.containsKey(userInput);
+			inputIsValid = (!existInSys && userInput.length() >= 6);
 			break;
 		case "newEmail":
 			// regex to validate email format
@@ -599,16 +615,21 @@ public class ValleyBikeSimModel {
 			
 			// email is valid if it's in valid format and it does not belong to an existing user
 			matchRegex = r.matcher(userInput).find();
-			notExistInSys = !emails.containsKey(userInput);
-			inputIsValid = (matchRegex && notExistInSys);
+			existInSys = emails.containsKey(userInput);
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newStationId":	
 			// Assumption: Valley Bike's station IDs are two-digit and only within the 01-99 range.
 			r = Pattern.compile("^[0-9]{2}$"); 
 			matchRegex = r.matcher(userInput).find();
 			
+			// only check to see if the station ID exists in the system if input is numeric
+			if (matchRegex) {
+				existInSys = stations.containsKey(Integer.parseInt(userInput));
+			}
+			
 			// new station ID is valid if it's 2-digit and has not appeared in the system.
-			inputIsValid = (matchRegex && !stations.containsKey(Integer.parseInt(userInput)));
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newStationName":	
 			
@@ -616,9 +637,12 @@ public class ValleyBikeSimModel {
 			// new station name must not coincide with existing station names
 			for (Station station : stations.values()) {
 				if (station.getStationName().equalsIgnoreCase(userInput)) {
-					inputIsValid = false;
+					existInSys = true;
 				}
 			}
+			
+			// a new station name is valid if it doesn't already exist in the system
+			inputIsValid = !existInSys;
 			break;
 		case "newStationAddress":	
 			r = Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
@@ -632,11 +656,11 @@ public class ValleyBikeSimModel {
 			// new station address must not coincide with existing station address
 			for (Station station : stations.values()) {
 				if (station.getAddress() == userInput) {
-					notExistInSys = false;
+					existInSys = true;
 				}
 			}
 			
-			inputIsValid = (notExistInSys && matchRegex);
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		} 	
 		return inputIsValid;

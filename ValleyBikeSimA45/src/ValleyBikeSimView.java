@@ -365,10 +365,10 @@ public class ValleyBikeSimView {
 	/**
 	 * Instruct the user to choose between adding a bike to a station or storage
 	 */
-	public void displayAddBikeToStationOrStorage() {
-		System.out.println("Would you like to add a bike to a station, or to storage?\n"
-				+ "1) Add a bike to a station\n"
-				+ "2) Add a bike to storage");
+	public void displayAddNewOrExistingBike() {
+		System.out.println("Would you like to add a new or existing bike?\n"
+				+ "1) Add new bike to storage/station\n"
+				+ "2) Add existing bike from storage to station");
 	}
 		
 	/**

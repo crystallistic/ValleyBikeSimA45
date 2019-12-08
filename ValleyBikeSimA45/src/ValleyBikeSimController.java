@@ -27,7 +27,7 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress", };
+		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress","newBikeId"};
 		// Set demonstration using HashSet Constructor
 		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
@@ -531,16 +531,12 @@ public class ValleyBikeSimController {
 	public void addBike() {
 		
 		// prompt the user to choose between adding a bike to a station, or to storage.
-		view.displayAddBikeToStationOrStorage();
+		view.displayAddNewOrExistingBike();
 		String optionSelected = getUserInput("option2");
 		
-		// if user wants to add a bike to a station
+		// if user wants to add a new bike
 		if (optionSelected.equals("1")) {
-			// check whether bike exists in system
-			// if bike exists in system
-				// add to station
-			// else
-				// add new bike to system
+			String newBikeId = getUserInput("newBikeId");
 			
 		}
 		
