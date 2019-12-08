@@ -27,7 +27,7 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress","newBikeId","bikeIdInStorage"};
+		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress","newBikeId","bikeIdInStorage","removeBikeId"};
 		// Set demonstration using HashSet Constructor
 		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
@@ -241,8 +241,7 @@ public class ValleyBikeSimController {
 				addBike();
 				break;
 			case "4":// 4) Remove bike
-				//removeBike(); //
-				System.out.println("Feature not yet available, check back soon!");
+				removeBike();
 				break;
 			case "5":// 5) Redistribute bikes
 				equalizeStations();
@@ -530,7 +529,7 @@ public class ValleyBikeSimController {
 	 * - Add new bike to station
 	 * - Add bike from storage to station
 	 */
-	public void addBike() {
+	private void addBike() {
 		
 		// prompt the user to choose between adding a bike to a station, or to storage.
 		view.displayAddNewOrExistingBike();
@@ -572,6 +571,38 @@ public class ValleyBikeSimController {
 			// display confirmation 
 			view.displayAddBikeFromStorageToStationSuccess(bikeId,stationId);
 		}		
+	}
+	
+	
+	/**
+	 * Remove a bike. The user can:
+	 * - Remove a bike from a station and move to storage
+	 * - Remove a bike from a station and delete it from the system
+	 * - Remove a bike from storage and delete it from the system
+	 */
+	private void removeBike() {
+		int bikeId = Integer.parseInt(getUserInput("removeBikeId"));
+		
+		String status = model.getBikeStatus(bikeId);
+		String bikeInStorageMessage = "";
+		if (status.equals("working")) { // if bike is docked at a station, move it to storage
+			String[] stationData = model.moveBikeFromStationToStorage(bikeId);
+			int stationId = Integer.parseInt(stationData[0]);
+			String stationName = stationData[1];
+			bikeInStorageMessage = "Bike " + bikeId + " has been moved to storage from station " + stationName + " (#" + stationId + ").";
+		} else if (status.equals("inStorage")) { // if already in storage, do nothing
+			bikeInStorageMessage = "Bike " + bikeId + " is currently in storage.";
+		}
+		view.displayBikeInStorageMessage(bikeInStorageMessage);
+		view.promptRemoveBikeFromSystem();
+		String optionSelected = getUserInput("option2");
+		
+		// if user wants to remove bike from system
+		if (optionSelected.equals("1")) {
+			model.removeBikeInStorageFromSystem(bikeId);
+			view.displayRemoveBikeFromSystemSuccess(bikeId);
+		}
+		
 	}
 	
 	/**

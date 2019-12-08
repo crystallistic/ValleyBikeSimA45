@@ -161,8 +161,7 @@ public class ValleyBikeSimView {
 			break;
 		case "newStationAddress":
 			System.out.println("Please enter the station's address. It cannot be the same as one of the existing stations\n"
-					+ "and must follow the following format:\n"
-					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
+					+ "and must not contain commas:");
 			break;
 		case "capacity":
 			System.out.println("Please enter the station's capacity (within the range of 05-27):");
@@ -179,6 +178,9 @@ public class ValleyBikeSimView {
 		case "bikeIdInStorage":
 			System.out.println("Please enter the new 3-digit bike ID. The bike must be in storage in order to be added to a station:");
 			break;	
+		case "removeBikeId":
+			System.out.println("Please enter the 3-digit bike ID. The bike must not be in use by any user in order to be removed:");
+			break;
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -435,6 +437,34 @@ public class ValleyBikeSimView {
 			System.out.print(bId);
 			System.out.print(',');
 		}
+		
+	}
+
+	/**
+	 * Informs user that the bike is in, or has been moved to, storage.
+	 * @param bikeInStorageMessage	Message to be shown
+	 */
+	public void displayBikeInStorageMessage(String bikeInStorageMessage) {
+		System.out.println(bikeInStorageMessage);
+		
+	}
+
+	/**
+	 * Ask the user if they would like to remove the bike from the system.
+	 */
+	public void promptRemoveBikeFromSystem() {
+		System.out.println("Would you like to remove this bike from the system, or leave it in storage?\n"
+				+ "1) Remove bike from system\n"
+				+ "2) Leave bike in storage");
+		
+	}
+
+	/**
+	 * Displays confirmation of successful removal of bike from system.
+	 * @param bikeId		The bike ID
+	 */
+	public void displayRemoveBikeFromSystemSuccess(int bikeId) {
+		System.out.println("Bike " + bikeId + " has been removed successfully from the system.");
 		
 	}
 	
