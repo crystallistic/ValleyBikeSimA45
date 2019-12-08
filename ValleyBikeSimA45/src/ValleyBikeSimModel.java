@@ -19,6 +19,10 @@ import java.util.regex.Pattern;
  * @author maingo
  *
  */
+/**
+ * @author maingo
+ *
+ */
 public class ValleyBikeSimModel {
 	
 	/** map all stations to their station ID */
@@ -91,25 +95,25 @@ public class ValleyBikeSimModel {
 	 * Read in all the data files and store them in appropriate data structures.
 	 */
 	public void readData() {
-		System.out.println("readStationData");
+		//System.out.println("readStationData");
 		readStationData();
-		System.out.println("readBikeData");
+		//System.out.println("readBikeData");
 		readBikeData();
-		System.out.println("readAdminData");
+		//System.out.println("readAdminData");
 		readAdminData();
-		System.out.println("readRiderData");
+		//System.out.println("readRiderData");
 		readRiderData();
-		System.out.println("readTicketData");
+		//System.out.println("readTicketData");
 		readTicketData();
-		System.out.println("readRidesCompletedData");
+		//System.out.println("readRidesCompletedData");
 		readRidesCompletedData();
-		System.out.println("readRideInProgressData");
+		//System.out.println("readRideInProgressData");
 		readRidesInProgressData();
-		System.out.println("readRidesOverdueData");
+		//System.out.println("readRidesOverdueData");
 		readRidesOverdueData();
-		System.out.println("readPaymentMethodData");
+		//System.out.println("readPaymentMethodData");
 		readPaymentMethodData();
-		System.out.println("readTransactionData");
+		//System.out.println("readTransactionData");
 		readTransactionData();
 	}
 	
@@ -137,11 +141,10 @@ public class ValleyBikeSimModel {
 			for(String[] array : allStationEntries) {
 				if(counter != 0) {
 					
-					// create new station object
+					// create new station object. It has no bikes yet - this info will correspond to bike-data file
 					Station station = new Station(Integer.parseInt(array[0]), array[1], 
-							array[8], Integer.parseInt(array[3]), Integer.parseInt(array[4]), 
-							Integer.parseInt(array[6]), Integer.parseInt(array[5]),(array[7].equals("1")));
-					
+							array[8], Integer.parseInt(array[6]), Integer.parseInt(array[5]),(array[7].equals("1")));
+
 					// map station to its ID number
 					stations.put(Integer.parseInt(array[0]), station); 
 				}
@@ -183,10 +186,12 @@ public class ValleyBikeSimModel {
 					// obtain station ID
 					int stationId = Integer.parseInt(array[1]);
 					
-					// add bike ID to the set of bike IDs at this station
-					stationsBikes.putIfAbsent(stationId, new HashSet<Integer>());
-					stationsBikes.get(stationId).add(bikeId);	
-					
+					// add bike IDs to the set of bike IDs at corresponding stations 
+					// if they are not in storage / OOO / out on a ride
+					if (stationId > 0) {
+						stationsBikes.putIfAbsent(stationId, new HashSet<Integer>());
+						stationsBikes.get(stationId).add(bikeId);	
+					}	
 					
 				}
 				counter++;	
@@ -195,7 +200,7 @@ public class ValleyBikeSimModel {
 		} 
 		catch(Exception e) {
 		
-			System.out.println(e.getMessage()+ "error!");
+			System.out.println(e.getMessage()+ " error in readBikeData!");
 		}	
 	}
 	
@@ -662,6 +667,27 @@ public class ValleyBikeSimModel {
 			
 			inputIsValid = (matchRegex && !existInSys);
 			break;
+		case "newBikeId":	// valid if is numeric, has 3 digits and doesn't exist in system	
+			r = Pattern.compile("^[0-9]{3}$");
+			matchRegex = r.matcher(userInput).find();
+			
+			if (matchRegex) {
+				existInSys = bikes.containsKey(Integer.parseInt(userInput));
+			}
+			
+			inputIsValid = (matchRegex && !existInSys);
+			break;
+		case "bikeIdInStorage": // valid if bike ID exists in system and bike is in storage
+			r = Pattern.compile("^[0-9]{3}$");
+			matchRegex = r.matcher(userInput).find();
+			
+			if (matchRegex) {
+				existInSys = bikes.containsKey(Integer.parseInt(userInput));
+			}
+			
+			inputIsValid = (matchRegex && existInSys && 
+					bikes.get(Integer.parseInt(userInput)).getStatus().equals("inStorage"));
+			break;
 		} 	
 		return inputIsValid;
 	}
@@ -780,12 +806,8 @@ public class ValleyBikeSimModel {
 		//Remove the bikeId from the HashSet of bikeIds associated to the station in stations HashMap
 		stationsBikes.get(stationId).remove(bikeId);
 		
-		//Update numFreeDocks in startStation to reflect one new free dock and one fewer bike
-		Station startStation = stations.get(stationId);
-		startStation.setNumFreeDocks(startStation.getNumFreeDocks()+1);
-		startStation.setNumBikes(startStation.getNumBikes()-1);
-		
 		//Creates new Ride object with bikeId and start time --> get current time 
+		Station startStation = stations.get(stationId);
 		Ride ride = new Ride(bikeId, startStation, new Date() );
 		
 		//Add ride and activeUser to ridesInProgress
@@ -820,28 +842,19 @@ public class ValleyBikeSimModel {
 		paymentMethod.chargeCard(chargeAmount);
 		
 		//Create new Transaction and add to list
-		Transaction transaction = new Transaction(activeUser.getUsername(),chargeAmount,now,"Ride");
+		Transaction transaction = new Transaction(activeUser.getUsername(),chargeAmount,now,"ValleyBike Ride");
 		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
 		//Update bike list at current Station
 		stationsBikes.get(stationId).add(ride.getBikeId());
-		
-		//Update station information
-		endStation.setNumFreeDocks(endStation.getNumFreeDocks()-1);
-		endStation.setNumBikes(endStation.getNumBikes()+1);
 		
 		//Add end time and end station to Ride associated to User
 		ride.setEndTime(now);
 		ride.setEndStation(endStation);
 		
 		//Move the ride from ridesInProgress to ridesCompleted
-		if (ridesCompleted.containsKey(activeUsername)) {
-			ridesCompleted.get(activeUsername).add(ride);
-		} else {
-			HashSet<Ride> activeUserRides = new HashSet<>();
-			activeUserRides.add(ride);
-			ridesCompleted.put(activeUsername, activeUserRides);
-		}
+		ridesCompleted.putIfAbsent(activeUsername, new HashSet<Ride>());
+		ridesCompleted.get(activeUsername).add(ride);
 		ridesInProgress.remove(activeUsername);
 		
 		//Update rides-in-progress file
@@ -879,11 +892,10 @@ public class ValleyBikeSimModel {
 		//passes in 0 for numBikes and maintenanceRequests
 		//passes in the capacity for numFreeDocks
 		
-		Station station = new Station(stationId,stationName,address,0,capacity,capacity,0,hasKiosk);
+		Station station = new Station(stationId,stationName,address,capacity,0,hasKiosk);
 		
 		stations.put(stationId, station);
-		HashSet<Integer> bikes = new HashSet<Integer>();
-		stationsBikes.put(stationId,bikes);
+		stationsBikes.put(stationId,new HashSet<Integer>());
 		
 		//Add station to stations file
 		saveAllStation(station);
@@ -940,10 +952,6 @@ public class ValleyBikeSimModel {
 					
 					extraBikes.add(bikeId);
 				}
-				station.setNumBikes(idealNumBikes);
-	
-				//Update Station data to reflect loss
-				station.setNumFreeDocks(station.getNumFreeDocks() + numBikesAboveIdeal);
 			}
 		}
 		
@@ -953,24 +961,18 @@ public class ValleyBikeSimModel {
 		for (ArrayList<Integer> need : needBikes) {
 			int stationId = need.get(0);
 			int numNeeded = need.get(1);
-			Station station = stations.get(stationId);
 			HashSet<Integer> bikeSet = stationsBikes.get(stationId);
 			
 			//Remove bikeIds from extraBikes and add them to the station's bikeSet
 			for (int i=0; i<numNeeded; i++) {
 				bikeSet.add(extraBikes.remove(0));
 			}
-			station.setNumBikes(station.getNumBikes() + numNeeded);
-			//Update Station data to reflect the gain
-			station.setNumFreeDocks(station.getNumFreeDocks() - numNeeded);
 		}
 		System.out.println(extraBikes.size());
 		
 		int indexStation = 0;
 		while (extraBikes.size() > 0) {
 			Station s = stationArray[indexStation];
-			s.setNumBikes(s.getNumBikes() + 1);
-			s.setNumFreeDocks(s.getNumFreeDocks() - 1);
 			stationsBikes.get(s.getStationId()).add(extraBikes.remove(0));
 			indexStation++;
 		}
@@ -1029,9 +1031,9 @@ public class ValleyBikeSimModel {
 	 * @return boolean 
 	 */
 	public boolean isStationDockFull(int stationId) {
-
-		Station station = stations.get(stationId);
-		return (station.getNumFreeDocks() == 0);
+		
+		// station is full if the number of bikes at that station equals capacity
+		return (stationsBikes.get(stationId).size() == stations.get(stationId).getCapacity());
 	}
 	
 	/**
@@ -1060,14 +1062,7 @@ public class ValleyBikeSimModel {
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * Save the updated ride lists to the CSV files, by overwriting all the entries and adding new entries for the new rides
-	 */
-	private void saveRideLists() {
-		// TODO Auto-generated method stub
-		saveRidesInProgressList();
-	}
+
 	
 	/**
 	 * Save the updated rides in progress lists to the CSV file, by overwriting all the entries and adding new entries for the new rides
@@ -1078,7 +1073,7 @@ public class ValleyBikeSimModel {
 			  csvWriter = new FileWriter("data-files/rides-in-progress.csv");
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "username,bikeId,From,Start".split(",");
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1142,7 +1137,7 @@ public class ValleyBikeSimModel {
 				csvWriter = new FileWriter(filename);
 				writer = new CSVWriter(csvWriter);
 				String [] record = "username,bikeId,From,To,Start,End".split(",");
-				writer.writeNext(record);
+				writer.writeNext(record,false);
 
 				writer.close();
 					      
@@ -1195,7 +1190,7 @@ public class ValleyBikeSimModel {
 			  csvWriter = new FileWriter("data-files/rides-overdue.csv");
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "username,bikeId,From,Start".split(",");
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1280,7 +1275,7 @@ public class ValleyBikeSimModel {
 			  csvWriter = new FileWriter("data-files/ticket-data.csv");
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "ticketIds,description,username".split(",");
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1329,7 +1324,7 @@ public class ValleyBikeSimModel {
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "username,billingName,cardNumber,billingAddress,expiryDate,cvv".split(",");
 
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1383,9 +1378,9 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/bike-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "bikeId,stationId".split(",");
+		      String [] record = "bikeId,stationId,status".split(",");
 
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1393,11 +1388,13 @@ public class ValleyBikeSimModel {
 			e.printStackTrace();
 		}
 		
-		//Save all bikes out of order with station -1
+		//Save all bikes out of order or in storage with station -1 
 		for (int bikeId : bikes.keySet()) {
 			Bike bike = bikes.get(bikeId);
 			if (bike.getStatus().equals("OOO")) {
 				saveAllBike(bikeId, -1,"OOO");
+			} else if (bike.getStatus().equals("inStorage")) {
+				saveAllBike(bikeId, -1,"inStorage");
 			}
 		}
 		
@@ -1464,7 +1461,7 @@ public class ValleyBikeSimModel {
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
 		      
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1487,7 +1484,7 @@ public class ValleyBikeSimModel {
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
 		      
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
@@ -1576,12 +1573,11 @@ public class ValleyBikeSimModel {
 			  writer = new CSVWriter(csvWriter);
 		      String [] record = "ID,Name,Bikes,Pedelecs,Available Docks,Maintainence Request,Capacity,Kiosk,Address".split(",");
 
-		      writer.writeNext(record);
+		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1611,7 +1607,9 @@ public class ValleyBikeSimModel {
 			csvWriter.append(Integer.toString(numBikes));
 			csvWriter.append(',');
 			
-			csvWriter.append(Integer.toString(station.getNumFreeDocks()));
+			// append number of free docks
+			int numFreeDocks = station.getCapacity() - stationsBikes.get(station.getStationId()).size();
+			csvWriter.append(Integer.toString(numFreeDocks));
 			csvWriter.append(',');
 			csvWriter.append(Integer.toString(station.getMaintenanceReqs()));
 			csvWriter.append(',');
@@ -1645,8 +1643,9 @@ public class ValleyBikeSimModel {
 
 	/**
 	 * Check all current rides for overdue/stolen bikes, and charge the users
+	 * @return true if currently active user has a ride that exceeds 24 hours, else false
 	 */
-	public void checkStolenBikes() {
+	public boolean checkStolenBikes() {
 		ArrayList<String> overdueUsernames = new ArrayList<String>();
 		for (String username : ridesInProgress.keySet()) {
 			Ride ride = ridesInProgress.get(username);
@@ -1688,6 +1687,7 @@ public class ValleyBikeSimModel {
 		saveRidesOverdueList();
 		//update rides in progress file
 		saveRidesInProgressList();
+		return (overdueUsernames.contains(activeUser.getUsername()));
 	}
 
 	/**
@@ -1726,16 +1726,19 @@ public class ValleyBikeSimModel {
 	public void removeStation(int stationId) {
 		
 		// move all bikes at this station to storage
-		HashSet<Integer> bikeIdsAtStation = stationsBikes.get(stationId);
-		for (Integer bikeId : bikeIdsAtStation) {
+		for (Integer bikeId : stationsBikes.get(stationId)) {
 			bikes.get(bikeId).setStatus("inStorage");
 		}
+		stationsBikes.remove(stationId);
 		
 		// remove station from station list
 		stations.remove(stationId);
 		
 		// update stations data file to reflect the change
 		saveStationList();		
+		
+		// update bikes data file to reflect the change
+		saveBikeList();
 	}
 
 	
@@ -1760,5 +1763,92 @@ public class ValleyBikeSimModel {
 		}
 		
 		return formattedRideList;
+	}
+
+	/**
+	 * Add a new bike to storage by ID.
+	 * @param bikeId The bike's ID number
+	 */
+	public void addNewBikeToStorage(int bikeId) {
+		Bike bike = new Bike(bikeId,"inStorage");
+		bikes.put(bikeId, bike);	
+		
+		// Updates bike file
+		saveBikeList();
+	}
+
+	/**
+	 * Add a bike from storage to a station by ID, and update station and bike data files.
+	 * @param bikeId 	The bike's ID number
+	 * @param stationId The station's ID number
+	 */
+	public void addBikeFromStorageToStation(int bikeId,int stationId) {
+		
+		// add bike to station
+		stationsBikes.putIfAbsent(stationId, new HashSet<Integer>());
+		stationsBikes.get(stationId).add(bikeId);
+		
+		// move bike from storage to "working" status
+		bikes.get(bikeId).setStatus("working");
+		
+		// Updates bike file
+		saveBikeList();
+		// Updates station file
+		saveStationList();
+	}
+
+	/**
+	 * Check if a bike is in storage by ID
+	 * @param bikeId The bike ID
+	 * @return true if bike is in storage, else false
+	 */
+	public boolean isBikeInStorage(int bikeId) {
+		return bikes.get(bikeId).getStatus().equals("inStorage");
+	}
+
+	/**
+	 * Check if a station is at capacity by comparing its capacity 
+	 * to the number of bikes at the station.
+	 * @param stationId		Station ID
+	 * @return true if station is at capacity, else false.
+	 */
+	public boolean isStationAtCapacity(int stationId) {
+		return stations.get(stationId).getCapacity() == stationsBikes.get(stationId).size();
+	}
+
+	/**
+	 * Check if this bike is indeed at this station.
+	 * @param stationId		Station ID
+	 * @param bikeId		Bike ID
+	 * @return true if bike at station, else false
+	 */
+	public boolean stationHasBike(int stationId, int bikeId) {
+		return stationsBikes.get(stationId).contains(bikeId);
+	}
+
+	/**
+	 * Helper function to return the list of bikes at a station.
+	 * @param stationId
+	 * @return
+	 */
+	public HashSet<Integer> getBikeListFromStation(int stationId) {
+		return stationsBikes.get(stationId);
+	}
+	
+	/**
+	 * Helper function to wrap all information pertaining to the specified station in a string.
+	 * @param station		Station ID
+	 * @return		a string with all of this station's information, formatted
+	 */
+	public String formatStationToString(int stationId) {
+		Station station = stations.get(stationId);
+		String id = Integer.toString(stationId);
+		String numBikes = Integer.toString(stationsBikes.get(stationId).size());
+		String cap = Integer.toString(station.getCapacity());
+		String avDocks = Integer.toString(Integer.parseInt(cap)-Integer.parseInt(numBikes));
+		String mainReq = Integer.toString(station.getMaintenanceReqs());
+		String hasKiosk = (station.isHasKiosk() ? "Yes" : "No");
+		String nameAddress = station.getStationName() + " - " + station.getAddress();
+		return id + "\t" + numBikes + "\t" + avDocks + "\t" + mainReq + "\t" + cap + "\t" + hasKiosk + "\t" + nameAddress;
 	}
 }

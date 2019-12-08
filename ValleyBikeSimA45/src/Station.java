@@ -2,27 +2,20 @@
  * @author maingo
  *
  */
-
-/**
- * @author maingo
- *
- */
 public class Station {
 	
 	
-	int stationId;
-	String stationName;
-	int numBikes;
-	String address;
-	int numFreeDocks;
-	int capacity;
-	int maintenanceReqs;
-	boolean hasKiosk;
+	private int stationId;
+	private String stationName;
+	private String address;
+	private int capacity;
+	private int maintenanceReqs;
+	private boolean hasKiosk;
 	
 	
 	/**
 	 * 
-	 * Constructor for the Station object.
+	 * Constructor for the Station object. Creates an empty station.
 	 * @param stationId
 	 * @param address
 	 * @param numBikes
@@ -31,13 +24,11 @@ public class Station {
 	 * @param maintenanceReqs
 	 * @param hasKiosk
 	 */
-	public Station(int stationId, String stationName, String address, int numBikes, 
-			int numFreeDocks, int capacity, int maintenanceReqs, boolean hasKiosk) {
+	public Station(int stationId, String stationName, String address, 
+		int capacity, int maintenanceReqs, boolean hasKiosk) {
 		this.stationId = stationId;
 		this.stationName = stationName;
-		this.numBikes = numBikes;
 		this.address = address;
-		this.numFreeDocks = numFreeDocks;
 		this.capacity = capacity;
 		this.maintenanceReqs = maintenanceReqs;
 		this.hasKiosk = hasKiosk;
@@ -58,21 +49,6 @@ public class Station {
 		this.stationId = stationId;
 	}
 	
-	
-	/**
-	 * @return the numBikes
-	 */
-	public int getNumBikes() {
-		return numBikes;
-	}
-
-	/**
-	 * @param numBikes the numBikes to set
-	 */
-	public void setNumBikes(int numBikes) {
-		this.numBikes = numBikes;
-	}
-
 	/**
 	 * @return the address of the station
 	 */
@@ -85,19 +61,7 @@ public class Station {
 	public void setAddress(String address) {
 		this.address = address;
 	}
-
-	/**
-	 * @return the number of free docks
-	 */
-	public int getNumFreeDocks() {
-		return numFreeDocks;
-	}
-	/**
-	 * @param numFreeDocks 		the number of free docks to set
-	 */
-	public void setNumFreeDocks(int numFreeDocks) {
-		this.numFreeDocks = numFreeDocks;
-	}
+	
 	/**
 	 * @return the capacity of the station 
 	 */
@@ -148,14 +112,5 @@ public class Station {
 	public void setStationName(String stationName) {
 		this.stationName = stationName;
 	}
-
-	@Override
-	public String toString() {
-		return stationId + "\t" + numBikes + "\t"
-				+ numFreeDocks + "\t" + maintenanceReqs + "\t" + capacity + "\t" +
-				(hasKiosk ? "Yes" : "No") + "\t" + stationName + " - " + address + "\n";
-	}
-	
-	
 	
 }

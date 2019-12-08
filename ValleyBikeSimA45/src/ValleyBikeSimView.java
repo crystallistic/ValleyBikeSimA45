@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Scanner;
 
 /**
@@ -171,7 +172,13 @@ public class ValleyBikeSimView {
 			break;
 		case "fileName":
 			System.out.println("Please enter the name of the data file, including the .csv extension. The file must be stored in the data-files folder:");
-			break;		
+			break;	
+		case "newBikeId":
+			System.out.println("Please enter the new 3-digit bike ID. It must not coincide with another bike ID number in the system:");
+			break;	
+		case "bikeIdInStorage":
+			System.out.println("Please enter the new 3-digit bike ID. The bike must be in storage in order to be added to a station:");
+			break;	
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -216,10 +223,10 @@ public class ValleyBikeSimView {
 	 */
 	public void displayAdminMainMenu() {
 		System.out.println("Please enter a number corresponding to one of the actions below:\n"
-				+ "1) Add station\n"
-				+ "2) Remove station\n"
-				+ "3) Add bikes\n"
-				+ "4) Remove bikes\n"
+				+ "1) Add a station\n"
+				+ "2) Remove a station\n"
+				+ "3) Add a bike\n"
+				+ "4) Remove a bike\n"
 				+ "5) Redistribute bikes\n"
 				+ "6) View station list\n"
 				+ "7) Resolve ride\n"
@@ -233,8 +240,8 @@ public class ValleyBikeSimView {
 	public void displayRiderMainMenu() {
 		System.out.println("Please enter a number corresponding to one of the actions below:\n"
 				+ "1) View station list\n"
-				+ "2) Start ride\n"
-				+ "3) End ride\n"
+				+ "2) Start a ride\n"
+				+ "3) End a ride\n"
 				+ "4) Edit profile\n"
 				+ "5) Edit payment method\n"
 				+ "6) Edit membership\n"
@@ -381,6 +388,54 @@ public class ValleyBikeSimView {
 			System.out.println(rideInfo);
 		}
 		System.out.println("\nThank you for using ValleyBike!\n");
+	}
+
+	/*
+	 * Ask the user whether they would like to add a bike from storage to a station
+	 */
+	public void displayAddBikeToStationOrNot() {
+		System.out.println("Would you like to add the bike to a station, or leave it in storage?\n"
+				+ "1) Add bike to station\n"
+				+ "2) Leave bike in storage");
+	}
+
+	/**
+	 * Confirm successful addition of a new bike to storage.
+	 * @param string
+	 */
+	public void addNewBikeToStorageSuccess(String bikeId) {
+		System.out.println("You have successfully added a new bike with ID " + bikeId + " into the system.\n"
+				+ "The bike is currently in storage.");
+		
+	}
+
+	/**
+	 * Confirm successful addition of a  bike from storage to a station.
+	 * @param bikeId		The bike's ID number
+	 * @param stationId		The station's ID number
+	 */
+	public void displayAddBikeFromStorageToStationSuccess(int bikeId, int stationId) {
+		System.out.println("You have successfully added bike " + Integer.toString(bikeId) + " to station " + Integer.toString(stationId) + ".");
+	}
+
+	/**
+	 * Notify the user that the station they chose is at capacity
+	 * @param stationId		The station's ID
+	 */
+	public void displayStationAtCapacity(int stationId) {
+		System.out.println("Station " + Integer.toString(stationId) + " is currently at capacity.\n"
+				+ "Please select a different station");
+		
+	}
+
+	public void displayBikeNotBelongToStation(int stationId, int bikeId, HashSet<Integer> bikeIdList) {
+		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + "\n"
+				+ "You may want to select a bike ID from the list of bike IDs currently at this station below:");
+		for (Integer bId : bikeIdList) {
+			System.out.print(bId);
+			System.out.print(',');
+		}
+		
 	}
 	
 }

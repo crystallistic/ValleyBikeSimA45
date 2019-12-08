@@ -27,7 +27,7 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress","newBikeId"};
+		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress","newBikeId","bikeIdInStorage"};
 		// Set demonstration using HashSet Constructor
 		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
@@ -122,7 +122,13 @@ public class ValleyBikeSimController {
 	 * system.
 	 */
 	public void login() {
-		model.checkStolenBikes();
+		
+		// check entire system to see if there are any stolen bikes, and charge users $2000.00
+		// isOverdue = true is currently logged in user has stolen a bike, else false
+		boolean isOverdue = model.checkStolenBikes();
+		if (isOverdue) {
+			view.bikeStolen(); // notify user of overdue charge
+		}
 		view.displayLoginScreen();
 		String username = getUserInput("username");
 
@@ -136,25 +142,15 @@ public class ValleyBikeSimController {
 
 		// if active user is a rider
 		if (!userIsAdmin) {
-			boolean rideIsInProgress = model.isRideInProgress(); // check if user has a ride in progress
+			// check if user has a ride in progress < 24hrs in duration
+			boolean rideIsInProgress = model.isRideInProgress(); 
 
-			// if the rider has a ride in progress
 			if (rideIsInProgress) {
 				view.remindEndRide(); // display message reminding user to end ride
-				boolean isOverdue = model.bikeIsOverdue(); // check whether bike is overdue
-
-				// if bike is overdue
-				if (isOverdue) {
-					BigDecimal amountCharged = model.chargeOverdue(); // charge user $2000 overdue bike
-					view.notifyOverdue(); // notify user of overdue charge
-				}
 			}
 		}
 
 		view.displayLoginSuccess();
-		if (model.activeUserStolenBike()) {
-			view.bikeStolen();
-		}
 		mainMenu(userIsAdmin); // show admin menu if user is admin, else show rider menu
 
 	}
@@ -439,13 +435,19 @@ public class ValleyBikeSimController {
 				}
 				else {
 					
-					// Assumption: The user will correctly enter the bike ID of a bike at this station
-					// TODO: catch errors if non-numeric input
 					int bikeId = Integer.parseInt(getUserInput("bikeId"));
 					int stationId = Integer.parseInt(getUserInput("stationId"));
 					
-					// TODO for A5: check if bike is at this station
-					model.startRide(bikeId, stationId); // Passes this info to startRide in Model
+					// check if bike is at this station, prompt user until input is valid
+					boolean stationHasBike = model.stationHasBike(stationId, bikeId);
+					while (!stationHasBike) {
+						view.displayBikeNotBelongToStation(stationId, bikeId, model.getBikeListFromStation(stationId));
+						bikeId = Integer.parseInt(getUserInput("bikeId"));
+						stationId = Integer.parseInt(getUserInput("stationId"));
+					}
+					
+					// Pass info to model to start ride and modify system data
+					model.startRide(bikeId, stationId); 
 					view.displayRideStart(); // print something like “Enjoy your ride!”
 				}
 			} catch (NumberFormatException e) {
@@ -490,7 +492,10 @@ public class ValleyBikeSimController {
 	public void addStation() {
 		//Ask the user for station id, name, capacity, # of pedelecs, kiosk?, address (a lot of calls to the view, then verification with calls to the model for each piece of information)
 		
+		// get new station ID (model will cross-check with database to make sure the station ID is unique)
 		int stationId = Integer.parseInt(getUserInput("newStationId"));
+		
+		// get new station name (model will cross-check with database to make sure the station name is unique)
 		String stationName = getUserInput("newStationName");
 		String address = getUserInput("newStationAddress");
 		int capacity = Integer.parseInt(getUserInput("capacity"));
@@ -498,10 +503,10 @@ public class ValleyBikeSimController {
 		
 		Station station = model.addStation(stationId,stationName,address,capacity,hasKiosk);
 		
-		view.displayStationAdded(station.toString());
+		view.displayStationAdded(model.formatStationToString(stationId));
 	
 	}
-
+		
 	/**
 	 * Remove a station from the system.
 	 */
@@ -512,7 +517,7 @@ public class ValleyBikeSimController {
 			return;
 		}
 		
-		// TODO: fix getUserInput to only take in numeric input, but still return a string
+		// get station ID from user
 		int stationId = Integer.parseInt(getUserInput("stationId"));
 		
 		// remove station from database and move all bikes at this station to storage.
@@ -534,16 +539,42 @@ public class ValleyBikeSimController {
 		view.displayAddNewOrExistingBike();
 		String optionSelected = getUserInput("option2");
 		
+		int bikeId = 0;
 		// if user wants to add a new bike
 		if (optionSelected.equals("1")) {
-			String newBikeId = getUserInput("newBikeId");
-			
+			bikeId = Integer.parseInt(getUserInput("newBikeId"));
+			model.addNewBikeToStorage(bikeId);
+			view.addNewBikeToStorageSuccess(Integer.toString(bikeId));
 		}
 		
-		// if user just wants to add a bike to storage
-		// add bike to storage
-			
+		// if user wants to add an existing bike
+		if (optionSelected.equals("2")) {
+			// get bike ID from user
+			bikeId = Integer.parseInt(getUserInput("bikeIdInStorage"));
+		}
 		
+		// ask user whether they want to add the bike to a station 
+		view.displayAddBikeToStationOrNot();
+		optionSelected = getUserInput("option2");
+		// user wants to add bike to station
+		if (optionSelected.equals("1")) {
+			// get station ID
+			int stationId = Integer.parseInt(getUserInput("stationId"));
+			
+			// while the specified station is at capacity, prompt user for valid station ID
+			boolean atCapacity = model.isStationAtCapacity(stationId);
+			while (atCapacity) {
+				view.displayStationAtCapacity(stationId);
+				stationId = Integer.parseInt(getUserInput("stationId"));
+				atCapacity = model.isStationAtCapacity(stationId);
+			}
+			
+			// add the bike from storage to the specified station
+			model.addBikeFromStorageToStation(bikeId,stationId);
+			
+			// display confirmation 
+			view.displayAddBikeFromStorageToStationSuccess(bikeId,stationId);
+		}		
 	}
 	
 	/**
