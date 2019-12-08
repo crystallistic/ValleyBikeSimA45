@@ -389,7 +389,17 @@ public class ValleyBikeSimView {
 		for (String rideInfo: formattedRideList) {
 			System.out.println(rideInfo);
 		}
-		System.out.println("\nThank you for using ValleyBike!\n");
+	}
+	
+	/**
+	 * Display the formatted transaction list
+	 * @param formattedTransactionList
+	 */
+	public void displayTransactionList(ArrayList<String> formattedTransactionList) {
+		for (String transactionInfo : formattedTransactionList) {
+			System.out.println(transactionInfo);
+		}
+		
 	}
 
 	/*

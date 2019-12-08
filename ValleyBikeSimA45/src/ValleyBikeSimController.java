@@ -290,8 +290,7 @@ public class ValleyBikeSimController {
 				displayRideHistory();
 				break;
 			case "8":// 8) View transaction history
-				//displayTransactionHistory();
-				System.out.println("Feature not yet available, check back soon!");
+				displayTransactionHistory();
 				break;
 			case "9":// 9) Report issue
 				//reportIssue();
@@ -305,6 +304,17 @@ public class ValleyBikeSimController {
 			}
 		}
 		mainMenu(userIsAdmin);
+	}
+
+	/**
+	 * displays the transaction history of the active user
+	 */
+	private void displayTransactionHistory() {
+		//get formatted transaction list from model
+		ArrayList<String> formattedTransactionList = model.getTransactionList();
+		//display in view
+		view.displayTransactionList(formattedTransactionList);
+		
 	}
 
 	/**
