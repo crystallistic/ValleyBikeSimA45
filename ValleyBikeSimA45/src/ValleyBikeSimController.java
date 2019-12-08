@@ -295,8 +295,7 @@ public class ValleyBikeSimController {
 				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case "7":// 7) View ride history
-				//displayRideHistory();
-				System.out.println("Feature not yet available, check back soon!");
+				displayRideHistory();
 				break;
 			case "8":// 8) View transaction history
 				//displayTransactionHistory();
@@ -314,6 +313,17 @@ public class ValleyBikeSimController {
 			}
 		}
 		mainMenu(userIsAdmin);
+	}
+
+	/**
+	 * displays the ride history of the active user
+	 */
+	private void displayRideHistory() {
+		// get formatted station list from model
+		ArrayList<String> formattedRideList = model.getRideList();
+				
+		// display in view
+		view.displayRideList(formattedRideList);
 	}
 
 	/**
@@ -590,16 +600,4 @@ public class ValleyBikeSimController {
 		
 	}
 			
-	/**
-	 * Save all data in the system into .csv files.
-	 */
-	public void saveData() {
-		
-		// model saves data in files
-		model.saveData();
-		
-		// display confirmation
-		view.displaySaveData();
-	}
-
 }

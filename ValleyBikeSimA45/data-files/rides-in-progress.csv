@@ -1,8 +1,1 @@
-username,bikeId,From,Start
-username1,501,20,08/20/19 10:18
-username2,186,32,12/05/19 10:15
-username3,833,30,12/05/19 07:10
-username4,911,33,12/05/19 11:40
-username5,164,26,12/05/19 11:45
-username6,340,31,12/05/19 06:30
-username7,628,28,12/05/19 11:02
+"username","bikeId","From","Start"

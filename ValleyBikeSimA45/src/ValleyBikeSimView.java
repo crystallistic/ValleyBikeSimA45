@@ -370,5 +370,17 @@ public class ValleyBikeSimView {
 				+ "1) Add a bike to a station\n"
 				+ "2) Add a bike to storage");
 	}
+		
+	/**
+	 * Display the formatted ride list
+	 * @param formattedRideList
+	 */
+	public void displayRideList(ArrayList<String> formattedRideList) {
+		System.out.println("You have completed "+(formattedRideList.size()-1)+" rides since joing ValleyBike:\n");
+		for (String rideInfo: formattedRideList) {
+			System.out.println(rideInfo);
+		}
+		System.out.println("\nThank you for using ValleyBike!\n");
+	}
 	
 }

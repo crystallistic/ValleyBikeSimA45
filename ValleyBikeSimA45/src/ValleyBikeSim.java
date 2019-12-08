@@ -14,7 +14,6 @@ public class ValleyBikeSim {
 		ValleyBikeSimView view = new ValleyBikeSimView();
 		ValleyBikeSimModel model = new ValleyBikeSimModel();
 		ValleyBikeSimController controller = new ValleyBikeSimController(view, model);
-		model.readData();
 		
 		controller.start(); // display welcome menu
 	}
