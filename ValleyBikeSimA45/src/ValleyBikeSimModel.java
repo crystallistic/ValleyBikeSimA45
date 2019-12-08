@@ -460,7 +460,7 @@ public class ValleyBikeSimModel {
 					
 					// create new transaction object
 					String username = array[0];
-					BigDecimal amount = new BigDecimal(Integer.parseInt(array[1]));
+					BigDecimal amount = new BigDecimal(array[1]);
 					Date time = toDate(array[2]);
 					String description = array[3];
 					

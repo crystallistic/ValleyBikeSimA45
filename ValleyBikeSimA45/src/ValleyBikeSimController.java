@@ -86,7 +86,7 @@ public class ValleyBikeSimController {
 															// https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
 		regex.put("fullName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // first and last name separated by space.
 		regex.put("billingName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // billingName, first name and last name separated by space
-		regex.put("capacity",Pattern.compile("^([1-9]|1[0-9]|2[0-7])$")); // max station has a capacity of 27 bikes
+		regex.put("capacity",Pattern.compile("^(0*[5-9]|1[0-9]|2[0-7])$")); // capacity is within the range [5-27]
 		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
 		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$")); 
 	}
@@ -234,80 +234,79 @@ public class ValleyBikeSimController {
 
 		view.displayMainMenu(userIsAdmin);
 
-		int optionSelected;
+		String optionSelected;
 		if (model.activeUserIsAdmin()) { // Deal with the Admin menu options
-			optionSelected = Integer.parseInt(getUserInput("option9"));
+			optionSelected = getUserInput("option9");
 			switch (optionSelected) {
-			case 1: // 1) Add station
+			case "1": // 1) Add station
 				addStation(); 
 				break;
-			case 2: // 2) Remove station
+			case "2": // 2) Remove station
 				removeStation();
 				break;
-			case 3:// 3) Add bike
-				//addBike();
-				System.out.println("Feature not yet available, check back soon!");
+			case "3":// 3) Add bike
+				addBike();
 				break;
-			case 4:// 4) Remove bike
+			case "4":// 4) Remove bike
 				//removeBike(); //
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 5:// 5) Redistribute bikes
+			case "5":// 5) Redistribute bikes
 				equalizeStations();
 				break;
-			case 6:// 6) View station list
+			case "6":// 6) View station list
 				displayStationList();
 				break;
-			case 7:// 7) Resolve ride
+			case "7":// 7) Resolve ride
 				resolveRide();
 				break;
-			case 8:// 8) Create support ticket
+			case "8":// 8) Create support ticket
 				//createSupportTicket();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 9:// 9) Log out
+			case "9":// 9) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
 				break;
 			}
 		} else { // Deal with the Rider menu options
-			optionSelected = Integer.parseInt(getUserInput("option10"));
+			optionSelected = getUserInput("option10");
 			switch (optionSelected) {
-			case 1:// 1) View station list
+			case "1":// 1) View station list
 				displayStationList();
 				break;
-			case 2:// 2) Start ride
+			case "2":// 2) Start ride
 				startRide();
 				break;
-			case 3:// 3) End ride
+			case "3":// 3) End ride
 				endRide();
 				break;
-			case 4:// 4) Edit profile
+			case "4":// 4) Edit profile
 				//editProfile();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 5:// 5) Edit payment method
+			case "5":// 5) Edit payment method
 				//editPaymentMethod();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 6:// 6) Edit membership
+			case "6":// 6) Edit membership
 				//editMembership();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 7:// 7) View ride history
+			case "7":// 7) View ride history
 				//displayRideHistory();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 8:// 8) View transaction history
+			case "8":// 8) View transaction history
 				//displayTransactionHistory();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 9:// 9) Report issue
+			case "9":// 9) Report issue
 				//reportIssue();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case 10:// 10) Log out
+			case "10":// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
@@ -398,7 +397,7 @@ public class ValleyBikeSimController {
 
 			inputIsValid = m.find();
 			while (!inputIsValid) {
-				System.out.println("Invalid input, please try again.");
+				System.out.println("Invalid input, please follow the provided instructions and try again.");
 				userInput = view.prompt(userInputName);
 				m = r.matcher(userInput);
 				inputIsValid = m.find();
@@ -494,6 +493,54 @@ public class ValleyBikeSimController {
 	}
 
 	/**
+	 * Remove a station from the system.
+	 */
+	public void removeStation() {
+		
+		if (model.noStationInSys()) {
+			view.displayNoStationExistsError();
+			return;
+		}
+		
+		// TODO: fix getUserInput to only take in numeric input, but still return a string
+		int stationId = Integer.parseInt(getUserInput("stationId"));
+		
+		// remove station from database and move all bikes at this station to storage.
+		model.removeStation(stationId);
+		
+		// notify user of successful removal of station
+		view.removeStationSuccess(stationId);
+	}
+	
+	/**
+	 * Add a bike. The user could do the following:
+	 * - Add new bike to storage
+	 * - Add new bike to station
+	 * - Add bike from storage to station
+	 */
+	public void addBike() {
+		
+		// prompt the user to choose between adding a bike to a station, or to storage.
+		view.displayAddBikeToStationOrStorage();
+		String optionSelected = getUserInput("option2");
+		
+		// if user wants to add a bike to a station
+		if (optionSelected.equals("1")) {
+			// check whether bike exists in system
+			// if bike exists in system
+				// add to station
+			// else
+				// add new bike to system
+			
+		}
+		
+		// if user just wants to add a bike to storage
+		// add bike to storage
+			
+		
+	}
+	
+	/**
 	 * Displays the full list of stations within the Valley Bike system.
 	 */
 	public void displayStationList() {
@@ -542,28 +589,7 @@ public class ValleyBikeSimController {
 		view.displayResolveRide(resolveRideResult);
 		
 	}
-
-	/**
-	 * Remove a station from the system.
-	 */
-	public void removeStation() {
-		
-		if (model.noStationInSys()) {
-			view.displayNoStationExistsError();
-			return;
-		}
-		
-		// TODO: fix getUserInput to only take in numeric input, but still return a string
-		int stationId = Integer.parseInt(getUserInput("stationId"));
-		
-		// remove station from database and move all bikes at this station to storage.
-		model.removeStation(stationId);
-		
-		// notify user of successful removal of station
-		view.removeStationSuccess(stationId);
-	}
 			
-	
 	/**
 	 * Save all data in the system into .csv files.
 	 */

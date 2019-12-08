@@ -22,10 +22,10 @@ public class ValleyBikeSimView {
 	public void displayWelcomeScreen() {
 		
 		// show welcome message and options for sign up, login, and exit program
-		System.out.println("Welcome to Valley Bike! Please enter a number corresponding to one of the options below:\n"
+		System.out.println("Welcome to Valley Bike!\n"
 				+ "1) Sign up\n"
 				+ "2) Login\n"
-				+ "3) Exit\n");
+				+ "3) Exit");
 	}
 	
 	/**
@@ -164,7 +164,7 @@ public class ValleyBikeSimView {
 					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
 			break;
 		case "capacity":
-			System.out.println("Please enter the station's capacity (within the range of 01-27):");
+			System.out.println("Please enter the station's capacity (within the range of 05-27):");
 			break;
 		case "hasKiosk":
 			System.out.println("Please enter 1 if the station has a kiosk, otherwise enter 0:");
@@ -360,6 +360,15 @@ public class ValleyBikeSimView {
 		System.out.println("Invalid input - wrong input format, or there has been some conflict with existing data in the system.\n"
 				+ "Please follow the instructions and try again.");
 		
+	}
+
+	/**
+	 * Instruct the user to choose between adding a bike to a station or storage
+	 */
+	public void displayAddBikeToStationOrStorage() {
+		System.out.println("Would you like to add a bike to a station, or to storage?\n"
+				+ "1) Add a bike to a station\n"
+				+ "2) Add a bike to storage");
 	}
 	
 }

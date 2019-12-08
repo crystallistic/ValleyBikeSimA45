@@ -14,7 +14,7 @@ public class Admin extends User {
 	
 	@Override
 	public String toString() {
-		return "Admin [userName=" + super.getUserName() + ", password=" + super.getPassword() + "]";
+		return "Admin [userName=" + super.getUsername() + ", password=" + super.getPassword() + "]";
 	}
 
 }
