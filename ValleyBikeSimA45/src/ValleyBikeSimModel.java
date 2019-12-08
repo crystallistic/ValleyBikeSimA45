@@ -12,7 +12,6 @@ import java.util.*;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -1129,7 +1128,7 @@ public class ValleyBikeSimModel {
 		String month = now.toString().substring(4,7);
 		String day = now.toString().substring(8,10);
 		String year = now.toString().substring(24,28);
-		String filename = "rides-"+month+"-"+day+"-"+year+".csv";
+		String filename = "data-files/rides-"+month+"-"+day+"-"+year+".csv";
 		File ridesToday = new File(filename);
 
 		//either adds the ride to the appropriate file or creates the file
@@ -1679,10 +1678,10 @@ public class ValleyBikeSimModel {
 				
 				//charge user for stolen bike
 				PaymentMethod paymentMethod = paymentMethods.get(username);
-				paymentMethod.chargeCard(new BigDecimal(2000.00));
+				paymentMethod.chargeCard(new BigDecimal("2000.00"));
 				
 				//create new Transaction
-				Transaction transaction = new Transaction(username,new BigDecimal(2000.00),new Date(),"ValleyBike Stolen Bike Fee");
+				Transaction transaction = new Transaction(username,new BigDecimal("2000.00"),new Date(),"ValleyBike Stolen Bike Fee");
 			
 				//add new transaction to data structure
 				transactionsByUser.putIfAbsent(username, new ArrayList<Transaction>());
@@ -1704,7 +1703,7 @@ public class ValleyBikeSimModel {
 		saveRidesInProgressList();
 		//update bike file
 		saveBikeList();
-		return (overdueUsernames.contains(activeUser.getUsername()));
+		return (ridesOverdue.containsKey(activeUser.getUsername()));
 	}
 
 	/**
@@ -1780,6 +1779,23 @@ public class ValleyBikeSimModel {
 		}
 		
 		return formattedRideList;
+	}
+	
+	/**
+	 * Returns a formatted list of the user's transaction history
+	 * @return formatted list of transactions
+	 */
+	public ArrayList<String> getTransactionList() {
+		ArrayList<String> formattedTransactionList = new ArrayList<>();
+		formattedTransactionList.add("Date\t\tAmount\t\tDescription\n");
+		DateFormat df = new SimpleDateFormat("MM/dd/yy");
+		for (Transaction transaction : transactionsByUser.get(activeUser.getUsername())) {
+			String date = df.format(transaction.getTime());
+			String amount = transaction.getAmount().toString();
+			String description = transaction.getDescription();
+			formattedTransactionList.add(date+"\t"+amount+"\t\t"+description+"\n");
+		}
+		return formattedTransactionList;
 	}
 
 	/**
