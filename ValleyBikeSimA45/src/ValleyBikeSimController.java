@@ -97,9 +97,6 @@ public class ValleyBikeSimController {
 	 */
 	public void start() {
 
-		// load data in model
-		model.readData();
-
 		// show welcome screen with options to login, signup, or exit program
 		view.displayWelcomeScreen();
 		String optionSelected = getUserInput("option3");
@@ -125,10 +122,6 @@ public class ValleyBikeSimController {
 		
 		// check entire system to see if there are any stolen bikes, and charge users $2000.00
 		// isOverdue = true is currently logged in user has stolen a bike, else false
-		boolean isOverdue = model.checkStolenBikes();
-		if (isOverdue) {
-			view.bikeStolen(); // notify user of overdue charge
-		}
 		view.displayLoginScreen();
 		String username = getUserInput("username");
 
@@ -139,7 +132,8 @@ public class ValleyBikeSimController {
 
 		model.setActiveUser(username);
 		boolean userIsAdmin = model.activeUserIsAdmin();
-
+		
+		boolean isOverdue = model.checkStolenBikes();
 		// if active user is a rider
 		if (!userIsAdmin) {
 			// check if user has a ride in progress < 24hrs in duration
@@ -147,6 +141,9 @@ public class ValleyBikeSimController {
 
 			if (rideIsInProgress) {
 				view.remindEndRide(); // display message reminding user to end ride
+			}
+			if (isOverdue) {
+				view.bikeStolen(); // notify user of overdue charge
 			}
 		}
 

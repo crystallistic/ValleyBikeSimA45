@@ -300,7 +300,7 @@ public class ValleyBikeSimView {
 	 * @param stationInfo	Information of the newly added station.
 	 */
 	public void displayStationAdded(String stationInfo) {
-		System.out.println("You have successfully added a new station with the following information: \n ID\tBikes\tAvDocs\tMainReq\tCap\tKiosk\tName - Address\n" + stationInfo);
+		System.out.println("You have successfully added a new station with the following information: \nID\tBikes\tAvDocs\tMainReq\tCap\tKiosk\tName - Address\n" + stationInfo);
 		
 	}
 

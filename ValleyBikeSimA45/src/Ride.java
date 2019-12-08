@@ -7,11 +7,13 @@ import java.util.Date;
  */
 public class Ride {
 
-	int bikeId;
-	Station startStation;
-	Station endStation;
-	Date startTime;
-	Date endTime;
+	private int bikeId;
+	private int startStationId;
+	private String startStationName;
+	private int endStationId;
+	private String endStationName;
+	private Date startTime;
+	private Date endTime;
 	
 	/**
 	 * Constructor for a Ride object, given the ride ID and bike ID, 
@@ -22,12 +24,12 @@ public class Ride {
 	 * @param startStation
 	 * @param startTime
 	 */
-	public Ride(int bikeId, Station startStation, Date startTime) {
+	public Ride(int bikeId, int startStationId, String startStationName, Date startTime) {
 
 		this.bikeId = bikeId;
-		this.startStation = startStation;
+		this.startStationId = startStationId;
+		this.startStationName = startStationName;
 		this.startTime = startTime;
-		this.endStation = null;
 		this.endTime = null;
 	}
 
@@ -46,31 +48,31 @@ public class Ride {
 	}
 
 	/**
-	 * @return the startStation
+	 * @return the start station ID
 	 */
-	public Station getStartStation() {
-		return startStation;
+	public int getStartStationId() {
+		return startStationId;
 	}
 
 	/**
-	 * @param startStation the startStation to set
+	 * @param startStationId the start station ID to set
 	 */
-	public void setStartStation(Station startStation) {
-		this.startStation = startStation;
+	public void setStartStationId(int startStationId) {
+		this.startStationId = startStationId;
 	}
 
 	/**
-	 * @return the endStation
+	 * @return the endStation ID
 	 */
-	public Station getEndStation() {
-		return endStation;
+	public int getEndStationId() {
+		return endStationId;
 	}
 
 	/**
-	 * @param endStation the endStation to set
+	 * @param endStation the endStation ID to set
 	 */
-	public void setEndStation(Station endStation) {
-		this.endStation = endStation;
+	public void setEndStationId(int endStationId) {
+		this.endStationId = endStationId;
 	}
 
 	/**
@@ -111,9 +113,37 @@ public class Ride {
 		return 0;
 	}
 
+	/**
+	 * @return the startStationName
+	 */
+	public String getStartStationName() {
+		return startStationName;
+	}
+
+	/**
+	 * @param startStationName the startStationName to set
+	 */
+	public void setStartStationName(String startStationName) {
+		this.startStationName = startStationName;
+	}
+
+	/**
+	 * @return the endStationName
+	 */
+	public String getEndStationName() {
+		return endStationName;
+	}
+
+	/**
+	 * @param endStationName the endStationName to set
+	 */
+	public void setEndStationName(String endStationName) {
+		this.endStationName = endStationName;
+	}
+	
 	@Override
 	public String toString() {
-		return "Ride [bikeId=" + bikeId + ", startStation=" + startStation + ", endStation=" + endStation
+		return "Ride [bikeId=" + bikeId + ", startStation=" + Integer.toString(startStationId) + ", endStation=" + Integer.toString(endStationId)
 				+ ", startTime=" + startTime + ", endTime=" + endTime + "]";
 	}
 }

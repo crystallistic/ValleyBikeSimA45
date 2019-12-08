@@ -19,10 +19,6 @@ import java.util.regex.Pattern;
  * @author maingo
  *
  */
-/**
- * @author maingo
- *
- */
 public class ValleyBikeSimModel {
 	
 	/** map all stations to their station ID */
@@ -95,25 +91,25 @@ public class ValleyBikeSimModel {
 	 * Read in all the data files and store them in appropriate data structures.
 	 */
 	public void readData() {
-		//System.out.println("readStationData");
+		System.out.println("readStationData");
 		readStationData();
-		//System.out.println("readBikeData");
+		System.out.println("readBikeData");
 		readBikeData();
-		//System.out.println("readAdminData");
+		System.out.println("readAdminData");
 		readAdminData();
-		//System.out.println("readRiderData");
+		System.out.println("readRiderData");
 		readRiderData();
-		//System.out.println("readTicketData");
+		System.out.println("readTicketData");
 		readTicketData();
-		//System.out.println("readRidesCompletedData");
+		System.out.println("readRidesCompletedData");
 		readRidesCompletedData();
-		//System.out.println("readRideInProgressData");
+		System.out.println("readRideInProgressData");
 		readRidesInProgressData();
-		//System.out.println("readRidesOverdueData");
+		System.out.println("readRidesOverdueData");
 		readRidesOverdueData();
-		//System.out.println("readPaymentMethodData");
+		System.out.println("readPaymentMethodData");
 		readPaymentMethodData();
-		//System.out.println("readTransactionData");
+		System.out.println("readTransactionData");
 		readTransactionData();
 	}
 	
@@ -147,6 +143,7 @@ public class ValleyBikeSimModel {
 
 					// map station to its ID number
 					stations.put(Integer.parseInt(array[0]), station); 
+					stationsBikes.put(Integer.parseInt(array[0]), new HashSet<Integer>());
 				}
 				counter++;	
 			}
@@ -189,7 +186,6 @@ public class ValleyBikeSimModel {
 					// add bike IDs to the set of bike IDs at corresponding stations 
 					// if they are not in storage / OOO / out on a ride
 					if (stationId > 0) {
-						stationsBikes.putIfAbsent(stationId, new HashSet<Integer>());
 						stationsBikes.get(stationId).add(bikeId);	
 					}	
 					
@@ -330,10 +326,11 @@ public class ValleyBikeSimModel {
 					
 				} else {
 					// create new Ride object
-					Date startTime = toDate(array[4]);
-					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
-					ride.setEndStation(this.stations.get(Integer.parseInt(array[3])));
-					ride.setEndTime(toDate(array[5]));
+					Date startTime = toDate(array[6]);
+					Ride ride = new Ride(Integer.parseInt(array[1]), Integer.parseInt(array[2]), array[3], startTime);
+					ride.setEndStationId(Integer.parseInt(array[4]));
+					ride.setEndStationName(array[5]);
+					ride.setEndTime(toDate(array[7]));
 					
 					// add ride to user's list of completed rides
 					String username = array[0];
@@ -368,10 +365,10 @@ public class ValleyBikeSimModel {
 					
 				} else {
 					// create new Ride object with endTime and endStation set to null
-					Date startTime = toDate(array[3]);
+					Date startTime = toDate(array[4]);
 					
 					// create Ride object
-					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
+					Ride ride = new Ride(Integer.parseInt(array[1]), Integer.parseInt(array[2]), array[3], startTime);
 					
 					// add ride to database of rides currently in progress
 					ridesInProgress.put(array[0], ride);
@@ -400,19 +397,23 @@ public class ValleyBikeSimModel {
 			
 			List<String[]> allRidesOverdueEntries = ridesOverdueDataReader.readAll();
 			
-			
 			int counter = 0;
 			for(String[] array : allRidesOverdueEntries) {
 				if(counter == 0) {
 					
 				} else {
-					// create new Ride object
-					Date startTime = toDate(array[3]);
-					Ride ride = new Ride(Integer.parseInt(array[1]), this.stations.get(Integer.parseInt(array[2])), startTime);
 					
-					// add ride to user's list of completed rides
-					String username = array[0];
-					ridesOverdue.put(username, ride);	
+					// if line is not empty, read line
+					if (array.length > 0) {
+						// create new Ride object
+						Date startTime = toDate(array[4]);
+						Ride ride = new Ride(Integer.parseInt(array[1]), Integer.parseInt(array[2]), array[3], startTime);
+						
+						// add ride to user's list of completed rides
+						String username = array[0];
+						ridesOverdue.put(username, ride);
+					}
+						
 				}
 				counter++;
 			} 
@@ -420,7 +421,7 @@ public class ValleyBikeSimModel {
 		} 
 		
 		catch (Exception e) {
-			System.out.println("\n" + e.getMessage());
+			System.out.println(e.getMessage() + " error in readRidesOverdueData()");
 		}
 	}
 	
@@ -807,8 +808,7 @@ public class ValleyBikeSimModel {
 		stationsBikes.get(stationId).remove(bikeId);
 		
 		//Creates new Ride object with bikeId and start time --> get current time 
-		Station startStation = stations.get(stationId);
-		Ride ride = new Ride(bikeId, startStation, new Date() );
+		Ride ride = new Ride(bikeId, stationId, stations.get(stationId).getStationName(), new Date() );
 		
 		//Add ride and activeUser to ridesInProgress
 		ridesInProgress.put(activeUser.getUsername(), ride);
@@ -834,7 +834,6 @@ public class ValleyBikeSimModel {
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
 		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
-		Station endStation = stations.get(stationId); //station where the bike is being returned
 		
 		//Charge user for the completed ride
 		int rideDuration = (int)(now.getTime() - ride.getStartTime().getTime()) / 60000;
@@ -850,7 +849,8 @@ public class ValleyBikeSimModel {
 		
 		//Add end time and end station to Ride associated to User
 		ride.setEndTime(now);
-		ride.setEndStation(endStation);
+		ride.setEndStationId(stationId);
+		ride.setEndStationName(stations.get(stationId).getStationName());
 		
 		//Move the ride from ridesInProgress to ridesCompleted
 		ridesCompleted.putIfAbsent(activeUsername, new HashSet<Ride>());
@@ -1011,7 +1011,7 @@ public class ValleyBikeSimModel {
 		Arrays.sort(stationIds);
 		
 		for (Object stationId : stationIds) {	
-			formattedStationList.add(stations.get((Integer)stationId).toString());
+			formattedStationList.add(formatStationToString((Integer)stationId));
 		}
 		
 		return formattedStationList;
@@ -1072,7 +1072,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/rides-in-progress.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "username,bikeId,From,Start".split(",");
+		      String [] record = "username,bikeId,From,FromName,Start".split(",");
 		      writer.writeNext(record,false);
 
 		      writer.close();
@@ -1105,7 +1105,9 @@ public class ValleyBikeSimModel {
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
-			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(Integer.toString(ride.getStartStationId()));
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartStationName());
 			csvWriter.append(",");
 			csvWriter.append(df.format(ride.getStartTime()));
 			csvWriter.append("\n");
@@ -1136,7 +1138,7 @@ public class ValleyBikeSimModel {
 				//overwrites existing file with new data
 				csvWriter = new FileWriter(filename);
 				writer = new CSVWriter(csvWriter);
-				String [] record = "username,bikeId,From,To,Start,End".split(",");
+				String [] record = "username,bikeId,From,FromName,To,ToName,Start,End".split(",");
 				writer.writeNext(record,false);
 
 				writer.close();
@@ -1165,9 +1167,13 @@ public class ValleyBikeSimModel {
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
-			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(""+ride.getStartStationId());
 			csvWriter.append(",");
-			csvWriter.append(ride.getEndStation().getStationName());
+			csvWriter.append(ride.getStartStationName());
+			csvWriter.append(",");
+			csvWriter.append(""+ride.getEndStationId());
+			csvWriter.append(",");
+			csvWriter.append(ride.getEndStationName());
 			csvWriter.append(",");
 			csvWriter.append(df.format(ride.getStartTime()));
 			csvWriter.append(",");
@@ -1189,7 +1195,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/rides-overdue.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "username,bikeId,From,Start".split(",");
+		      String [] record = "username,bikeId,From,FromName,Start".split(",");
 		      writer.writeNext(record,false);
 
 		      writer.close();
@@ -1222,7 +1228,9 @@ public class ValleyBikeSimModel {
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
-			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(Integer.toString(ride.getStartStationId()));
+			csvWriter.append(",");
+			csvWriter.append(ride.getStartStationName());
 			csvWriter.append(",");
 			csvWriter.append(df.format(ride.getStartTime()));
 			csvWriter.append("\n");
@@ -1250,9 +1258,13 @@ public class ValleyBikeSimModel {
 			csvWriter.append(",");
 			csvWriter.append(""+ride.getBikeId());
 			csvWriter.append(",");
-			csvWriter.append(ride.getStartStation().getStationName());
+			csvWriter.append(""+ride.getStartStationId());
 			csvWriter.append(",");
-			csvWriter.append(ride.getEndStation().getStationName());
+			csvWriter.append(ride.getStartStationName());
+			csvWriter.append(",");
+			csvWriter.append(""+ride.getEndStationId());
+			csvWriter.append(",");
+			csvWriter.append(ride.getEndStationName());
 			csvWriter.append(",");
 			csvWriter.append(df.format(ride.getStartTime()));
 			csvWriter.append(",");
@@ -1594,7 +1606,7 @@ public class ValleyBikeSimModel {
 	private void saveAllStation(Station station) {
 		try {
 			csvWriter = new FileWriter("data-files/station-data.csv",true);
-
+			
 			//adding all the station details into the csv
 			csvWriter.append(Integer.toString(station.getStationId()));
 		    csvWriter.append(',');
@@ -1603,9 +1615,13 @@ public class ValleyBikeSimModel {
 			csvWriter.append("0");
 			csvWriter.append(',');
 			
+			System.out.println(station.getStationId());
+			
+			
 			int numBikes = stationsBikes.get(station.getStationId()).size();
 			csvWriter.append(Integer.toString(numBikes));
 			csvWriter.append(',');
+			
 			
 			// append number of free docks
 			int numFreeDocks = station.getCapacity() - stationsBikes.get(station.getStationId()).size();
@@ -1658,7 +1674,7 @@ public class ValleyBikeSimModel {
 				//remove bike from the database
 				int bikeId = ride.getBikeId();
 				bikes.remove(bikeId);
-				
+
 				overdueUsernames.add(username);
 				
 				//charge user for stolen bike
@@ -1674,19 +1690,20 @@ public class ValleyBikeSimModel {
 				
 				//append transaction to data file
 				saveAllTransaction(transaction);
-				//update bike file
-				saveBikeList();
+				
 			}
 		}
-		for (int i=0; i<overdueUsernames.size(); i++) {
-			//move ride to ridesOverdue
-			String username = overdueUsernames.get(i);
+		for (String username : overdueUsernames) {
+			//move ride from ridesInProgress to ridesOverdue
 			ridesOverdue.put(username,ridesInProgress.remove(username));
 		}
+		
 		//update rides overdue file
 		saveRidesOverdueList();
 		//update rides in progress file
 		saveRidesInProgressList();
+		//update bike file
+		saveBikeList();
 		return (overdueUsernames.contains(activeUser.getUsername()));
 	}
 
@@ -1751,8 +1768,8 @@ public class ValleyBikeSimModel {
 		formattedRideList.add("Start Time\tEnd Time\tDuration\tStart Station-End Station\n");
 		DateFormat df = new SimpleDateFormat("MM/dd/yy HH:mm");
 		for (Ride ride : ridesCompleted.get(activeUser.getUsername())) {
-			String startStationName = ride.getStartStation().getStationName();
-			String endStationName = ride.getEndStation().getStationName();
+			String startStationName = ride.getStartStationName();
+			String endStationName = ride.getEndStationName();
 			String stations = startStationName+" - "+endStationName;
 			Date startTime = ride.getStartTime();
 			Date endTime = ride.getEndTime();

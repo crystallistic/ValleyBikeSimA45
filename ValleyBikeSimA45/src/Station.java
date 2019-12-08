@@ -18,8 +18,6 @@ public class Station {
 	 * Constructor for the Station object. Creates an empty station.
 	 * @param stationId
 	 * @param address
-	 * @param numBikes
-	 * @param numFreeDocks
 	 * @param capacity
 	 * @param maintenanceReqs
 	 * @param hasKiosk
