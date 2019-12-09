@@ -163,7 +163,7 @@ public class ValleyBikeSimController {
 		String password = getUserInput("newPassword");
 		String fullName = getUserInput("fullName");
 		String email = getUserInput("newEmail");
-		String address = getUserInput("riderAddress");
+		String address = getUserInput("riderAddress").replaceAll(",", "");	
 		String phoneNumber = getUserInput("phoneNumber");
 
 		view.displayMembershipOptions();
@@ -193,7 +193,7 @@ public class ValleyBikeSimController {
 		// get credit card information, add to user account
 		String billingName = getUserInput("billingName");
 		String creditCardNumber = getUserInput("creditCardNumber");
-		String billingAddress = getUserInput("billingAddress");
+		String billingAddress = getUserInput("billingAddress").replaceAll(",", "");
 		String creditCardDate = getUserInput("creditCardDate");
 		String cvv = getUserInput("CVV");
 
@@ -280,8 +280,7 @@ public class ValleyBikeSimController {
 				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case "5":// 5) Edit payment method
-				//editPaymentMethod();
-				System.out.println("Feature not yet available, check back soon!");
+				editPaymentMethod();
 				break;
 			case "6":// 6) Edit membership
 				editMembership();
@@ -304,6 +303,34 @@ public class ValleyBikeSimController {
 			}
 		}
 		mainMenu(userIsAdmin);
+	}
+
+	private void editPaymentMethod() {
+		//print out rider's current information, asks user what they want to edit
+		view.displayCurrentPaymentMethod(model.getPaymentMethodString());
+
+		String option = getUserInput("option4");	
+		switch(option) {
+		case "1": //change billing name
+			String billingName = getUserInput("billingName");
+			model.setBillingName(billingName);
+			editPaymentMethod();
+			break;
+		case "2": //change billing address
+			String billingAddress = getUserInput("billingAddress").replaceAll(",", "");
+			model.setBillingAddress(billingAddress);
+			editPaymentMethod();
+			break;
+		case "3": //add new card
+			String creditCardNumber = getUserInput("creditCardNumber");
+			String creditCardDate = getUserInput("creditCardDate");
+			String cvv = getUserInput("CVV");
+			model.addCard(creditCardNumber, creditCardDate, cvv);
+			editPaymentMethod();
+			break;
+		case "4": //return to main menu
+			break;
+		}
 	}
 
 	/**

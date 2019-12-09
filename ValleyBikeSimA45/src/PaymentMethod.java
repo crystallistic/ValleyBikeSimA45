@@ -1,4 +1,6 @@
 import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * @author maingo
@@ -99,8 +101,11 @@ public class PaymentMethod {
 
 	@Override
 	public String toString() {
-		return "PaymentMethod [billingName=" + billingName + ", cardNumber=" + cardNumber + ", billingAddress="
-				+ billingAddress + ", expiryDate=" + expiryDate + ", cvv=" + cvv + "]";
+		String s = "Card number\t\tExpiry Date\tBilling Name\t\tBilling Address\n";
+		s += "************"+cardNumber.substring(12,16)+"\t";
+		s += expiryDate+"\t\t";
+		s += billingName + "\t\t" + billingAddress + "\n";
+		return s;
 	}
 	
 	/**

@@ -830,7 +830,13 @@ public class ValleyBikeSimModel {
 	public void addPaymentMethod(String username, PaymentMethod paymentMethod) {
 
 		// associate payment method with user
-		this.paymentMethods.put(username,paymentMethod);
+		if (paymentMethods.containsKey(username)) {
+			paymentMethods.replace(username, paymentMethod);
+		} else {
+			paymentMethods.put(username,paymentMethod);
+		}
+		//update payment methods file
+		savePaymentMethodList();
 	}
 	
 	/**
@@ -1767,13 +1773,8 @@ public class ValleyBikeSimModel {
 	public void createNewRider(Rider rider, PaymentMethod paymentMethod, Membership membership) {
 		addUser(rider); // maps rider to username in system
 		addEmail(rider.getEmail(), rider); // map email address to rider in the system
-		addPaymentMethod(rider.getUsername(), paymentMethod); // add payment method to rider's account
-		setMembership(rider.getUsername(), membership); // set rider's membership
-		
-		//append rider to rider-file
-		//done in setMembership
-		//append paymentMethod 
-		saveAllPaymentMethod(rider.getUsername(),paymentMethod);
+		addPaymentMethod(rider.getUsername(), paymentMethod); // add payment method to rider's account, adds payment method to file
+		setMembership(rider.getUsername(), membership); // set rider's membership, adds rider to file
 	}
 
 	/**
@@ -2001,5 +2002,47 @@ public class ValleyBikeSimModel {
 		
 		// save changes to bike data file
 		saveBikeList();
+	}
+
+	/**
+	 * Returns the string version of the active user's payment method
+	 * @return
+	 */
+	public String getPaymentMethodString() {
+		return paymentMethods.get(activeUser.getUsername()).toString();
+	}
+
+	/**
+	 * Sets activeUser's billing name
+	 * @param billingName
+	 */
+	public void setBillingName(String billingName) {
+		PaymentMethod paymentMethod = paymentMethods.get(activeUser.getUsername());
+		paymentMethod.setBillingName(billingName);
+		savePaymentMethodList();
+	}
+
+	/**
+	 * Sets activeUser's billing address
+	 * @param billingAddress
+	 */
+	public void setBillingAddress(String billingAddress) {
+		PaymentMethod paymentMethod = paymentMethods.get(activeUser.getUsername());
+		paymentMethod.setAddress(billingAddress);
+		savePaymentMethodList();
+	}
+
+	/**
+	 * Adds a new card to activeUser's account
+	 * @param creditCardNumber
+	 * @param creditCardDate
+	 * @param cvv
+	 */
+	public void addCard(String creditCardNumber, String creditCardDate, String cvv) {
+		PaymentMethod paymentMethod = paymentMethods.get(activeUser.getUsername());
+		paymentMethod.setCardNumber(creditCardNumber);
+		paymentMethod.setExpiryDate(creditCardDate);
+		paymentMethod.setCvv(cvv);
+		savePaymentMethodList();
 	}
 }

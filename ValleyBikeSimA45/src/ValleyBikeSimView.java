@@ -181,6 +181,7 @@ public class ValleyBikeSimView {
 		case "riderAddress":
 			System.out.println("Please enter your address on one line, in the following format:\n"
 					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
+			break;
 		case "removeBikeId":
 			System.out.println("Please enter the 3-digit bike ID. The bike must not be in use by any user in order to be removed:");
 			break;
@@ -525,6 +526,19 @@ public class ValleyBikeSimView {
 	 */
 	public void displayRemoveBikeFromSystemSuccess(int bikeId) {
 		System.out.println("Bike " + bikeId + " has been removed successfully from the system.");
+	}
+
+	/**
+	 * Displays message when user views their current payment method and offers options
+	 * @param paymentMethodString
+	 */
+	public void displayCurrentPaymentMethod(String paymentMethodString) {
+		System.out.println("Your current payment method:\n\n"+paymentMethodString);
+		System.out.println("Which of the following would you like to edit?\n"
+							+ "1) Change billing name\n"
+							+ "2) Change billing address\n"
+							+ "3) Add new card\n"
+							+ "4) Return to main menu\n");
 	}
 	
 }
