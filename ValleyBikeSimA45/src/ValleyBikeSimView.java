@@ -161,7 +161,8 @@ public class ValleyBikeSimView {
 			break;
 		case "newStationAddress":
 			System.out.println("Please enter the station's address. It cannot be the same as one of the existing stations\n"
-					+ "and must not contain commas:");
+					+ "and must follow the following format:\n"
+					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode\"");
 			break;
 		case "capacity":
 			System.out.println("Please enter the station's capacity (within the range of 05-27):");
