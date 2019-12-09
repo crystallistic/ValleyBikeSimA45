@@ -895,6 +895,7 @@ public class ValleyBikeSimModel {
 		
 		//Create new Transaction and add to list
 		Transaction transaction = new Transaction(activeUser.getUsername(),chargeAmount,now,"ValleyBike Ride");
+		transactionsByUser.putIfAbsent(activeUser.getUsername(), new ArrayList<Transaction>());
 		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
 		//Update bike list at current Station
@@ -2044,5 +2045,45 @@ public class ValleyBikeSimModel {
 		paymentMethod.setExpiryDate(creditCardDate);
 		paymentMethod.setCvv(cvv);
 		savePaymentMethodList();
+	}
+
+	/**
+	 * Reads rides from the specified file and returns the formatted rides list and statistics
+	 * @param filename
+	 * @return String stating the number and average duration of rides that day
+	 */
+	public String getRidesStatistics(String filename) {
+		String allLines = "";
+		String formattedRideList = "From\tTo\tStart\t\tEnd\n";
+		long sumRideDurations = 0;
+		try {
+			CSVReader ridesCompletedDataReader = new CSVReader(new FileReader(filename));
+			
+			List<String[]> allRideEntries = ridesCompletedDataReader.readAll();
+			
+			
+			int counter = 0;
+			for(String[] array : allRideEntries) {
+				if(counter > 0) {
+					formattedRideList += array[2] + "\t" + array[4] + "\t" + array[6] + "\t" + array[7] + "\n";
+					
+					Date startTime = toDate(array[6]);
+					Date endTime = toDate(array[7]);
+					long difference = (endTime.getTime() - startTime.getTime()) / 1000 / 60; // difference in minutes
+					sumRideDurations += difference;
+				}
+				counter++;
+			} 
+			ridesCompletedDataReader.close();
+			
+			long avgRideDuration = sumRideDurations/(counter-1);
+			allLines = "On this day there were "+(counter-1)+" rides with average ride time of "+avgRideDuration+" minutes\n\n";
+			allLines += formattedRideList;
+		} 
+		
+		catch (Exception e) {
+			System.out.println("\n" + e.getMessage());
+		}
+		return allLines;
 	}
 }

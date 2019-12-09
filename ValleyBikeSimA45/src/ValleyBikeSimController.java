@@ -1,5 +1,6 @@
 import java.math.BigDecimal;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -88,7 +89,7 @@ public class ValleyBikeSimController {
 		regex.put("billingName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // billingName, first name and last name separated by space
 		regex.put("capacity",Pattern.compile("^(0*[5-9]|1[0-9]|2[0-7])$")); // capacity is within the range [5-27]
 		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
-		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$")); 
+		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$"));
 	}
 
 	/**
@@ -250,8 +251,8 @@ public class ValleyBikeSimController {
 			case "6":// 6) View station list
 				displayStationList();
 				break;
-			case "7":// 7) Resolve ride
-				resolveRide();
+			case "7":// 7) View daily statistics (previously resolve ride)
+				displayDailyStatistics();
 				break;
 			case "8":// 8) Create support ticket
 				//createSupportTicket();
@@ -390,7 +391,7 @@ public class ValleyBikeSimController {
 				inputIsValid = model.isValid("loginInfo", loginInfo);
 			}
 		} else if (validateInModel.contains(userInputName)) {
-			inputIsValid = model.isValid(userInputName, userInput); //
+			inputIsValid = model.isValid(userInputName, userInput); // test for validity against model data
 
 			while (!inputIsValid) {
 				view.displayInvalidInput();
@@ -438,7 +439,19 @@ public class ValleyBikeSimController {
 			// convert user input to a string and return
 			userInput = Integer.toString(intUserInput);
 
-		} else {
+		} else if (userInputName.equals("pastDay")) {
+			inputIsValid = false;
+			while (!inputIsValid) {
+				userInput = view.prompt(userInputName);
+				try {
+					Date df = new SimpleDateFormat("MM-dd-yy").parse(userInput);
+					inputIsValid = true;
+				} catch (ParseException e) {
+					System.out.println("Invalid input, please follow the provided instructions and try again.");
+				}
+			}
+		}
+		else {
 			Pattern r = regex.get(userInputName);
 			Matcher m = r.matcher(userInput);
 
@@ -723,24 +736,55 @@ public class ValleyBikeSimController {
 	 * Reads a .csv ride data file that contains all the rides for one day of service.
 	 * After processing the data, returns statistics for the day.
 	 */
-	public void resolveRide() {
-		
-		// get the file name from user
-		String fileName = getUserInput("fileName");
-		
-		
-		// model reads in file can calculate
-		String resolveRideResult = model.readRidesDataFile(fileName);
-		
-		// prompts the user for correct file name until file can be read successfully
-		while (resolveRideResult.length() == 0) {
-			view.displayInvalidFileName();
-			fileName = getUserInput("fileName");	
-			resolveRideResult = model.readRidesDataFile(fileName); // read in file and calculate
+	public void displayDailyStatistics() {
+		//Ask the admin what day they want statistics for
+		String dateString = getUserInput("pastDay");
+		String month = "";
+		switch(dateString.substring(0,2)) {
+		case "01":
+			month = "Jan";
+			break;
+		case "02":
+			month = "Feb";
+			break;
+		case "03":
+			month = "Mar";
+			break;
+		case "04":
+			month = "Apr";
+			break;
+		case "05":
+			month = "May";
+			break;
+		case "06":
+			month = "Jun";
+			break;
+		case "07":
+			month = "Jul";
+			break;
+		case "08":
+			month = "Aug";
+			break;
+		case "09":
+			month = "Sep";
+			break;
+		case "10":
+			month = "Oct";
+			break;
+		case "11":
+			month = "Nov";
+			break;
+		case "12":
+			month = "Dec";
+			break;
 		}
+		dateString = month+dateString.substring(2,6)+"20"+dateString.substring(6);
+		String filename = "data-files/rides-"+dateString+".csv";
 		
-		// display results
-		view.displayResolveRide(resolveRideResult);
+		String rideStatistics = model.getRidesStatistics(filename);
+		view.displayRideStatistics(rideStatistics);
+		
+		
 		
 	}
 			

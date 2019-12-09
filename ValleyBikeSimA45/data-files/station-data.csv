@@ -1,15 +1,15 @@
 ID,Name,Bikes,Pedelecs,Available Docks,Maintainence Request,Capacity,Kiosk,Address
-33,Northampton High School,0,14,6,0,20,0,380 Elm Street Northampton Ma
+33,Northampton High School,0,15,5,0,20,0,380 Elm Street Northampton Ma
 80,Juicy Station,0,0,6,0,6,1,1 Juicy Street Unit #20 Juicy City Juicy State 38742 Juicy Nation
 20,Village Hill/State Hospital,0,2,8,0,10,1,Village Hill/State Hospital
 21,Florence Bank Station,0,2,8,1,10,1,19 Meadow Street Florence Ma @ Lilly Library
 22,YMCA/Childs Park,0,2,8,0,10,1,YMCA/Childs Park
-23,Forbes Library,0,5,5,0,10,0,20 West Street Northampton Ma
-24,Florence Center,0,5,5,0,10,0,31 Main Street Florence Ma
-25,Cooley Dickinson Health Care,0,6,4,0,10,0,51 Locust Street Northampton MA
+23,Forbes Library,0,4,6,0,10,0,20 West Street Northampton Ma
+24,Florence Center,0,4,6,0,10,0,31 Main Street Florence Ma
+25,Cooley Dickinson Health Care,0,5,5,0,10,0,51 Locust Street Northampton MA
 26,John M Greene Hall/Smith College,0,7,3,0,10,0,1 Chapin Way Northampton MA @ John M. Greene Hall
-27,Pulaski Park/Downtown,0,8,2,0,10,0,274 Main Street Northampton Ma at Pulaski Park
-28,Northampton Train Station,0,9,1,0,10,0,Northampton Train Station
+27,Pulaski Park/Downtown,0,9,1,0,10,0,274 Main Street Northampton Ma at Pulaski Park
+28,Northampton Train Station,0,10,0,0,10,0,Northampton Train Station
 29,State St/Mass Central Rail Trail,0,10,0,0,10,0,State Street/Mass Central Rail Trail
 30,Jackson Street,0,11,9,2,20,0,7A-7D Jackson Street Northampton Ma
 31,Main Street/Court House,0,11,9,0,20,0,99 Main Street Northampton Ma
