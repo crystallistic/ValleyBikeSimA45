@@ -293,13 +293,13 @@ public class ValleyBikeSimModel {
 		
 			for(String[] array : allTicketEntries) {
 				if(counter != 0) {
-					
 					// create new ticket object
-					Ticket ticket = new Ticket(Integer.parseInt(array[0]), array[1], array[2]);
+					Ticket ticket = new Ticket(Integer.parseInt(array[0]), array[1], array[2],array[3],
+							(array[4].equals("1")), array[5]);
 					
-					
-					// map user to Ticket
-					this.tickets.put(array[2], ticket);
+					System.out.println(ticket.toString());
+					// map username to Ticket object
+					this.tickets.put(array[1], ticket);
 				}
 				counter++;	
 			}
