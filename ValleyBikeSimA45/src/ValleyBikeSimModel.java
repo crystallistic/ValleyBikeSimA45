@@ -18,6 +18,10 @@ import java.util.regex.Pattern;
  * @author maingo
  *
  */
+/**
+ * @author maingo
+ *
+ */
 public class ValleyBikeSimModel {
 	
 	/** map all stations to their station ID */
@@ -583,12 +587,15 @@ public class ValleyBikeSimModel {
 		boolean matchRegex = false;
 		boolean existInSys = false;
 		Pattern r = null;
-		Pattern numeric = Pattern.compile("^[0-9]+$");
-		
+		HashMap<String,Pattern> regex = new HashMap<>();
+		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
+		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
+		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"));
+		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#@-]){6,}$"));
 		
 		switch (userInputName) {
 		case "stationId":	// valid if is numeric and exists in system	
-			matchRegex = numeric.matcher(userInput).find();
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			
 			if (matchRegex) {
 				existInSys = stations.containsKey(Integer.parseInt(userInput));
@@ -597,7 +604,7 @@ public class ValleyBikeSimModel {
 			inputIsValid = (matchRegex && existInSys);
 			break;
 		case "bikeId":	// valid if is numeric and exists in system	
-			matchRegex = numeric.matcher(userInput).find();
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			
 			if (matchRegex) {
 				existInSys = bikes.containsKey(Integer.parseInt(userInput));
@@ -615,18 +622,15 @@ public class ValleyBikeSimModel {
 			inputIsValid = (!existInSys && userInput.length() >= 6);
 			break;
 		case "newEmail":
-			// regex to validate email format
-			r = Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"); 
 			
 			// email is valid if it's in valid format and it does not belong to an existing user
-			matchRegex = r.matcher(userInput).find();
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			existInSys = emails.containsKey(userInput);
 			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newStationId":	
 			// Assumption: Valley Bike's station IDs are two-digit and only within the 01-99 range.
-			r = Pattern.compile("^[0-9]{2}$"); 
-			matchRegex = r.matcher(userInput).find();
+			matchRegex = regex.get("stationId").matcher(userInput).find();
 			
 			// only check to see if the station ID exists in the system if input is numeric
 			if (matchRegex) {
@@ -650,13 +654,7 @@ public class ValleyBikeSimModel {
 			inputIsValid = !existInSys;
 			break;
 		case "newStationAddress":	
-			r = Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
-								+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
-								+ "([a-zA-Z .'-]+)," // city
-								+ "([a-zA-Z0-9 .'\\/#-]+)," // state
-								+ " *([0-9]{5}) *," // zip code
-								+ " *([a-zA-Z .,'-]+)$");  // country)
-			matchRegex = r.matcher(userInput).find();
+			matchRegex = regex.get("stationAddress").matcher(userInput).find();
 			
 			// new station address must not coincide with existing station address
 			for (Station station : stations.values()) {
@@ -668,8 +666,7 @@ public class ValleyBikeSimModel {
 			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newBikeId":	// valid if is numeric, has 3 digits and doesn't exist in system	
-			r = Pattern.compile("^[0-9]{3}$");
-			matchRegex = r.matcher(userInput).find();
+			matchRegex = regex.get("bikeId").matcher(userInput).find();
 			
 			if (matchRegex) {
 				existInSys = bikes.containsKey(Integer.parseInt(userInput));
@@ -678,8 +675,7 @@ public class ValleyBikeSimModel {
 			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "bikeIdInStorage": // valid if bike ID exists in system and bike is in storage
-			r = Pattern.compile("^[0-9]{3}$");
-			matchRegex = r.matcher(userInput).find();
+			matchRegex = regex.get("bikeId").matcher(userInput).find();
 			
 			if (matchRegex) {
 				existInSys = bikes.containsKey(Integer.parseInt(userInput));
@@ -688,6 +684,21 @@ public class ValleyBikeSimModel {
 			inputIsValid = (matchRegex && existInSys && 
 					bikes.get(Integer.parseInt(userInput)).getStatus().equals("inStorage"));
 			break;
+		case "removeBikeId": // valid if it is a 3 digit number, exists in system and is not being used by anyone.
+			matchRegex = regex.get("bikeId").matcher(userInput).find();
+			
+			if (matchRegex) {
+				existInSys = bikes.containsKey(Integer.parseInt(userInput));
+			}
+			
+			// check to see if bike is in use
+			boolean bikeInUse = false;
+			for (Ride ride : ridesInProgress.values()) {
+				if (ride.getBikeId() == Integer.parseInt(userInput)) {
+					bikeInUse = true;
+				}
+			}
+			inputIsValid = (matchRegex && existInSys && !bikeInUse);
 		} 	
 		return inputIsValid;
 	}
@@ -1946,5 +1957,49 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean activeUserHasTransactions() {
 		return transactionsByUser.containsKey(activeUser.getUsername());
+	}
+	
+	/**
+	 * Returns a bike's status
+	 * @param bikeId 	The bike ID
+	 * @return the bike's status as a string
+	 */
+	public String getBikeStatus(int bikeId) {
+		return bikes.get(bikeId).getStatus();
+	}
+
+	/**
+	 * Move bike from station to storage, and returns the name and ID of the station to which the bike belonged.
+	 * @param bikeId	The bike ID
+	 * @return station name and ID
+	 */
+	public String[] moveBikeFromStationToStorage(int bikeId) {
+		String[] returnData = new String[2];
+		for (Integer sId : stationsBikes.keySet()) {
+			if (stationsBikes.get(sId).contains(bikeId)) {
+				returnData[0] = Integer.toString(sId);
+				returnData[1] = stations.get(sId).getStationName();
+			}
+		}
+		
+		// move bike from this station to storage
+		stationsBikes.get(Integer.parseInt(returnData[0])).remove(bikeId);
+		bikes.get(bikeId).setStatus("inStorage");
+		
+		// save changes to bike and station data files
+		saveStationList();
+		saveBikeList();
+		return returnData;
+	}
+
+	/**
+	 * Remove a bike currently in storage from the Valley Bike system
+	 * @param bikeId		The bike ID
+	 */
+	public void removeBikeInStorageFromSystem(int bikeId) {
+		bikes.remove(bikeId);
+		
+		// save changes to bike data file
+		saveBikeList();
 	}
 }
