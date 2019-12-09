@@ -68,7 +68,7 @@ public class ValleyBikeSimController {
 		regex.put("newPassword", Pattern.compile("^[a-zA-Z0-9]{6,}$")); // password has to be at least 6 characters
 		regex.put("riderAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 											+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
-											+ "([a-zA-Z .'-]+)," // city
+											+ "([a-zA-Z .'-]+)," // city 
 											+ "([a-zA-Z0-9 .'\\/#-]+)," // state
 											+ " *([0-9]{5}) *," // zip code
 											+ " *([a-zA-Z .,'-]+)$"));  // country
@@ -396,6 +396,11 @@ public class ValleyBikeSimController {
 				view.displayInvalidInput();
 				userInput = view.prompt(userInputName);
 				inputIsValid = model.isValid(userInputName, userInput);
+			}
+			
+			// if user input is an address, strip all commas so we could store it in csv data files
+			if (userInputName.toLowerCase().contains("address")) {
+				userInput = userInput.replaceAll(",", " ");
 			}
 		}
 		// validate the number the user enters to pick a menu option
