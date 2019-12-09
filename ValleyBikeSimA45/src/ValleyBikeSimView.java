@@ -179,6 +179,10 @@ public class ValleyBikeSimView {
 		case "bikeIdInStorage":
 			System.out.println("Please enter the new 3-digit bike ID. The bike must be in storage in order to be added to a station:");
 			break;	
+		case "riderAddress":
+			System.out.println("Please enter your address on one line, in the following format:\n"
+					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode, Country\"");
+			break;
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -438,6 +442,12 @@ public class ValleyBikeSimView {
 		
 	}
 
+	/**
+	 * Tells the user that they have entered a bike number for a bike not at their current station
+	 * @param stationId
+	 * @param bikeId
+	 * @param bikeIdList
+	 */
 	public void displayBikeNotBelongToStation(int stationId, int bikeId, HashSet<Integer> bikeIdList) {
 		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + "\n"
 				+ "You may want to select a bike ID from the list of bike IDs currently at this station below:");
@@ -446,6 +456,46 @@ public class ValleyBikeSimView {
 			System.out.print(',');
 		}
 		
+	}
+
+	/**
+	 * Tells the user what membership they have and that the default is Pay-per-ride
+	 * @param numCurrentMembership
+	 */
+	public void displayEditMembership(int numCurrentMembership) {
+		System.out.println("numCurrentMembership: "+numCurrentMembership);
+		String[] membershipOptions = {"Pay per ride","Day Pass","Monthly","Yearly","Founding Member"};
+		String options = "Please choose from the membership options below by entering the corresponding option number (1-5):\n";
+		for (int i=0; i<5; i++) {
+			String option = membershipOptions[i];
+			if (numCurrentMembership==(i+1)) {
+				options = options+(i+1)+") Keep existing membership ("+option+")\n";
+			} else {
+				options = options+(i+1)+") "+option+"\n";
+			}
+		}
+		System.out.println(options);
+	}
+
+	/**
+	 * Displays message reassuring user that they have kept their current membership
+	 */
+	public void displayKeepCurrentMembership() {
+		System.out.println("You have chosen to keep your current membership");
+	}
+
+	/**
+	 * Displays message when a user with no ride history tries to view their ride history
+	 */
+	public void displayNoRidesMade() {
+		System.out.println("You have not yet completed any rides.");
+	}
+	
+	/**
+	 * Displays message when a user with no transaction history tries to view their transaction history
+	 */
+	public void displayNoTransactionsMade() {
+		System.out.println("You have not yet completed any transactions.");
 	}
 	
 }

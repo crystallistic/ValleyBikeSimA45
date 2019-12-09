@@ -200,16 +200,17 @@ public class ValleyBikeSimController {
 		PaymentMethod paymentMethod = new PaymentMethod(billingName, creditCardNumber, billingAddress, creditCardDate,
 				cvv);
 		model.addPaymentMethod(newUsername, paymentMethod);
-		
-		// Charge user's credit card. To simplify process: we assume for now that all
-		// credit card payments go through
-		view.displayPurchaseMembershipSuccess(membership.getMembershipType(), membership.getBaseRate());
-		view.displayAccountCreationSuccess(newUsername);
 
 		Rider rider = new Rider(newUsername, password, fullName, email, phoneNumber, address);
 
 		model.createNewRider(rider,paymentMethod,membership);
 		model.setActiveUser(newUsername); // set rider as currently active user
+		
+		// Charge user's credit card. To simplify process: we assume for now that all
+		// credit card payments go through
+		view.displayPurchaseMembershipSuccess(membership.getMembershipType(), membership.getBaseRate());
+		view.displayAccountCreationSuccess(newUsername);
+				
 		mainMenu(false); // show rider menu (userIsAdmin = false)
 	}
 
@@ -284,8 +285,7 @@ public class ValleyBikeSimController {
 				System.out.println("Feature not yet available, check back soon!");
 				break;
 			case "6":// 6) Edit membership
-				//editMembership();
-				System.out.println("Feature not yet available, check back soon!");
+				editMembership();
 				break;
 			case "7":// 7) View ride history
 				displayRideHistory();
@@ -311,10 +311,14 @@ public class ValleyBikeSimController {
 	 * displays the transaction history of the active user
 	 */
 	private void displayTransactionHistory() {
-		//get formatted transaction list from model
-		ArrayList<String> formattedTransactionList = model.getTransactionList();
-		//display in view
-		view.displayTransactionList(formattedTransactionList);
+		if (model.activeUserHasTransactions()) {
+			//get formatted transaction list from model
+			ArrayList<String> formattedTransactionList = model.getTransactionList();
+			//display in view
+			view.displayTransactionList(formattedTransactionList);
+		} else {
+			view.displayNoTransactionsMade();
+		}
 		
 	}
 
@@ -323,10 +327,14 @@ public class ValleyBikeSimController {
 	 */
 	private void displayRideHistory() {
 		// get formatted station list from model
-		ArrayList<String> formattedRideList = model.getRideList();
-				
-		// display in view
-		view.displayRideList(formattedRideList);
+		if (model.activeUserHasRidesCompleted()) {
+			ArrayList<String> formattedRideList = model.getRideList();
+					
+			// display in view
+			view.displayRideList(formattedRideList);
+		} else {
+			view.displayNoRidesMade();
+		}
 	}
 
 	/**
@@ -418,6 +426,50 @@ public class ValleyBikeSimController {
 		}
 		return userInput;
 
+	}
+	
+	private void editMembership() {
+		//print out the current membership they have
+		String currentMembershipName = model.getActiveUserMembershipName();
+		System.out.println("currentMembershipName: "+currentMembershipName);
+		String[] membershipOptions = {"Pay Per Ride","Day Pass","Monthly","Yearly","Founding Member"};
+		int numCurrentMembership = -1;
+		for (int i=0; i<5; i++) {
+			if (currentMembershipName.equals(membershipOptions[i])) {
+				numCurrentMembership = i+1;
+			}
+		}
+		
+		view.displayEditMembership(numCurrentMembership);
+		int membershipOption = Integer.parseInt(getUserInput("option5"));
+
+		if (membershipOption == numCurrentMembership) {
+			view.displayKeepCurrentMembership();
+		} else {
+			// create membership object based on user input
+			Membership membership = null;
+			MembershipFactory mf = new MembershipFactory();
+			switch (membershipOption) {
+			case 1:
+				membership = mf.getMembership("PayPerRide");
+				break;
+			case 2:
+				membership = mf.getMembership("DayPass");
+				break;
+			case 3:
+				membership = mf.getMembership("Monthly");
+				break;
+			case 4:
+				membership = mf.getMembership("Yearly");
+				break;
+			case 5:
+				membership = mf.getMembership("FoundingMember");
+				break;
+			}
+			
+			model.setMembership(model.getActiveUser().getUsername(), membership); // set rider's membership
+			view.displayPurchaseMembershipSuccess(membership.getMembershipType(), membership.getBaseRate());
+		}
 	}
 
 	/**

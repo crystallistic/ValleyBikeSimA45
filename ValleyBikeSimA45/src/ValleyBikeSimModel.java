@@ -763,7 +763,44 @@ public class ValleyBikeSimModel {
 	 * @param membership	The rider's membership
 	 */
 	public void setMembership(String username, Membership membership) {
+		//Set the user's membership
 		this.memberships.put(username, membership);
+		
+		if (!membership.getMembershipType().equals("PayPerRide")) {
+			//Charge the user the base rate for the membership (unless they have pay-per-ride)
+			PaymentMethod paymentMethod = paymentMethods.get(username);
+			BigDecimal chargeAmount;
+			chargeAmount = membership.getBaseRate();
+			
+			paymentMethod.chargeCard(chargeAmount);
+			
+			//Create new Transaction and add to list
+			String description = "ValleyBike ";
+			switch(membership.getMembershipType()) {
+			case "Monthly":
+				description = description + "Monthly ";
+				break;
+			case "Yearly":
+				description = description + "Yearly ";
+				break;
+			case "FoundingMember":
+				description = description + "Founding Member ";
+				break;
+			case "DayPass":
+				description = description + "Day Pass ";
+				break;
+			}
+			description = description + "Subscription";
+			
+			Transaction transaction = new Transaction(username,chargeAmount,new Date(),description);
+			transactionsByUser.putIfAbsent(username, new ArrayList<Transaction>());
+			transactionsByUser.get(username).add(transaction);
+			
+			//updates user lists
+			saveUserLists();
+			//appends to transactions file
+			saveAllTransaction(transaction);
+		}
 	}
 	
 	/**
@@ -1525,6 +1562,8 @@ public class ValleyBikeSimModel {
 			csvWriter.append(",");
 			csvWriter.append(rider.getFullName());
 			csvWriter.append(",");
+			csvWriter.append(rider.getEmail());
+			csvWriter.append(",");
 			csvWriter.append(rider.getPhoneNumber());
 			csvWriter.append(",");
 			csvWriter.append(rider.getAddress());
@@ -1721,7 +1760,7 @@ public class ValleyBikeSimModel {
 		setMembership(rider.getUsername(), membership); // set rider's membership
 		
 		//append rider to rider-file
-		saveAllRider(rider);
+		//done in setMembership
 		//append paymentMethod 
 		saveAllPaymentMethod(rider.getUsername(),paymentMethod);
 	}
@@ -1883,5 +1922,29 @@ public class ValleyBikeSimModel {
 		String hasKiosk = (station.isHasKiosk() ? "Yes" : "No");
 		String nameAddress = station.getStationName() + " - " + station.getAddress();
 		return id + "\t" + numBikes + "\t" + avDocks + "\t" + mainReq + "\t" + cap + "\t" + hasKiosk + "\t" + nameAddress;
+	}
+
+	/**
+	 * 
+	 * @return the name of the type of membership the active user has
+	 */
+	public String getActiveUserMembershipName() {
+		return memberships.get(activeUser.getUsername()).getMembershipType();
+	}
+
+	/**
+	 * Checks if the user has completed any rides
+	 * @return
+	 */
+	public boolean activeUserHasRidesCompleted() {
+		return ridesCompleted.containsKey(activeUser.getUsername());
+	}
+	
+	/**
+	 * Checks if the user has made any transactions
+	 * @return
+	 */
+	public boolean activeUserHasTransactions() {
+		return transactionsByUser.containsKey(activeUser.getUsername());
 	}
 }
