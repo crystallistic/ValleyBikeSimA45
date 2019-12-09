@@ -186,6 +186,9 @@ public class ValleyBikeSimView {
 		case "removeBikeId":
 			System.out.println("Please enter the 3-digit bike ID. The bike must not be in use by any user in order to be removed:");
 			break;
+		case "pastDay":
+			System.out.println("Please enter the day you want the statistics for. The format should be mm-dd-yy");
+			break;
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -236,7 +239,7 @@ public class ValleyBikeSimView {
 				+ "4) Remove a bike\n"
 				+ "5) Redistribute bikes\n"
 				+ "6) View station list\n"
-				+ "7) Resolve ride\n"
+				+ "7) View daily statistics\n"
 				+ "8) Create support ticket\n"
 				+ "9) Log out");
 	}
@@ -540,6 +543,14 @@ public class ValleyBikeSimView {
 							+ "2) Change billing address\n"
 							+ "3) Add new card\n"
 							+ "4) Return to main menu\n");
+	}
+
+	/**
+	 * Prints out ride statistics for a day
+	 * @param rideStatistics
+	 */
+	public void displayRideStatistics(String rideStatistics) {
+		System.out.println(rideStatistics);
 	}
 	
 }
