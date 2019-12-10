@@ -258,7 +258,10 @@ public class ValleyBikeSimController {
 				//createSupportTicket();
 				System.out.println("Feature not yet available, check back soon!");
 				break;
-			case "9":// 9) Log out
+			case "9": // 9) Resolve support ticket
+				// resolveSupportTicket();
+				System.out.println("Feature not yet available, check back soon!");
+			case "10":// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
