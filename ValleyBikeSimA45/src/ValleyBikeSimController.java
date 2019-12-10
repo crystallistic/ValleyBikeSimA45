@@ -324,7 +324,7 @@ public class ValleyBikeSimController {
 			break;
 		case "2": //change password
 			getUserInput("username"); //makes the user log in again for security reasons
-			String newPassword = view.prompt("password");
+			String newPassword = view.prompt("newPassword");
 			while (newPassword.equals(model.getActiveUser().getPassword())) {
 				view.displayOldPassword();
 				newPassword = view.prompt("password");
@@ -334,7 +334,7 @@ public class ValleyBikeSimController {
 			break;
 		case "3": //change full name
 			String newFullName = getUserInput("fullName");
-			model.setActiveUserInfo("fullname",newFullName);
+			model.setActiveUserInfo("fullName",newFullName);
 			editProfile();
 			break;
 		case "4": //change email
@@ -348,7 +348,7 @@ public class ValleyBikeSimController {
 			editProfile();
 			break;
 		case "6": //change address
-			String address = getUserInput("address");
+			String address = getUserInput("riderAddress");
 			model.setActiveUserInfo("address",address);
 			editProfile();
 			break;
