@@ -118,7 +118,7 @@ class ValleyBikeSimModelTest {
 		assertFalse(model.isValid("newEmail", "user.com"));
 		assertFalse(model.isValid("newEmail", "user@@server.com"));
 		assertFalse(model.isValid("newEmail", "user@server"));
-		assertFalse(model.isValid("newEmail", "user@server..com"));
+		assertFalse(model.isValid("newEmail", "user@server..com"));//user passes an email that contains two periods after domain
 		assertFalse(model.isValid("newEmail", "user.com@"));
 		assertFalse(model.isValid("newEmail", "@server.com"));
 		assertFalse(model.isValid("newEmail", "hpotter@hogwarts.edu")); //user passes an email that already exists in rider-data.csv
