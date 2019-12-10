@@ -303,6 +303,7 @@ public class ValleyBikeSimModel {
 					
 					// map Ticket object to ticket ID
 					this.tickets.put(Integer.parseInt(array[0]), ticket);
+
 					// map Ticket object to username
 					this.usersTickets.putIfAbsent(array[1], new HashSet<Ticket>());
 					this.usersTickets.get(array[1]).add(ticket);
