@@ -39,8 +39,11 @@ public class ValleyBikeSimModel {
 	/** the currently logged in user */
 	private User activeUser;
 
+	/** map all tickets to their ids */
+	private HashMap<Integer,Ticket> tickets;
+	
 	/** map all usernames to technical support tickets */
-	private HashMap<String, Ticket> tickets;
+	private HashMap<String, HashSet<Ticket>> usersTickets;
 
 	/** map all users to their user names. The HashMap contains Admin and Rider objects, 
 	 * and requires casting to the proper child class at retrieval. */
@@ -79,9 +82,10 @@ public class ValleyBikeSimModel {
 		bikes = new HashMap<>();
 		stationsBikes = new HashMap<>();
 		paymentMethods = new HashMap<>();
-		activeUser = null; // what's the default value here and when should it be initialized?
+		activeUser = null;
 		users = new HashMap<>();
 		tickets = new HashMap<>();
+		usersTickets = new HashMap<>();
 		ridesCompleted = new HashMap<>();
 		ridesInProgress = new HashMap<>();
 		ridesOverdue = new HashMap<>();
@@ -293,13 +297,17 @@ public class ValleyBikeSimModel {
 		
 			for(String[] array : allTicketEntries) {
 				if(counter != 0) {
-					
 					// create new ticket object
-					Ticket ticket = new Ticket(Integer.parseInt(array[0]), array[1], array[2]);
+					Ticket ticket = new Ticket(Integer.parseInt(array[0]), array[1], array[2],array[3],
+							(array[4].equals("Yes")), array[5]);
 					
+					// map Ticket object to ticket ID
+					this.tickets.put(Integer.parseInt(array[0]), ticket);
+
+					// map Ticket object to username
+					this.usersTickets.putIfAbsent(array[1], new HashSet<Ticket>());
+					this.usersTickets.get(array[1]).add(ticket);
 					
-					// map user to Ticket
-					this.tickets.put(array[2], ticket);
 				}
 				counter++;	
 			}
@@ -528,8 +536,6 @@ public class ValleyBikeSimModel {
 	 */
 	
 	
-	
-	
 	/**
 	 * Reads a ride data file that contains all the rides for one day of service.
 	 * After processing the data, returns statistics for the day.
@@ -570,7 +576,7 @@ public class ValleyBikeSimModel {
 		catch (Exception e) {
 			//System.out.println("\n" + e.getMessage());
 			System.out.println("Invalid file name, please try again.");
-			
+	
 		}
 		return "";
 	}
@@ -590,8 +596,13 @@ public class ValleyBikeSimModel {
 		HashMap<String,Pattern> regex = new HashMap<>();
 		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
-		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"));
-		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#@-]){6,}$"));
+		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
+		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
+		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
+													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2
+													+ "([a-zA-Z .'-]+),"		// city
+													+ "([a-zA-Z0-9 .'\\/#-]+),"	// state
+													+ " *([0-9]{5}) *$"));	// zip code
 		
 		switch (userInputName) {
 		case "stationId":	// valid if is numeric and exists in system	
@@ -617,12 +628,13 @@ public class ValleyBikeSimModel {
 			
 			inputIsValid = (users.containsKey(info[0]) && users.get(info[0]).getPassword().equals(info[1]));
 			break;
-		case "newUsername":
+		case "newUsername": 
+			//is valid if only contains lowercase, uppercase letter, digits, min 6 characters and 
+			// doesn't exist in system
 			existInSys = users.containsKey(userInput);
-			inputIsValid = (!existInSys && userInput.length() >= 6);
+			inputIsValid = !existInSys;
 			break;
 		case "newEmail":
-			
 			// email is valid if it's in valid format and it does not belong to an existing user
 			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			existInSys = emails.containsKey(userInput);
@@ -642,16 +654,19 @@ public class ValleyBikeSimModel {
 			break;
 		case "newStationName":	
 			
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			userInput = userInput.trim();
-			// new station name must not coincide with existing station names
+			String userInputWithoutSpaces = userInput.replaceAll(" ", "");
+			
+			// new station name must not coincide with existing station names, even with different spacing
 			for (Station station : stations.values()) {
-				if (station.getStationName().equalsIgnoreCase(userInput)) {
+				if (station.getStationName().replaceAll(" ", "").equalsIgnoreCase(userInputWithoutSpaces)) {
 					existInSys = true;
 				}
 			}
 			
 			// a new station name is valid if it doesn't already exist in the system
-			inputIsValid = !existInSys;
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newStationAddress":	
 			matchRegex = regex.get("stationAddress").matcher(userInput).find();
@@ -895,6 +910,7 @@ public class ValleyBikeSimModel {
 		
 		//Create new Transaction and add to list
 		Transaction transaction = new Transaction(activeUser.getUsername(),chargeAmount,now,"ValleyBike Ride");
+		transactionsByUser.putIfAbsent(activeUser.getUsername(), new ArrayList<Transaction>());
 		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
 		//Update bike list at current Station
@@ -1339,13 +1355,12 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/ticket-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "ticketIds,description,username".split(",");
+		      String [] record = "ticketId,username,category,identifyingInfo,isResolved,description".split(",");
 		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1364,12 +1379,18 @@ public class ValleyBikeSimModel {
 			csvWriter = new FileWriter("data-files/ticket-data.csv",true);
 
 			//adding all the bike details into the csv
-			
 			csvWriter.append(""+ticket.getTicketId());
 			csvWriter.append(",");
-			csvWriter.append(ticket.getDescription());
-			csvWriter.append(",");
 			csvWriter.append(ticket.getUsername());
+			csvWriter.append(",");
+			csvWriter.append(ticket.getCategory());
+			csvWriter.append(",");
+			csvWriter.append(ticket.getIdentifyingInfo());
+			csvWriter.append(",");
+			csvWriter.append((ticket.isResolved() ? "Yes" : "No"));
+			csvWriter.append(",");
+			csvWriter.append("\""+ticket.getDescription()+"\"");
+			
 			csvWriter.append("\n");
 			csvWriter.flush();
 			csvWriter.close();
@@ -1670,9 +1691,6 @@ public class ValleyBikeSimModel {
 			csvWriter.append("0");
 			csvWriter.append(',');
 			
-			System.out.println(station.getStationId());
-			
-			
 			int numBikes = stationsBikes.get(station.getStationId()).size();
 			csvWriter.append(Integer.toString(numBikes));
 			csvWriter.append(',');
@@ -1842,7 +1860,7 @@ public class ValleyBikeSimModel {
 		DateFormat df = new SimpleDateFormat("MM/dd/yy");
 		for (Transaction transaction : transactionsByUser.get(activeUser.getUsername())) {
 			String date = df.format(transaction.getTime());
-			String amount = transaction.getAmount().toString();
+			String amount = "$"+transaction.getAmount().toString();
 			String description = transaction.getDescription();
 			formattedTransactionList.add(date+"\t"+amount+"\t\t"+description+"\n");
 		}
@@ -1974,7 +1992,7 @@ public class ValleyBikeSimModel {
 	 * @param bikeId	The bike ID
 	 * @return station name and ID
 	 */
-	public String[] moveBikeFromStationToStorage(int bikeId) {
+	public String[] moveBikeFromStationToStorage(int bikeId, String bikeStatus) {
 		String[] returnData = new String[2];
 		for (Integer sId : stationsBikes.keySet()) {
 			if (stationsBikes.get(sId).contains(bikeId)) {
@@ -1985,7 +2003,7 @@ public class ValleyBikeSimModel {
 		
 		// move bike from this station to storage
 		stationsBikes.get(Integer.parseInt(returnData[0])).remove(bikeId);
-		bikes.get(bikeId).setStatus("inStorage");
+		bikes.get(bikeId).setStatus(bikeStatus);
 		
 		// save changes to bike and station data files
 		saveStationList();
@@ -2010,6 +2028,14 @@ public class ValleyBikeSimModel {
 	 */
 	public String getPaymentMethodString() {
 		return paymentMethods.get(activeUser.getUsername()).toString();
+	}
+	
+	/**
+	 * Returns the string version of the active user's profile
+	 * @return
+	 */
+	public String getUserProfileString() {
+		return users.get(activeUser.getUsername()).toString();
 	}
 
 	/**
@@ -2044,5 +2070,146 @@ public class ValleyBikeSimModel {
 		paymentMethod.setExpiryDate(creditCardDate);
 		paymentMethod.setCvv(cvv);
 		savePaymentMethodList();
+	}
+
+	/**
+	 * Reads rides from the specified file and returns the formatted rides list and statistics
+	 * @param filename
+	 * @return String stating the number and average duration of rides that day
+	 */
+	public String getRidesStatistics(String filename) {
+		String allLines = "";
+		String formattedRideList = "From\tTo\tStart\t\tEnd\n";
+		long sumRideDurations = 0;
+		try {
+			CSVReader ridesCompletedDataReader = new CSVReader(new FileReader(filename));
+			
+			List<String[]> allRideEntries = ridesCompletedDataReader.readAll();
+			
+			
+			int counter = 0;
+			for(String[] array : allRideEntries) {
+				if(counter > 0) {
+					formattedRideList += array[2] + "\t" + array[4] + "\t" + array[6] + "\t" + array[7] + "\n";
+					
+					Date startTime = toDate(array[6]);
+					Date endTime = toDate(array[7]);
+					long difference = (endTime.getTime() - startTime.getTime()) / 1000 / 60; // difference in minutes
+					sumRideDurations += difference;
+				}
+				counter++;
+			} 
+			ridesCompletedDataReader.close();
+			
+			long avgRideDuration = sumRideDurations/(counter-1);
+			allLines = "On this day there were "+(counter-1)+" rides with average ride time of "+avgRideDuration+" minutes\n\n";
+			allLines += formattedRideList;
+		} 
+		
+		catch (Exception e) {
+			return "No rides completed on this day.\n";
+		}
+		return allLines;
+	}
+
+	/**
+	 * Create a support ticket, and store it in the database. Update data files accordingly.
+	 * @param category
+	 * @param identifyingInfo
+	 * @param description
+	 */
+	public int createSupportTicket(String category, String identifyingInfo, String description) {
+		
+		// create ticket object
+		int ticketId = (Integer)Collections.max(tickets.keySet()) + 1;
+		String username = activeUser.getUsername();
+		Ticket ticket = new Ticket(ticketId, username, category,identifyingInfo,false, description);
+		
+		// map ticket object to the user and to the ticket ID
+		tickets.put(ticketId, ticket);
+		usersTickets.putIfAbsent(username, new HashSet<>());
+		usersTickets.get(username).add(ticket);
+		
+		// if bike is broken, move to storage
+		if (category.equals("bike")) {
+			int bikeId = Integer.parseInt(identifyingInfo);
+			moveBikeFromStationToStorage(bikeId, "OOO");
+		}
+		
+		// if ticket is maintenance request for station, edit station data
+		if (category.equals("station")) {
+			int stationId = Integer.parseInt(identifyingInfo);
+			
+			// increase the number of maintenance requests at this station
+			Station station = stations.get(stationId);
+			station.setMaintenanceReqs(station.getMaintenanceReqs()+1);
+			saveStationList();
+		}
+		
+		// save ticket to data file
+		saveTicketList();
+		
+		return ticketId;
+	}
+	
+	/**
+	 * Gets a list of all transactions completed in a specified day
+	 * @param dateString
+	 * @return
+	 */
+	public ArrayList<String> getTransactionsStatistics(String desiredDate) {
+		ArrayList<String> formattedTransactionList = new ArrayList<>();
+		formattedTransactionList.add("Amount\t\tDescription\n");
+		DateFormat df = new SimpleDateFormat("MMM-dd-yy");
+		
+		BigDecimal total = new BigDecimal(0);
+		for (ArrayList<Transaction> userTransactions : transactionsByUser.values()) {
+			for (Transaction transaction : userTransactions) {
+				String date = df.format(transaction.getTime());
+
+				// check if the date is the desired date
+				if (date.equals(desiredDate)) {
+					String amount = transaction.getAmount().toString();
+					total = total.add(new BigDecimal(amount));
+					String description = transaction.getDescription();
+					formattedTransactionList.add("$"+amount + "\t\t" + description + "\n");
+				}
+			}
+		}
+		String stats = "ValleyBike made $"+total.toString()+" on this day.\n";
+		ArrayList<String> output = new ArrayList<String>();
+		output.add(stats);
+		output.addAll(formattedTransactionList);
+		return output;
+	}
+
+	/**
+	 * Change the activeUser's specified field
+	 * @param string
+	 * @param newUsername
+	 */
+	public void setActiveUserInfo(String fieldName, String value) {
+		Rider activeRider = (Rider)users.get(activeUser.getUsername());
+		switch(fieldName) {
+		case "username":
+			activeUser.setUsername(value);
+			break;
+		case "password":
+			activeUser.setPassword(value);
+			break;
+		case "fullName":
+			activeRider.setFullName(value);
+			break;
+		case "email":
+			activeRider.setEmail(value);
+			break;
+		case "phoneNumber":
+			activeRider.setPhoneNumber(value);
+			break;
+		case "address":
+			activeRider.setAddress(value);
+			break;
+		}
+		saveUserLists();
 	}
 }

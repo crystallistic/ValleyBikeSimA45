@@ -161,7 +161,8 @@ public class ValleyBikeSimView {
 			break;
 		case "newStationAddress":
 			System.out.println("Please enter the station's address. It cannot be the same as one of the existing stations\n"
-					+ "and must not contain commas:");
+					+ "and must follow the following format:\n"
+					+ "\"Address line 1, Address line 2 (if applicable), City, State/Province/Region, Zipcode\"");
 			break;
 		case "capacity":
 			System.out.println("Please enter the station's capacity (within the range of 05-27):");
@@ -184,6 +185,13 @@ public class ValleyBikeSimView {
 			break;
 		case "removeBikeId":
 			System.out.println("Please enter the 3-digit bike ID. The bike must not be in use by any user in order to be removed:");
+			break;
+		case "pastDay":
+			System.out.println("Please enter the day you want the statistics for. The format should be mm-dd-yy:");
+			break;
+		case "ticketDescription":
+			System.out.println("Please describe the issue in a single paragraph. The message may not be empty.\n"
+					+ "Press \"Enter\" when you finish writing the message:");
 			break;
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
@@ -235,7 +243,7 @@ public class ValleyBikeSimView {
 				+ "4) Remove a bike\n"
 				+ "5) Redistribute bikes\n"
 				+ "6) View station list\n"
-				+ "7) Resolve ride\n"
+				+ "7) View daily statistics\n"
 				+ "8) Create support ticket\n"
 				+ "9) Log out");
 	}
@@ -461,7 +469,6 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * Tells the user what membership they have and that the default is Pay-per-ride
 	 * @param numCurrentMembership
 	 */
@@ -534,11 +541,97 @@ public class ValleyBikeSimView {
 	 */
 	public void displayCurrentPaymentMethod(String paymentMethodString) {
 		System.out.println("Your current payment method:\n\n"+paymentMethodString);
-		System.out.println("Which of the following would you like to edit?\n"
+		System.out.println("Which of the following would you like to edit?:\n"
 							+ "1) Change billing name\n"
 							+ "2) Change billing address\n"
 							+ "3) Add new card\n"
 							+ "4) Return to main menu\n");
+	}
+	
+	/**
+	 * Displays user's current profile and options for what to edit
+	 * @param userProfileString
+	 */
+	public void displayCurrentUserProfile(String userProfileString) {
+		System.out.println("Your current user profile:\n\n"+userProfileString);
+		System.out.println("Which of the following would you like to edit?:\n"
+							+ "1) Username\n"
+							+ "2) Password\n"
+							+ "3) Full name\n"
+							+ "4) Email\n"
+							+ "5) Phone number\n"
+							+ "6) Address\n"
+							+ "7) Return to main menu\n");
+	}
+
+	/**
+	 * Prints out ride statistics for a day
+	 * @param rideStatistics
+	 */
+	public void displayRideStatistics(String rideStatistics) {
+		System.out.println(rideStatistics);
+	}
+
+	/**
+	 * Display all ticket categories
+	 */
+	public void displayTicketCategory() {
+		System.out.println("What is this issue related to?\n"
+							+ "1) A station (issues with kiosks, docks, etc.)\n"
+							+ "2) A broken bike\n"
+							+ "3) Check "
+							+ "3) Other (user account, payment methods, etc.)");
+	}
+
+	/**
+	 * Prompt user to choose a support ticket category
+	 */
+	public void displayChooseStation() {
+		System.out.println("Which station is this issue related to?");
+		
+	}
+
+	/**
+	 * Confirm successful creation of support ticket
+	 */
+	public void displaySubmitSupportTicketSuccess(int ticketId) {
+		System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
+				+ "Your support ticket number is " + ticketId + ".");
+	}
+	
+	/*
+	 * Prints out transaction statistics for a day
+	 * @param transactionStatistics
+	 */
+	public void displayTransactionStatistics(ArrayList<String> transactionStatistics) {
+		if (transactionStatistics.size()<=2) {
+			System.out.println("No transactions were completed on the given day.");
+		} else {
+			for (String line : transactionStatistics) {
+				System.out.println(line);
+			}
+		}
+	}
+
+	/**
+	 * Tells the user that their date is invalid.
+	 */
+	public void displayInvalidDate() {
+		System.out.println("Date does not exist");	
+	}
+
+	/**
+	 * Tell the user they cannot enter an empty string
+	 */
+	public void displayEmptyInputError() {
+		System.out.println("You may not enter an empty input. Please try again.");
+	}
+	
+	/*
+	 * Tells the user that they can't re-use their old password
+	 */
+	public void displayOldPassword() {
+		System.out.println("New password is the same as old password. Try again.");
 	}
 	
 }
