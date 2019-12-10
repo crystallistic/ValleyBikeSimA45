@@ -187,7 +187,7 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter the 3-digit bike ID. The bike must not be in use by any user in order to be removed:");
 			break;
 		case "pastDay":
-			System.out.println("Please enter the day you want the statistics for. The format should be mm-dd-yy");
+			System.out.println("Please enter the day you want the statistics for. The format should be mm-dd-yy:");
 			break;
 		case "ticketDescription":
 			System.out.println("Please describe the issue in a single paragraph. The message may not be empty.\n"
@@ -581,7 +581,27 @@ public class ValleyBikeSimView {
 	public void displaySubmitSupportTicketSuccess(int ticketId) {
 		System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
 				+ "Your support ticket number is " + ticketId + ".");
-		
+	}
+	
+	/*
+	 * Prints out transaction statistics for a day
+	 * @param transactionStatistics
+	 */
+	public void displayTransactionStatistics(ArrayList<String> transactionStatistics) {
+		if (transactionStatistics.size()<=2) {
+			System.out.println("No transactions were completed on the given day.");
+		} else {
+			for (String line : transactionStatistics) {
+				System.out.println(line);
+			}
+		}
+	}
+
+	/**
+	 * Tells the user that their date is invalid.
+	 */
+	public void displayInvalidDate() {
+		System.out.println("Date does not exist");	
 	}
 	
 }
