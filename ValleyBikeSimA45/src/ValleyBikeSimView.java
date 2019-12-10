@@ -189,6 +189,10 @@ public class ValleyBikeSimView {
 		case "pastDay":
 			System.out.println("Please enter the day you want the statistics for. The format should be mm-dd-yy:");
 			break;
+		case "ticketDescription":
+			System.out.println("Please describe the issue in a single paragraph. The message may not be empty.\n"
+					+ "Press \"Enter\" when you finish writing the message:");
+			break;
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -569,6 +573,33 @@ public class ValleyBikeSimView {
 	}
 
 	/**
+	 * Display all ticket categories
+	 */
+	public void displayTicketCategory() {
+		System.out.println("What is this issue related to?\n"
+							+ "1) A station (issues with kiosks, docks, etc.)\n"
+							+ "2) A broken bike\n"
+							+ "3) Check "
+							+ "3) Other (user account, payment methods, etc.)");
+	}
+
+	/**
+	 * Prompt user to choose a support ticket category
+	 */
+	public void displayChooseStation() {
+		System.out.println("Which station is this issue related to?");
+		
+	}
+
+	/**
+	 * Confirm successful creation of support ticket
+	 */
+	public void displaySubmitSupportTicketSuccess(int ticketId) {
+		System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
+				+ "Your support ticket number is " + ticketId + ".");
+	}
+	
+	/*
 	 * Prints out transaction statistics for a day
 	 * @param transactionStatistics
 	 */

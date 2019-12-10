@@ -39,8 +39,11 @@ public class ValleyBikeSimModel {
 	/** the currently logged in user */
 	private User activeUser;
 
+	/** map all tickets to their ids */
+	private HashMap<Integer,Ticket> tickets;
+	
 	/** map all usernames to technical support tickets */
-	private HashMap<String, Ticket> tickets;
+	private HashMap<String, HashSet<Ticket>> usersTickets;
 
 	/** map all users to their user names. The HashMap contains Admin and Rider objects, 
 	 * and requires casting to the proper child class at retrieval. */
@@ -79,9 +82,10 @@ public class ValleyBikeSimModel {
 		bikes = new HashMap<>();
 		stationsBikes = new HashMap<>();
 		paymentMethods = new HashMap<>();
-		activeUser = null; // what's the default value here and when should it be initialized?
+		activeUser = null;
 		users = new HashMap<>();
 		tickets = new HashMap<>();
+		usersTickets = new HashMap<>();
 		ridesCompleted = new HashMap<>();
 		ridesInProgress = new HashMap<>();
 		ridesOverdue = new HashMap<>();
@@ -295,11 +299,15 @@ public class ValleyBikeSimModel {
 				if(counter != 0) {
 					// create new ticket object
 					Ticket ticket = new Ticket(Integer.parseInt(array[0]), array[1], array[2],array[3],
-							(array[4].equals("1")), array[5]);
+							(array[4].equals("Yes")), array[5]);
 					
-					System.out.println(ticket.toString());
-					// map username to Ticket object
-					this.tickets.put(array[1], ticket);
+					// map Ticket object to ticket ID
+					this.tickets.put(Integer.parseInt(array[0]), ticket);
+
+					// map Ticket object to username
+					this.usersTickets.putIfAbsent(array[1], new HashSet<Ticket>());
+					this.usersTickets.get(array[1]).add(ticket);
+					
 				}
 				counter++;	
 			}
@@ -528,8 +536,6 @@ public class ValleyBikeSimModel {
 	 */
 	
 	
-	
-	
 	/**
 	 * Reads a ride data file that contains all the rides for one day of service.
 	 * After processing the data, returns statistics for the day.
@@ -570,7 +576,7 @@ public class ValleyBikeSimModel {
 		catch (Exception e) {
 			//System.out.println("\n" + e.getMessage());
 			System.out.println("Invalid file name, please try again.");
-			
+	
 		}
 		return "";
 	}
@@ -590,7 +596,9 @@ public class ValleyBikeSimModel {
 		HashMap<String,Pattern> regex = new HashMap<>();
 		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
-		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$"));
+		regex.put("newStationName", Pattern.compile("^[^ ]+.*$")); // must contain at least one non-space character
+		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
+		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
 		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2
 													+ "([a-zA-Z .'-]+),"		// city
@@ -621,12 +629,14 @@ public class ValleyBikeSimModel {
 			
 			inputIsValid = (users.containsKey(info[0]) && users.get(info[0]).getPassword().equals(info[1]));
 			break;
-		case "newUsername":
+		case "newUsername": 
+			//is valid if only contains lowercase, uppercase letter, digits, min 6 characters and 
+			// doesn't exist in system
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			existInSys = users.containsKey(userInput);
-			inputIsValid = (!existInSys && userInput.length() >= 6);
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newEmail":
-			
 			// email is valid if it's in valid format and it does not belong to an existing user
 			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			existInSys = emails.containsKey(userInput);
@@ -646,16 +656,19 @@ public class ValleyBikeSimModel {
 			break;
 		case "newStationName":	
 			
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			userInput = userInput.trim();
-			// new station name must not coincide with existing station names
+			String userInputWithoutSpaces = userInput.replaceAll(" ", "");
+			
+			// new station name must not coincide with existing station names, even with different spacing
 			for (Station station : stations.values()) {
-				if (station.getStationName().equalsIgnoreCase(userInput)) {
+				if (station.getStationName().replaceAll(" ", "").equalsIgnoreCase(userInputWithoutSpaces)) {
 					existInSys = true;
 				}
 			}
 			
 			// a new station name is valid if it doesn't already exist in the system
-			inputIsValid = !existInSys;
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newStationAddress":	
 			matchRegex = regex.get("stationAddress").matcher(userInput).find();
@@ -1344,13 +1357,12 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/ticket-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "ticketIds,description,username".split(",");
+		      String [] record = "ticketId,username,category,identifyingInfo,isResolved,description".split(",");
 		      writer.writeNext(record,false);
 
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1369,12 +1381,18 @@ public class ValleyBikeSimModel {
 			csvWriter = new FileWriter("data-files/ticket-data.csv",true);
 
 			//adding all the bike details into the csv
-			
 			csvWriter.append(""+ticket.getTicketId());
 			csvWriter.append(",");
-			csvWriter.append(ticket.getDescription());
-			csvWriter.append(",");
 			csvWriter.append(ticket.getUsername());
+			csvWriter.append(",");
+			csvWriter.append(ticket.getCategory());
+			csvWriter.append(",");
+			csvWriter.append(ticket.getIdentifyingInfo());
+			csvWriter.append(",");
+			csvWriter.append((ticket.isResolved() ? "Yes" : "No"));
+			csvWriter.append(",");
+			csvWriter.append("\""+ticket.getDescription()+"\"");
+			
 			csvWriter.append("\n");
 			csvWriter.flush();
 			csvWriter.close();
@@ -1674,9 +1692,6 @@ public class ValleyBikeSimModel {
 			csvWriter.append(',');
 			csvWriter.append("0");
 			csvWriter.append(',');
-			
-			System.out.println(station.getStationId());
-			
 			
 			int numBikes = stationsBikes.get(station.getStationId()).size();
 			csvWriter.append(Integer.toString(numBikes));
@@ -1979,7 +1994,7 @@ public class ValleyBikeSimModel {
 	 * @param bikeId	The bike ID
 	 * @return station name and ID
 	 */
-	public String[] moveBikeFromStationToStorage(int bikeId) {
+	public String[] moveBikeFromStationToStorage(int bikeId, String bikeStatus) {
 		String[] returnData = new String[2];
 		for (Integer sId : stationsBikes.keySet()) {
 			if (stationsBikes.get(sId).contains(bikeId)) {
@@ -1990,7 +2005,7 @@ public class ValleyBikeSimModel {
 		
 		// move bike from this station to storage
 		stationsBikes.get(Integer.parseInt(returnData[0])).remove(bikeId);
-		bikes.get(bikeId).setStatus("inStorage");
+		bikes.get(bikeId).setStatus(bikeStatus);
 		
 		// save changes to bike and station data files
 		saveStationList();
@@ -2099,6 +2114,46 @@ public class ValleyBikeSimModel {
 		return allLines;
 	}
 
+	/**
+	 * Create a support ticket, and store it in the database. Update data files accordingly.
+	 * @param category
+	 * @param identifyingInfo
+	 * @param description
+	 */
+	public int createSupportTicket(String category, String identifyingInfo, String description) {
+		
+		// create ticket object
+		int ticketId = (Integer)Collections.max(tickets.keySet()) + 1;
+		String username = activeUser.getUsername();
+		Ticket ticket = new Ticket(ticketId, username, category,identifyingInfo,false, description);
+		
+		// map ticket object to the user and to the ticket ID
+		tickets.put(ticketId, ticket);
+		usersTickets.putIfAbsent(username, new HashSet<>());
+		usersTickets.get(username).add(ticket);
+		
+		// if bike is broken, move to storage
+		if (category.equals("bike")) {
+			int bikeId = Integer.parseInt(identifyingInfo);
+			moveBikeFromStationToStorage(bikeId, "OOO");
+		}
+		
+		// if ticket is maintenance request for station, edit station data
+		if (category.equals("station")) {
+			int stationId = Integer.parseInt(identifyingInfo);
+			
+			// increase the number of maintenance requests at this station
+			Station station = stations.get(stationId);
+			station.setMaintenanceReqs(station.getMaintenanceReqs()+1);
+			saveStationList();
+		}
+		
+		// save ticket to data file
+		saveTicketList();
+		
+		return ticketId;
+	}
+	
 	/**
 	 * Gets a list of all transactions completed in a specified day
 	 * @param dateString
