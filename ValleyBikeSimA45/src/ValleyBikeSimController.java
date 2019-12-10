@@ -446,6 +446,12 @@ public class ValleyBikeSimController {
 
 		} else if (userInputName.equals("pastDay")) {
 			inputIsValid = false;
+			try {
+				Date df = new SimpleDateFormat("MM-dd-yy").parse(userInput);
+				inputIsValid = true;
+			} catch (ParseException e) {
+				System.out.println("Invalid input, please follow the provided instructions and try again.");
+			}
 			while (!inputIsValid) {
 				userInput = view.prompt(userInputName);
 				try {
@@ -742,7 +748,7 @@ public class ValleyBikeSimController {
 	 * After processing the data, returns statistics for the day.
 	 */
 	public void displayDailyStatistics() {
-		//Ask the admin what day they want statistics for
+		//Get the day that the admin wants to see the statistics for
 		String dateString = getUserInput("pastDay");
 		String month = "";
 		switch(dateString.substring(0,2)) {
@@ -782,6 +788,9 @@ public class ValleyBikeSimController {
 		case "12":
 			month = "Dec";
 			break;
+		default:
+			view.displayInvalidDate();
+			return;
 		}
 		dateString = month+dateString.substring(2,6)+"20"+dateString.substring(6);
 		String filename = "data-files/rides-"+dateString+".csv";
@@ -789,8 +798,8 @@ public class ValleyBikeSimController {
 		String rideStatistics = model.getRidesStatistics(filename);
 		view.displayRideStatistics(rideStatistics);
 		
-		
-		
+		ArrayList<String> transactionStatistics = model.getTransactionsStatistics(dateString.substring(0,7)+dateString.substring(9));
+		view.displayTransactionStatistics(transactionStatistics);
 	}
 			
 }
