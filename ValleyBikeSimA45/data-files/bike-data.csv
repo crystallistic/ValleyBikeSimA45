@@ -44,7 +44,6 @@ bikeId,stationId,status
 208,20,working
 301,20,working
 628,21,working
-830,21,working
 496,22,working
 693,22,working
 464,23,working
@@ -52,6 +51,7 @@ bikeId,stationId,status
 929,23,working
 921,23,working
 747,23,working
+830,23,working
 642,24,working
 164,24,working
 839,24,working
