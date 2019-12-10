@@ -142,7 +142,7 @@ class ValleyBikeSimModelTest {
 	@Test
 	void isValidNewStationName() {
 		model.readData();
-		assertTrue(model.isValid("newStationName", "Candy Land"));
+		assertTrue(model.isValid("newStationName", "CandyLand"));
 		assertTrue(model.isValid("newStationName", "010101")); //user passes a string of numbers
 		assertFalse(model.isValid("newStationName", "Northampton High School")); //this exists in station-data.csv
 		assertFalse(model.isValid("newStationName", "Northampton High School   ")); //this exists in station-data.csv but with spaces
