@@ -579,8 +579,8 @@ public class ValleyBikeSimView {
 		System.out.println("What is this issue related to?\n"
 							+ "1) A station (issues with kiosks, docks, etc.)\n"
 							+ "2) A broken bike\n"
-							+ "3) Check "
-							+ "3) Other (user account, payment methods, etc.)");
+							+ "3) Check in a bike at a full station\n"
+							+ "4) Other (user account, payment methods, etc.)");
 	}
 
 	/**

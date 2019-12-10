@@ -878,6 +878,7 @@ public class ValleyBikeSimController {
 		
 		String category = "";
 		String identifyingInfo = "";
+		String description = "";
 		switch (optionSelected) {
 		case "1": // ticket is station-related
 			view.displayChooseStation();
@@ -885,16 +886,24 @@ public class ValleyBikeSimController {
 			category = "station";
 			identifyingInfo = getUserInput("stationId");
 			break;
-		case "2": // ticket is bike-related
+		case "2": // broken bike 
 			category = "bike";
 			identifyingInfo = getUserInput("bikeId");
+			description = "Bike OOO";
 			break;
-		case "3": // general issue
+		case "3": // check in bike at empty station
+			category = "bike";
+			identifyingInfo = getUserInput("bikeId");
+			description = "Check in bike at full station";
+			break;
+		case "4": // general issue
 			category = "general";
 			break;
 		}
 		
-		String description = getUserInput("ticketDescription");
+		if (!category.equals("bike")) {
+			description = getUserInput("ticketDescription");
+		}
 		
 		int ticketId = model.createSupportTicket(category,identifyingInfo,description);
 		view.displaySubmitSupportTicketSuccess(ticketId);
