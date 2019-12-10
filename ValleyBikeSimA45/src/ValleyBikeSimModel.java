@@ -2086,8 +2086,39 @@ public class ValleyBikeSimModel {
 		} 
 		
 		catch (Exception e) {
-			System.out.println("\n" + e.getMessage());
+			return "No rides completed on this day.\n";
 		}
 		return allLines;
+	}
+
+	/**
+	 * Gets a list of all transactions completed in a specified day
+	 * @param dateString
+	 * @return
+	 */
+	public ArrayList<String> getTransactionsStatistics(String desiredDate) {
+		ArrayList<String> formattedTransactionList = new ArrayList<>();
+		formattedTransactionList.add("Amount\t\tDescription\n");
+		DateFormat df = new SimpleDateFormat("MMM-dd-yy");
+		
+		BigDecimal total = new BigDecimal(0);
+		for (ArrayList<Transaction> userTransactions : transactionsByUser.values()) {
+			for (Transaction transaction : userTransactions) {
+				String date = df.format(transaction.getTime());
+
+				// check if the date is the desired date
+				if (date.equals(desiredDate)) {
+					String amount = transaction.getAmount().toString();
+					total = total.add(new BigDecimal(amount));
+					String description = transaction.getDescription();
+					formattedTransactionList.add(amount + "\t\t" + description + "\n");
+				}
+			}
+		}
+		String stats = "ValleyBike made $"+total.toString()+" on this day.\n";
+		ArrayList<String> output = new ArrayList<String>();
+		output.add(stats);
+		output.addAll(formattedTransactionList);
+		return output;
 	}
 }
