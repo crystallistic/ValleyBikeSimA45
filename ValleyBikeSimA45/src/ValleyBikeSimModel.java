@@ -596,7 +596,7 @@ public class ValleyBikeSimModel {
 		HashMap<String,Pattern> regex = new HashMap<>();
 		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
-
+		regex.put("newStationName", Pattern.compile("^[^ ]+.*$")); // must contain at least one non-space character
 		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
 		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
 		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
@@ -656,6 +656,7 @@ public class ValleyBikeSimModel {
 			break;
 		case "newStationName":	
 			
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			userInput = userInput.trim();
 			String userInputWithoutSpaces = userInput.replaceAll(" ", "");
 			
@@ -667,7 +668,7 @@ public class ValleyBikeSimModel {
 			}
 			
 			// a new station name is valid if it doesn't already exist in the system
-			inputIsValid = !existInSys;
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newStationAddress":	
 			matchRegex = regex.get("stationAddress").matcher(userInput).find();
@@ -1691,9 +1692,6 @@ public class ValleyBikeSimModel {
 			csvWriter.append(',');
 			csvWriter.append("0");
 			csvWriter.append(',');
-			
-			System.out.println(station.getStationId());
-			
 			
 			int numBikes = stationsBikes.get(station.getStationId()).size();
 			csvWriter.append(Integer.toString(numBikes));
