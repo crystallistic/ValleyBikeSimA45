@@ -177,7 +177,7 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter the new 3-digit bike ID. It must not coincide with another bike ID number in the system:");
 			break;	
 		case "bikeIdInStorage":
-			System.out.println("Please enter the new 3-digit bike ID. The bike must be in storage in order to be added to a station:");
+			System.out.println("Please enter the 3-digit bike ID. The bike must be in storage in order to be added to a station:");
 			break;	
 		case "riderAddress":
 			System.out.println("Please enter your address on one line, in the following format:\n"

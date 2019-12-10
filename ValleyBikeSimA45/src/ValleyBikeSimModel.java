@@ -593,11 +593,11 @@ public class ValleyBikeSimModel {
 		boolean matchRegex = false;
 		boolean existInSys = false;
 		Pattern r = null;
-		HashMap<String,Pattern> regex = new HashMap<>();
-		regex.put("stationId", Pattern.compile("^(0*[1-9]|[1-9][0-9])$"));
-		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
-		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
-		regex.put("newStationName", Pattern.compile("^[^ ]+.*$"));
+		HashMap<String,Pattern> regex = new HashMap<>(); 
+		regex.put("stationId", Pattern.compile("^(0*[1-9]|[1-9][0-9])$")); // accept values between 1-99
+		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));	// 3 digits 
+		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$")); // lowercase + uppercase + nummbers, min 6 chars
+		regex.put("newStationName", Pattern.compile("^[^ ]+.*$")); // must contain at least 1 non-whitespace character
 		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
 		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2
