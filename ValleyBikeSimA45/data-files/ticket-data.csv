@@ -14,3 +14,5 @@ ticketId,username,category,identifyingInfo,isResolved,description
 13,adminUsername3,bike,245,No,"Bike OOO"
 14,adminUsername1,bike,213,No,"Bike OOO"
 15,adminUsername1,station,31,No,"Dock broken"
+16,adminUsername1,general,,No,"   "
+17,adminUsername1,station,24,No,"I don't like the number and it looked at me funny."
