@@ -632,8 +632,9 @@ public class ValleyBikeSimModel {
 		case "newUsername": 
 			//is valid if only contains lowercase, uppercase letter, digits, min 6 characters and 
 			// doesn't exist in system
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			existInSys = users.containsKey(userInput);
-			inputIsValid = !existInSys;
+			inputIsValid = (matchRegex && !existInSys);
 			break;
 		case "newEmail":
 			// email is valid if it's in valid format and it does not belong to an existing user

@@ -886,7 +886,6 @@ public class ValleyBikeSimController {
 	 * Create a ticket
 	 */
 	private void createSupportTicket() {
-		
 
 		if (model.activeUserIsAdmin()) {
 			//view.displaySorry();
