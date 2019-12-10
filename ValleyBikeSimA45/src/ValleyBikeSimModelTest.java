@@ -62,6 +62,48 @@ class ValleyBikeSimModelTest {
 		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
 	}
 	
+	//Tests if addStation adds a Station object to the model
+	@Test
+	void addStationTest() {
+		//Controller validates user input so do not need to check that station information is valid here 
+		model.readData();
+		model.addStation(80, "my_station", "777 Brockton Avenue, Abington, MA, 2351", 10, true);
+		assertEquals("my_station", model.getStation(80).getStationName());
+		assertEquals("777 Brockton Avenue, Abington, MA, 2351", model.getStation(80).getAddress());
+		assertEquals(10, model.getStation(80).getCapacity());
+		assertEquals(true, model.getStation(80).isHasKiosk());
+	}
+	
+	//Tests if removeStation removes a station properly
+	@Test
+	void removeStationTest() {
+		//Controller validates user input so do not need to check that station information is valid here
+		model.readData();
+		model.addStation(70, "my_station1", "37 Elm Street, Northampton, MA 01063", 15, false);
+		model.removeStation(70);
+		assertEquals(null, model.getStation(70));
+		
+		//remove a station that already is in the system
+		model.removeStation(20);
+		assertEquals(null, model.getStation(20));
+	}
+	
+	//Tests if addBikeFromStorageToStation (adds a bike) adds a bike to the model and updates the station list
+	//Works for adding new and existing bikes because this method takes bikes from storage for both cases, so
+	//we are assuming new and existing bikes are properly put in storage
+	@Test 
+	void addBikeFromStorageToStationTest(){ 
+		//Controller validates user input so do not need to check that station information is valid here
+		model.readData();
+		model.addNewBikeToStorage(111); //creates a new bike with ID 111 and puts it in storage
+		assertTrue(model.isBikeInStorage(111)); //checks to see if bike is moved to storage
+		model.addBikeFromStorageToStation(111, 33);
+		assertFalse(model.isBikeInStorage(111)); //bike should be removed from storage
+		assertTrue(model.stationHasBike(33, 111)); //does the station have the bike
+		
+	}
+	
+	
 	/* NEW SECTION HERE */
 	/* TESTING isValid() method below, which verifies user input */
 	
