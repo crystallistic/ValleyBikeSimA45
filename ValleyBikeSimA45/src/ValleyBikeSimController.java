@@ -431,21 +431,41 @@ public class ValleyBikeSimController {
 		String userInput = view.prompt(userInputName);
 		while (userInput.replaceAll(" ", "").length() == 0) {
 			view.displayEmptyInputError();
-			view.prompt(userInputName);
+			userInput = view.prompt(userInputName);
 		}
 
 
 		if (userInputName.equals("username")) {
-			String password = view.prompt("password").trim();
+			
+			// make sure password is not empty
+			String password = view.prompt("password");
+			while (password.replaceAll(" ", "").length() == 0) {
+				view.displayEmptyInputError();
+				password = view.prompt("password");
+			}
+			password = password.trim();
+			
+			// check the username-password combination in the system
 			String loginInfo = userInput + " " + password;
 			inputIsValid = model.isValid("loginInfo", loginInfo);
 
 			while (!inputIsValid) {
-
 				System.out.println("Invalid username and password combination, please try again.");
-
-				userInput = view.prompt(userInputName); // username
+				
+				// get username
+				userInput = view.prompt(userInputName);
+				while (userInput.replaceAll(" ", "").length() == 0) {
+					view.displayEmptyInputError();
+					userInput = view.prompt(userInputName);
+				}
+				
 				password = view.prompt("password");
+				while (password.replaceAll(" ", "").length() == 0) {
+					view.displayEmptyInputError();
+					password = view.prompt("password");
+				}
+				password = password.trim();
+				
 				loginInfo = userInput + " " + password;
 				inputIsValid = model.isValid("loginInfo", loginInfo);
 			}
