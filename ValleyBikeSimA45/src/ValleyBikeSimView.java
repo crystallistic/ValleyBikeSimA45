@@ -297,7 +297,9 @@ public class ValleyBikeSimView {
 	}
 
 	public void displayFullDock() {
-		System.out.println("Dock is full. Please return bike to another station");
+		System.out.println("This station has no available docks. Would you like to return your bike to a different station?\n"
+							+ "1) Return my bike to a different station\n"
+							+ "2) Contact customer support to end your ride here");
 		
 	}
 
@@ -358,7 +360,8 @@ public class ValleyBikeSimView {
 	 * Notifies user of stolen bike charge.
 	 */
 	public void bikeStolen() {
-		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000. Please contact ValleyBike for instructions for next steps");
+		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000.\n"
+				+ "Please contact ValleyBike for instructions for next steps");
 	}
 
 	/**
@@ -459,12 +462,13 @@ public class ValleyBikeSimView {
 	 * @param bikeIdList
 	 */
 	public void displayBikeNotBelongToStation(int stationId, int bikeId, HashSet<Integer> bikeIdList) {
-		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + "\n"
+		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + ".\n"
 				+ "You may want to select a bike ID from the list of bike IDs currently at this station below:");
 		for (Integer bId : bikeIdList) {
 			System.out.print(bId);
 			System.out.print(',');
 		}
+		System.out.println();
 		
 	}
 
@@ -632,6 +636,15 @@ public class ValleyBikeSimView {
 	 */
 	public void displayOldPassword() {
 		System.out.println("New password is the same as old password. Try again.");
+	}
+
+	/**
+	 * Informs user that they've contacted customer support successfully about returning a bike at a full station
+	 */
+	public void displayReturnBikeAtFullStationSuccess() {
+		System.out.println("Thank you for letting us know! Please lock the bike securely near the station, \n"
+				+ "and we will mark your ride as completed in the system. Thank you for riding with ValleyBike.");
+		
 	}
 	
 }

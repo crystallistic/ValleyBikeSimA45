@@ -51,7 +51,7 @@ class ValleyBikeSimModelTest {
 		model.addPaymentMethod("username", payment);
 		model.setMembership("username", membership.getMembership("DayPass"));
 		model.startRide(830,33);
-		model.endRide(23);
+		model.endRide(23,false);
 		assertFalse(model.isRideInProgress()); //Ride should no longer be in progress
 
 		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
