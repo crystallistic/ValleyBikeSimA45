@@ -597,6 +597,7 @@ public class ValleyBikeSimModel {
 		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
 		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
+		regex.put("newStationName", Pattern.compile("^[^ ]+.*$"));
 		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
 		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2
@@ -2130,10 +2131,15 @@ public class ValleyBikeSimModel {
 		usersTickets.putIfAbsent(username, new HashSet<>());
 		usersTickets.get(username).add(ticket);
 		
-		// if bike is broken, move to storage
+		// bike category issues 
 		if (category.equals("bike")) {
 			int bikeId = Integer.parseInt(identifyingInfo);
-			moveBikeFromStationToStorage(bikeId, "OOO");
+			// if bike is broken, move to storage
+			if (ticket.getDescription().equalsIgnoreCase("Bike OOO")) {
+				moveBikeFromStationToStorage(bikeId, "OOO");
+			} else {
+				
+			}
 		}
 		
 		// if ticket is maintenance request for station, edit station data
