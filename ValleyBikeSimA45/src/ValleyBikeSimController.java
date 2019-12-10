@@ -280,8 +280,7 @@ public class ValleyBikeSimController {
 				endRide();
 				break;
 			case "4":// 4) Edit profile
-				//editProfile();
-				System.out.println("Feature not yet available, check back soon!");
+				editProfile();
 				break;
 			case "5":// 5) Edit payment method
 				editPaymentMethod();
@@ -309,6 +308,58 @@ public class ValleyBikeSimController {
 		mainMenu(userIsAdmin);
 	}
 
+	/**
+	 * Allows user to change their profile information
+	 */
+	private void editProfile() {
+		//print out rider's current information, asks user what they want to edit
+		view.displayCurrentUserProfile(model.getUserProfileString());
+
+		String option = getUserInput("option7");
+		switch(option) {
+		case "1": //change username
+			String newUsername = getUserInput("newUsername");
+			model.setActiveUserInfo("username",newUsername);
+			editProfile();
+			break;
+		case "2": //change password
+			getUserInput("username"); //makes the user log in again for security reasons
+			String newPassword = view.prompt("password");
+			while (newPassword.equals(model.getActiveUser().getPassword())) {
+				view.displayOldPassword();
+				newPassword = view.prompt("password");
+			}
+			model.setActiveUserInfo("password",newPassword);
+			editProfile();
+			break;
+		case "3": //change full name
+			String newFullName = getUserInput("fullName");
+			model.setActiveUserInfo("fullname",newFullName);
+			editProfile();
+			break;
+		case "4": //change email
+			String newEmail = getUserInput("newEmail");
+			model.setActiveUserInfo("email",newEmail);
+			editProfile();
+			break;
+		case "5": //change phone number
+			String phoneNumber = getUserInput("phoneNumber");
+			model.setActiveUserInfo("phoneNumber",phoneNumber);
+			editProfile();
+			break;
+		case "6": //change address
+			String address = getUserInput("address");
+			model.setActiveUserInfo("address",address);
+			editProfile();
+			break;
+		case "7": //return to main menu
+			break;
+		}
+	}
+
+	/**
+	 * Allows user to change their payment method.
+	 */
 	private void editPaymentMethod() {
 		//print out rider's current information, asks user what they want to edit
 		view.displayCurrentPaymentMethod(model.getPaymentMethodString());

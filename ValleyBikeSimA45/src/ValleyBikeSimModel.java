@@ -1847,7 +1847,7 @@ public class ValleyBikeSimModel {
 		DateFormat df = new SimpleDateFormat("MM/dd/yy");
 		for (Transaction transaction : transactionsByUser.get(activeUser.getUsername())) {
 			String date = df.format(transaction.getTime());
-			String amount = transaction.getAmount().toString();
+			String amount = "$"+transaction.getAmount().toString();
 			String description = transaction.getDescription();
 			formattedTransactionList.add(date+"\t"+amount+"\t\t"+description+"\n");
 		}
@@ -2016,6 +2016,14 @@ public class ValleyBikeSimModel {
 	public String getPaymentMethodString() {
 		return paymentMethods.get(activeUser.getUsername()).toString();
 	}
+	
+	/**
+	 * Returns the string version of the active user's profile
+	 * @return
+	 */
+	public String getUserProfileString() {
+		return users.get(activeUser.getUsername()).toString();
+	}
 
 	/**
 	 * Sets activeUser's billing name
@@ -2111,7 +2119,7 @@ public class ValleyBikeSimModel {
 					String amount = transaction.getAmount().toString();
 					total = total.add(new BigDecimal(amount));
 					String description = transaction.getDescription();
-					formattedTransactionList.add(amount + "\t\t" + description + "\n");
+					formattedTransactionList.add("$"+amount + "\t\t" + description + "\n");
 				}
 			}
 		}
@@ -2120,5 +2128,35 @@ public class ValleyBikeSimModel {
 		output.add(stats);
 		output.addAll(formattedTransactionList);
 		return output;
+	}
+
+	/**
+	 * Change the activeUser's specified field
+	 * @param string
+	 * @param newUsername
+	 */
+	public void setActiveUserInfo(String fieldName, String value) {
+		Rider activeRider = (Rider)users.get(activeUser.getUsername());
+		switch(fieldName) {
+		case "username":
+			activeUser.setUsername(value);
+			break;
+		case "password":
+			activeUser.setPassword(value);
+			break;
+		case "fullName":
+			activeRider.setFullName(value);
+			break;
+		case "email":
+			activeRider.setEmail(value);
+			break;
+		case "phoneNumber":
+			activeRider.setPhoneNumber(value);
+			break;
+		case "address":
+			activeRider.setAddress(value);
+			break;
+		}
+		saveUserLists();
 	}
 }

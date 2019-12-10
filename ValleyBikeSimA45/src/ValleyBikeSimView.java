@@ -465,7 +465,6 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-<<<<<<< HEAD
 	 * Tells the user what membership they have and that the default is Pay-per-ride
 	 * @param numCurrentMembership
 	 */
@@ -538,11 +537,27 @@ public class ValleyBikeSimView {
 	 */
 	public void displayCurrentPaymentMethod(String paymentMethodString) {
 		System.out.println("Your current payment method:\n\n"+paymentMethodString);
-		System.out.println("Which of the following would you like to edit?\n"
+		System.out.println("Which of the following would you like to edit?:\n"
 							+ "1) Change billing name\n"
 							+ "2) Change billing address\n"
 							+ "3) Add new card\n"
 							+ "4) Return to main menu\n");
+	}
+	
+	/**
+	 * Displays user's current profile and options for what to edit
+	 * @param userProfileString
+	 */
+	public void displayCurrentUserProfile(String userProfileString) {
+		System.out.println("Your current user profile:\n\n"+userProfileString);
+		System.out.println("Which of the following would you like to edit?:\n"
+							+ "1) Username\n"
+							+ "2) Password\n"
+							+ "3) Full name\n"
+							+ "4) Email\n"
+							+ "5) Phone number\n"
+							+ "6) Address\n"
+							+ "7) Return to main menu\n");
 	}
 
 	/**
@@ -572,6 +587,13 @@ public class ValleyBikeSimView {
 	 */
 	public void displayInvalidDate() {
 		System.out.println("Date does not exist");	
+	}
+
+	/**
+	 * Tells the user that they can't re-use their old password
+	 */
+	public void displayOldPassword() {
+		System.out.println("New password is the same as old password. Try again.");
 	}
 	
 }
