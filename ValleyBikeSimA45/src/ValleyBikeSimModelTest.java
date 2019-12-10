@@ -16,11 +16,16 @@ class ValleyBikeSimModelTest {
 		assertEquals("username", model.getActiveUser().getUsername());
 	}
 	
-	//Tests if readRidesDataFile works and ride data is accurate
+	//Tests if getRidesStatistics works and ride data is accurate
 	@Test
-	void readRidesDataFileTest() {
-		String message = "The ride list contains 20 rides and the average ride time is 36 minutes." + "\n";
-		assertEquals(message, model.readRidesDataFile("rides-completed-data.csv")); //Error: this should work
+	void getRidesStatisticsTest() {
+		/*String message = "On this day there were 1 rides with average ride time of 317 minutes"+ "\n\n" + "From	To Start  End" + "\n" +
+				"32	20	12/08/19 10:15	12/08/19 15:32";*/
+		String message = "On this day there were 1 rides with average ride time of 317 minutes\n" + 
+				"\n" + 
+				"From	To	Start		End\n" + 
+				"32	20	12/08/19 10:15	12/08/19 15:32" + "\n";
+		assertEquals(message, model.getRidesStatistics("data-files/rides-Dec-08-2019.csv"));
 	}
 	
 	//Tests if startRide method is working correctly
@@ -91,9 +96,7 @@ class ValleyBikeSimModelTest {
 		assertTrue(model.isValid("loginInfo", "username1 password1"));
 		assertFalse(model.isValid("loginInfo", "string string"));
 		assertFalse(model.isValid("loginInfo", "")); //user passes an empty string
-		assertFalse(model.isValid("loginInfo", " ")); //user passes a space
-		assertFalse(model.isValid("loginInfo", "username1")); //user does not enter a password
-		assertFalse(model.isValid("loginInfo", " password1")); //user does not enter a username
+ 		assertFalse(model.isValid("loginInfo", " password1")); //user does not enter a username
 		assertFalse(model.isValid("loginInfo", "010101 100")); //user enters numbers
 	}
 	
