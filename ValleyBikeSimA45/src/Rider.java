@@ -88,7 +88,9 @@ public class Rider extends User {
 	
 	@Override
 	public String toString() {
-		return "Rider [Username=" + super.getUsername() + ", password=" + super.getPassword() + ", fullname=" + fullName + ", phoneNumber=" + phoneNumber + ", address=" + address + ", email=" + email + "]";
+		String heading = "Username\tFull Name\tEmail\t\t\tPhone Number\tAddress\n";
+		String line = super.getUsername()+"\t"+fullName+"\t"+email+"\t"+phoneNumber+"\t"+address+"\n";
+		return heading+line;
 	}
 
 }
