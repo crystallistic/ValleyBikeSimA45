@@ -594,7 +594,7 @@ public class ValleyBikeSimModel {
 		boolean existInSys = false;
 		Pattern r = null;
 		HashMap<String,Pattern> regex = new HashMap<>();
-		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
+		regex.put("stationId", Pattern.compile("^(0*[1-9]|[1-9][0-9])$"));
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
 		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
 		regex.put("newStationName", Pattern.compile("^[^ ]+.*$"));
