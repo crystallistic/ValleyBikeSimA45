@@ -632,6 +632,7 @@ public class ValleyBikeSimController {
 						view.displayBikeNotBelongToStation(stationId, bikeId, model.getBikeListFromStation(stationId));
 						bikeId = Integer.parseInt(getUserInput("bikeId"));
 						stationId = Integer.parseInt(getUserInput("stationId"));
+						stationHasBike = model.stationHasBike(stationId, bikeId);
 					}
 					
 					// Pass info to model to start ride and modify system data
@@ -665,12 +666,19 @@ public class ValleyBikeSimController {
 		
 		if (dockIsFull) {
 			view.displayFullDock();
-			//TODO Maybe generate a ticket automatically about this full station?
-			return;
+			String optionSelected = getUserInput("option2");
+			
+			// if user wants to return bike to different station, restart process
+			if (optionSelected.equals("1")) {
+				endRide();
+			} else { // if user wants to contact customer support to end ride here
+				model.createSupportTicket("bike", Integer.toString(model.getBikeIdRideInProgress()), "Check in bike at full station");
+				view.displayReturnBikeAtFullStationSuccess();
+			}
 		}
 
 		// charge the user for this ride
-		BigDecimal chargeAmount = model.endRide(stationId);
+		BigDecimal chargeAmount = model.endRide(stationId,dockIsFull);
 		view.chargeUserForRide(chargeAmount);
 	}
 	
@@ -893,7 +901,7 @@ public class ValleyBikeSimController {
 		
 		String optionSelected;
 		view.displayTicketCategory();
-		optionSelected = getUserInput("option3");
+		optionSelected = getUserInput("option4");
 		
 		String category = "";
 		String identifyingInfo = "";
@@ -910,7 +918,7 @@ public class ValleyBikeSimController {
 			identifyingInfo = getUserInput("bikeId");
 			description = "Bike OOO";
 			break;
-		case "3": // check in bike at empty station
+		case "3": // check in bike at full station
 			category = "bike";
 			identifyingInfo = getUserInput("bikeId");
 			description = "Check in bike at full station";

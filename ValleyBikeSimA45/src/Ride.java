@@ -140,10 +140,12 @@ public class Ride {
 	public void setEndStationName(String endStationName) {
 		this.endStationName = endStationName;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "Ride [bikeId=" + bikeId + ", startStation=" + Integer.toString(startStationId) + ", endStation=" + Integer.toString(endStationId)
+		return "Ride [bikeId=" + bikeId + ", startStationId=" + startStationId + ", startStationName="
+				+ startStationName + ", endStationId=" + endStationId + ", endStationName=" + endStationName
 				+ ", startTime=" + startTime + ", endTime=" + endTime + "]";
 	}
+	
 }
