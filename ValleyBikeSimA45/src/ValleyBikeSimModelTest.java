@@ -82,10 +82,6 @@ class ValleyBikeSimModelTest {
 		model.addStation(70, "my_station1", "37 Elm Street, Northampton, MA 01063", 15, false);
 		model.removeStation(70);
 		assertEquals(null, model.getStation(70));
-		
-		//remove a station that already is in the system
-		model.removeStation(20);
-		assertEquals(null, model.getStation(20));
 	}
 	
 	//Tests if addBikeFromStorageToStation (adds a bike) adds a bike to the model and updates the station list
@@ -124,7 +120,10 @@ class ValleyBikeSimModelTest {
 	@Test
 	void isValidBikeId() {
 		model.readData();
-		assertTrue(model.isValid("bikeId", "628"));
+		//add a bike to the model for testing
+		model.addNewBikeToStorage(300); //creates a new bike with ID 300 and puts it in storage
+		model.addBikeFromStorageToStation(300, 33);
+		assertTrue(model.isValid("bikeId", "300"));
 		assertFalse(model.isValid("bikeId", "hello")); //user passes a string of characters
 		assertFalse(model.isValid("bikeId", "62812"));
 		assertFalse (model.isValid("bikeId", " ")); //user passes a space
