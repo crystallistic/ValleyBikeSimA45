@@ -50,12 +50,9 @@ class ValleyBikeSimModelTest {
 		PaymentMethod payment = new PaymentMethod("myname", "1010101010101010", "1 Chapin Way Northampton MA 01063", "02/24", "100");
 		model.addPaymentMethod("username", payment);
 		model.setMembership("username", membership.getMembership("DayPass"));
-		
 		model.startRide(830,33);
-		//int start_num_freedocks = model.getStation(23).numFreeDocks;
 		model.endRide(23);
 		assertFalse(model.isRideInProgress()); //Ride should no longer be in progress
-		//assertTrue(model.getStation(23).numFreeDocks == start_num_freedocks-1); //Number of free docks at the new station should increase by one
 
 		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
 	}
@@ -67,7 +64,7 @@ class ValleyBikeSimModelTest {
 	@Test
 	void isValidStationID() {
 		model.readData(); //reads in station-data.csv
-		assertTrue(model.isValid("stationId", "30"));
+		assertTrue(model.isValid("stationId", "31"));
 		assertFalse(model.isValid("stationId", "300"));
 		assertFalse(model.isValid("stationId", "string")); //user passes a string
 		assertFalse(model.isValid("stationId", "30string")); //user passes a string with an integer)
@@ -157,16 +154,16 @@ class ValleyBikeSimModelTest {
 	}
 	
 	//isValid should return true if the station address passed does not exist in station-data.csv and follows the correct regex format
+	//Not checking if an address exists in the real world, because we don't not have a way to validate this
 	@Test
 	void isValidNewStationAddress() {
-		assertTrue(model.isValid("newStationAddress", "1 Smith Way Northampton MA 01063"));
+		assertTrue(model.isValid("newStationAddress", "1 Smith Way, Northampton, MA, 01063"));
 		assertFalse(model.isValid("newStationAddress", "10 0101 0101 01010 0101 01010")); //user passes an invalid address
 		assertFalse(model.isValid("newStationAddress", "this is an address")); //user passes an invalid address
 		assertFalse(model.isValid("newStationAddress", "a town, Unit 7214/, City, MA, 34324, USA")); //user passes a non-existing address in the correct format
 		assertFalse(model.isValid("newStationAddress", "a town, fsdfsf, MA, 34324, USA")); //user passes a non-existing address in the correct format
 		assertFalse(model.isValid("newStationAddress", "8409 Forest Rd., Benton Harbor, Benton Harbor, MI, 49022, USA")); //user passes a non-existing address in the correct format
 		assertFalse(model.isValid("newStationAddress", "11806 Cline Ave,Crown Point,IN,46307,USA")); //user passes a non-existing address in the correct format
-		assertFalse(model.isValid("newStationAddress", "42 Wallaby Way, Sydney, New South Wales, 32432, Australia")); //user passes a non-existing address in the correct format
 		assertFalse(model.isValid("newStationAddress", " ")); //user passes a space
 		assertFalse(model.isValid("newStationAddress", "")); //user passes an empty string
 	} 
