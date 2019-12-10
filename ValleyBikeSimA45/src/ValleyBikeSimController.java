@@ -90,6 +90,7 @@ public class ValleyBikeSimController {
 		regex.put("capacity",Pattern.compile("^(0*[5-9]|1[0-9]|2[0-7])$")); // capacity is within the range [5-27]
 		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
 		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$"));
+		regex.put("ticketDescription", Pattern.compile(".{3,}")); // description of issues cannot be empty
 	}
 
 	/**
@@ -255,8 +256,7 @@ public class ValleyBikeSimController {
 				displayDailyStatistics();
 				break;
 			case "8":// 8) Create support ticket
-				//createSupportTicket();
-				System.out.println("Feature not yet available, check back soon!");
+				createSupportTicket();
 				break;
 			case "9": // 9) Resolve support ticket
 				// resolveSupportTicket();
@@ -296,8 +296,7 @@ public class ValleyBikeSimController {
 				displayTransactionHistory();
 				break;
 			case "9":// 9) Report issue
-				//reportIssue();
-				System.out.println("Feature not yet available, check back soon!");
+				createSupportTicket();
 				break;
 			case "10":// 10) Log out
 				view.displayLogout();
@@ -696,7 +695,7 @@ public class ValleyBikeSimController {
 		String status = model.getBikeStatus(bikeId);
 		String bikeInStorageMessage = "";
 		if (status.equals("working")) { // if bike is docked at a station, move it to storage
-			String[] stationData = model.moveBikeFromStationToStorage(bikeId);
+			String[] stationData = model.moveBikeFromStationToStorage(bikeId, "inStorage");
 			int stationId = Integer.parseInt(stationData[0]);
 			String stationName = stationData[1];
 			bikeInStorageMessage = "Bike " + bikeId + " has been moved to storage from station " + stationName + " (#" + stationId + ").";
@@ -718,7 +717,7 @@ public class ValleyBikeSimController {
 	/**
 	 * Displays the full list of stations within the Valley Bike system.
 	 */
-	public void displayStationList() {
+	private void displayStationList() {
 		
 		// get formatted station list from model
 		ArrayList<String> formattedStationList = model.getStationList();
@@ -731,7 +730,7 @@ public class ValleyBikeSimController {
 	 * Equally divides all the bikes between stations
 	 * to avoid stations being under- or over-occupied
 	 */
-	public void equalizeStations() {
+	private void equalizeStations() {
 		
 		// equalizes stations in model
 		model.equalizeStations();
@@ -744,7 +743,7 @@ public class ValleyBikeSimController {
 	 * Reads a .csv ride data file that contains all the rides for one day of service.
 	 * After processing the data, returns statistics for the day.
 	 */
-	public void displayDailyStatistics() {
+	private void displayDailyStatistics() {
 		//Ask the admin what day they want statistics for
 		String dateString = getUserInput("pastDay");
 		String month = "";
@@ -791,8 +790,43 @@ public class ValleyBikeSimController {
 		
 		String rideStatistics = model.getRidesStatistics(filename);
 		view.displayRideStatistics(rideStatistics);
+	}
+	
+	/**
+	 * Create a ticket
+	 */
+	private void createSupportTicket() {
 		
+		if (model.activeUserIsAdmin()) {
+			//view.displaySorry();
+		}
 		
+		String optionSelected;
+		view.displayTicketCategory();
+		optionSelected = getUserInput("option3");
+		
+		String category = "";
+		String identifyingInfo = "";
+		switch (optionSelected) {
+		case "1": // ticket is station-related
+			view.displayChooseStation();
+			displayStationList();
+			category = "station";
+			identifyingInfo = getUserInput("stationId");
+			break;
+		case "2": // ticket is bike-related
+			category = "bike";
+			identifyingInfo = getUserInput("bikeId");
+			break;
+		case "3": // general issue
+			category = "general";
+			break;
+		}
+		
+		String description = getUserInput("ticketDescription");
+		
+		int ticketId = model.createSupportTicket(category,identifyingInfo,description);
+		view.displaySubmitSupportTicketSuccess(ticketId);
 		
 	}
 			
