@@ -621,6 +621,13 @@ public class ValleyBikeSimView {
 	}
 
 	/**
+	 * Tell the user they cannot enter an empty string
+	 */
+	public void displayEmptyInputError() {
+		System.out.println("You may not enter an empty input. Please try again.");
+	}
+	
+	/*
 	 * Tells the user that they can't re-use their old password
 	 */
 	public void displayOldPassword() {

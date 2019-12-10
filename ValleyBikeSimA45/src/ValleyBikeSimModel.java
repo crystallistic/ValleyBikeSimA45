@@ -596,7 +596,6 @@ public class ValleyBikeSimModel {
 		HashMap<String,Pattern> regex = new HashMap<>();
 		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
-		regex.put("newStationName", Pattern.compile("^[^ ]+.*$")); // must contain at least one non-space character
 		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
 		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
 		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
@@ -632,9 +631,8 @@ public class ValleyBikeSimModel {
 		case "newUsername": 
 			//is valid if only contains lowercase, uppercase letter, digits, min 6 characters and 
 			// doesn't exist in system
-			matchRegex = regex.get(userInputName).matcher(userInput).find();
 			existInSys = users.containsKey(userInput);
-			inputIsValid = (matchRegex && !existInSys);
+			inputIsValid = !existInSys;
 			break;
 		case "newEmail":
 			// email is valid if it's in valid format and it does not belong to an existing user
