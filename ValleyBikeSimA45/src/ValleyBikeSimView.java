@@ -604,5 +604,13 @@ public class ValleyBikeSimView {
 	public void displayInvalidDate() {
 		System.out.println("Date does not exist");	
 	}
+
+	/**
+	 * Tell the user they cannot enter an empty string
+	 */
+	public void displayEmptyInputError() {
+		System.out.println("You may not enter an empty input. Please try again.");
+		
+	}
 	
 }

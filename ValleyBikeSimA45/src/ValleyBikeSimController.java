@@ -375,8 +375,14 @@ public class ValleyBikeSimController {
 	public String getUserInput(String userInputName) {
 
 		boolean inputIsValid;
-
+		
+		// check for empty string/ string with only spaces
 		String userInput = view.prompt(userInputName);
+		while (userInput.replaceAll(" ", "").length() == 0) {
+			view.displayEmptyInputError();
+			view.prompt(userInputName);
+		}
+
 
 		if (userInputName.equals("username")) {
 			String password = view.prompt("password").trim();
