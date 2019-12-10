@@ -90,7 +90,7 @@ public class ValleyBikeSimController {
 		regex.put("capacity",Pattern.compile("^(0*[5-9]|1[0-9]|2[0-7])$")); // capacity is within the range [5-27]
 		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
 		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$"));
-		regex.put("ticketDescription", Pattern.compile(".{3,}")); // description of issues cannot be empty
+		regex.put("ticketDescription", Pattern.compile("[^ ]{3,}")); // description of issues cannot be empty
 	}
 
 	/**
