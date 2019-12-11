@@ -47,6 +47,7 @@ class ValleyBikeSimModelTest {
 	//Tests if endRide method is working correctly
 	@Test
 	void endRideTest() {
+		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress
 		model.readData();
 		Rider rider = new Rider("username", "password", "myname", "myemail", "8008008000", "1 Chapin Way Northampton MA 01063");
 		model.addUser(rider);
@@ -58,7 +59,7 @@ class ValleyBikeSimModelTest {
 		model.startRide(830,33);
 		model.endRide(23,false);
 		assertFalse(model.isRideInProgress()); //Ride should no longer be in progress
-		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
+		 		
 	}
 	
 	//Tests if addStation adds a Station object to the model
@@ -126,6 +127,12 @@ class ValleyBikeSimModelTest {
             	model.isBikeInStorage(500); //will return a null pointer exception if bike does not exist
             });
 	}
+	
+	@Test
+	void createTicket() {
+		
+	}
+	
 	
 	/* NEW SECTION HERE */
 	/* TESTING isValid() method below, which verifies user input */
