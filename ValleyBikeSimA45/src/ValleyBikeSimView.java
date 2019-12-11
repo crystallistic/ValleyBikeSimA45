@@ -50,11 +50,11 @@ public class ValleyBikeSimView {
 	 */
 	public void displayMembershipOptions() {
 		System.out.println("Please choose from the membership options below by entering the corresponding option number (1-5):\n"
-				+ "1) Pay per ride\t($2 per ride, first 30 minutes are free, $0.15 for each additional minute)\n"
-				+ "2) Day Pass\t($6 for one day, first 30 minutes are free, $0.15 for each additional minute)\n"
-				+ "3) Monthly\t($20 a month, first 45 minutes are free, $0.15 for each additional minute)\n"
-				+ "4) Yearly\t($80 a year, first 45 minutes are free, $0.15 for each additional minute)\n"
-				+ "5) Founding Member\t($90 a year, first 60 minutes are free, $0.15 for each additional minute)\n");
+				+ "1) Pay per ride\t($2 per ride, first 30 minutes of each ride are free, $0.15 for each additional minute)\n"
+				+ "2) Day Pass\t($6 for one day, first 30 minutes of each ride are free, $0.15 for each additional minute)\n"
+				+ "3) Monthly\t($20 a month, first 45 minutes of each ride are free, $0.15 for each additional minute)\n"
+				+ "4) Yearly\t($80 a year, first 45 minutes of each ride are free, $0.15 for each additional minute)\n"
+				+ "5) Founding Member\t($90 a year, first 60 minutes of each ride are free, $0.15 for each additional minute)\n");
 	}
 	
 	/**
