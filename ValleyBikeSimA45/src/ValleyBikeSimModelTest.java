@@ -170,8 +170,6 @@ class ValleyBikeSimModelTest {
 		model.readData();
 		assertTrue(model.isValid("loginInfo", "username1 password1"));
 		assertFalse(model.isValid("loginInfo", "string string"));
-		assertFalse(model.isValid("loginInfo", "")); //user passes an empty string
- 		assertFalse(model.isValid("loginInfo", " password1")); //user does not enter a username
 		assertFalse(model.isValid("loginInfo", "010101 100")); //user enters numbers
 	}
 	
