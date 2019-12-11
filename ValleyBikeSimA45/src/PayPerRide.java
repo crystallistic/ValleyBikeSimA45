@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store Pay Per Ride membership information
  */
 public class PayPerRide extends Membership {
 

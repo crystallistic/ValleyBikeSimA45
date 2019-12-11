@@ -1,6 +1,6 @@
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store the station information
  */
 public class Station {
 	

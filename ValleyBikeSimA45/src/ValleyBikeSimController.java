@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author maingo
- *
  */
 public class ValleyBikeSimController {
 	ValleyBikeSimView view;
@@ -162,11 +161,13 @@ public class ValleyBikeSimController {
 			model.chargeMonthly();
 		}
 		
-		//Checks if user's yearly or founding member subscription has expired
-		boolean subExpired = model.hasSubscriptionExpired();
-		
-		if (subExpired) {
-			view.displaySubscriptionExpired();
+		if (!userIsAdmin) {
+			//Checks if user's yearly or founding member subscription has expired
+			boolean subExpired = model.hasSubscriptionExpired();
+			
+			if (subExpired) {
+				view.displaySubscriptionExpired();
+			}
 		}
 		
 		Date now = new Date();

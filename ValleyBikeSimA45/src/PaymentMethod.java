@@ -1,8 +1,8 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
- *
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
+ * Object to store payment method information
  */
 public class PaymentMethod {
 	

@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store Monthly membership information
  */
 public class Monthly extends Membership {
 	

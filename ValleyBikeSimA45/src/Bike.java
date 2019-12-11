@@ -1,6 +1,6 @@
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store bike information
  */
 public class Bike {
 	

@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store membership information
  */
 public abstract class Membership {
 	

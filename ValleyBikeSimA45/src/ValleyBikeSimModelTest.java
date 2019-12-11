@@ -3,7 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
 /**
- * 
+ * Used to test the program
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
