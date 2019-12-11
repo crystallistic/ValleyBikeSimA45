@@ -715,7 +715,7 @@ public class ValleyBikeSimController {
 		int capacity = Integer.parseInt(getUserInput("capacity"));
 		boolean hasKiosk = getUserInput("hasKiosk").contentEquals("1");
 		
-		Station station = model.addStation(stationId,stationName,address,capacity,hasKiosk);
+		model.addStation(stationId,stationName,address,capacity,hasKiosk);
 		
 		view.displayStationAdded(model.formatStationToString(stationId));
 	
