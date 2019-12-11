@@ -1,5 +1,5 @@
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Bike {

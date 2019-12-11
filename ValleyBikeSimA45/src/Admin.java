@@ -1,5 +1,5 @@
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Admin extends User {
@@ -11,11 +11,4 @@ public class Admin extends User {
 	public Admin(String userName, String password) {
 		super(userName, password);	
 	}
-	
-	@Override
-	public String toString() {
-		//returns admins username and password
-		return "Admin [userName=" + super.getUsername() + ", password=" + super.getPassword() + "]";
-	}
-
 }

@@ -1,7 +1,7 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public abstract class Membership {

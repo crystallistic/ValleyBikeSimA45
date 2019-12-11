@@ -1105,6 +1105,31 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
+	 * Save the updated transaction list to the CSV file, by overwriting all the entries and adding new entries for the new transactions
+	 */
+	private void saveTransactionsList() {
+		try {
+			  //overwrites existing file with new data
+			  csvWriter = new FileWriter("data-files/transaction-data.csv");
+			  writer = new CSVWriter(csvWriter);
+		      String [] record = "username,amount,time,description".split(",");
+		      writer.writeNext(record,false);
+
+		      writer.close();
+		      
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		//loops through and saves all transactions
+		for (ArrayList<Transaction> transactions: transactionsByUser.values()) {
+			for (Transaction transaction: transactions) {
+				saveAllTransaction(transaction);
+			}
+		}
+	}
+	
+	/**
 	 * Save a transaction to the CSV file
 	 * @param transaction
 	 */
@@ -2189,31 +2214,31 @@ public class ValleyBikeSimModel {
 		
 		for (String username: memberships.keySet()) {
 			String chargeDate = chargeDates.get(username);
-			if (!chargeDate.contentEquals(today)) { //if the user has not already been charged today
-				//check if user has a day pass. If so, give them a pay per ride pass instead and charge
-				Membership membership = memberships.get(username);
-				if (membership instanceof DayPass) {
+			Membership membership = memberships.get(username);
+			if ((membership instanceof DayPass) || (membership instanceof Monthly)) {
+				if (!chargeDate.contentEquals(today)) { //if the user has not already been charged today
+					//check if user has a day pass. If so, give them a pay per ride pass instead and charge
+					if (membership instanceof DayPass) {
+						MembershipFactory mf = new MembershipFactory();
+						Membership newMembership = mf.getMembership("PayPerRide");
+						memberships.put(username,newMembership);
+						Transaction transaction = new Transaction(username,new BigDecimal("2.00"),new Date(),"ValleyBike Pay Per Ride Pass");
+						transactionsByUser.get(username).add(transaction);
+						saveAllTransaction(transaction);
+						chargeDates.put(username, today);
+					} else if (membership instanceof Monthly) {
+						monthlyUncharged = true;
+					}
+				}
+			} else if (!(membership instanceof PayPerRide)){
+				String chargeDateYear = chargeDate.substring(6);
+				if (!chargeDateYear.equals(today.substring(6))) {
+					//Reset their membership to Pay Per Ride
 					MembershipFactory mf = new MembershipFactory();
 					Membership newMembership = mf.getMembership("PayPerRide");
 					memberships.put(username,newMembership);
-					Transaction transaction = new Transaction(username,new BigDecimal("2.00"),new Date(),"ValleyBike Pay Per Ride Pass");
-					transactionsByUser.get(username).add(transaction);
-					saveAllTransaction(transaction);
-					chargeDates.put(username, today);
-				} else if (membership instanceof Monthly) {
-					monthlyUncharged = true;
-				} else if (membership instanceof Yearly) {
-					Transaction transaction = new Transaction(username,new BigDecimal("80.00"),new Date(),"ValleyBike Yearly Subscription");
-					transactionsByUser.get(username).add(transaction);
-					saveAllTransaction(transaction);
-					chargeDates.put(username, today);
-				} else if (membership instanceof FoundingMember) {
-					Transaction transaction = new Transaction(username,new BigDecimal("90.00"),new Date(),"ValleyBike Founding Member Subscription");
-					transactionsByUser.get(username).add(transaction);
-					saveAllTransaction(transaction);
-					chargeDates.put(username, today);
-				} else if (membership instanceof PayPerRide) {
-					Transaction transaction = new Transaction(username,new BigDecimal("2.00"),new Date(),"ValleyBike Pay Per Ride Pass Renewel");
+					
+					Transaction transaction = new Transaction(username,new BigDecimal("0.00"),new Date(),"ValleyBike Pay Per Ride Reset");
 					transactionsByUser.get(username).add(transaction);
 					saveAllTransaction(transaction);
 					chargeDates.put(username, today);
@@ -2429,7 +2454,6 @@ public class ValleyBikeSimModel {
 			
 			// update bike data file to reflect this change
 			saveBikeList();
-			
 		}
 		
 		// set resolved ticket to true
@@ -2437,6 +2461,24 @@ public class ValleyBikeSimModel {
 		
 		saveTicketList();
 		
+	}
+
+	/**
+	 * Checks if yearly/founding member pass has expired
+	 * @return
+	 */
+	public boolean hasSubscriptionExpired() {
+		//check if user's transaction list contains a reset
+		for (Transaction transaction: transactionsByUser.get(activeUser.getUsername())) {
+			String description = transaction.getDescription();
+			if (description.contains("Reset")) {
+				transactionsByUser.get(activeUser.getUsername()).remove(transaction);
+				saveTransactionsList();
+				saveUserLists();
+				return true;
+			}
+		}
+		return false;
 	}
 
 }

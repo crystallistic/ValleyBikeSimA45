@@ -1,13 +1,13 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class DayPass extends Membership {
 
 	/**
-	 * 
+	 * constructor for the day pass object
 	 */
 	public DayPass() {
 		membershipType = "Day Pass";
@@ -16,7 +16,7 @@ public class DayPass extends Membership {
 	}
 	
 	/**
-	 *
+	 *@param rideDurationInMinutes Holds how long the users ride has been 
 	 */
 	@Override
 	public BigDecimal getChargeForRide(int rideDurationInMinutes) {

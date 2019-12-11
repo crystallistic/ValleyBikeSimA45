@@ -1,13 +1,13 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class FoundingMember extends Membership {
 
 	/**
-	 * 
+	 * constructor for of founding member object
 	 */
 	public FoundingMember() {
 		membershipType = "Founding Member";

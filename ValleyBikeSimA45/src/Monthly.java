@@ -1,14 +1,14 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Monthly extends Membership {
 	
 	
 	/**
-	 * 
+	 * constructor for Monthly object
 	 */
 	public Monthly() {
 		membershipType = "Monthly";

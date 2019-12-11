@@ -2,7 +2,7 @@ import java.util.Date;
 
 /**
  * The Ride class contains information about a ride.
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Ride {
@@ -19,10 +19,10 @@ public class Ride {
 	 * Constructor for a Ride object, given the ride ID and bike ID, 
 	 * the start station, and the start time. 
 	 * End station and end time can be unknown at object creation.
-	 * @param rideId
-	 * @param bikeId
-	 * @param startStation
-	 * @param startTime
+	 * @param bikeId Holds the bike id associated with bike of the rider's ride
+	 * @param startStationId Holds the station id where the rider's bike came from
+	 * @param startStationName Holds the station name where the rider's bike came from
+	 * @param startTime Holds the start time of when the rider began a ride
 	 */
 	public Ride(int bikeId, int startStationId, String startStationName, Date startTime) {
 
@@ -34,14 +34,14 @@ public class Ride {
 	}
 
 	/**
-	 * @return the bikeId
+	 * @return the bikeId of the ride in progress associated with the user
 	 */
 	public int getBikeId() {
 		return bikeId;
 	}
 
 	/**
-	 * @param bikeId the bikeId to set
+	 * @param bikeId the bikeId to set to the bike chosen by the user
 	 */
 	public void setBikeId(int bikeId) {
 		this.bikeId = bikeId;
@@ -76,7 +76,7 @@ public class Ride {
 	}
 
 	/**
-	 * @return the startTime
+	 * @return the startTime 
 	 */
 	public Date getStartTime() {
 		return startTime;
@@ -114,14 +114,14 @@ public class Ride {
 	}
 
 	/**
-	 * @return the startStationName
+	 * @return the startStationName associated with the bike that is checked out
 	 */
 	public String getStartStationName() {
 		return startStationName;
 	}
 
 	/**
-	 * @param startStationName the startStationName to set
+	 * @param startStationName the startStationName of the bike that is checked out
 	 */
 	public void setStartStationName(String startStationName) {
 		this.startStationName = startStationName;
@@ -135,7 +135,7 @@ public class Ride {
 	}
 
 	/**
-	 * @param endStationName the endStationName to set
+	 * @param endStationName the endStationName is the end station chosen by the user once they have finished their ride
 	 */
 	public void setEndStationName(String endStationName) {
 		this.endStationName = endStationName;
