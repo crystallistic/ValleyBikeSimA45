@@ -4,12 +4,14 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 /**
- * @author maingo
- *
+ * @author maingo, Jemimah Charles, Maggie Burkart, Emma Tanur
+ * Handles printing messages and asking for user input.
  */
 public class ValleyBikeSimView {
 	
+	/** Scanner used to get user input from the console*/
 	private Scanner sc;
+	
 	/**
 	 * Constructor for the Valley Bike Simulator View.
 	 */
@@ -18,7 +20,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays welcome screen, with options to create a new account, login, or exit program
+	 * Displays the welcome screen, with options to create a new account, login, or exit program
 	 */
 	public void displayWelcomeScreen() {
 		
@@ -30,7 +32,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays message on the login screen.
+	 * Displays a message on the login screen.
 	 */
 	public void displayLoginScreen() {
 		// show login screen
@@ -38,7 +40,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays message on the signup screen.
+	 * Displays a message on the signup screen.
 	 */
 	public void displaySignupScreen() {
 		// show sign up screen
@@ -58,7 +60,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays message confirming purchase of membership and amount charged to rider for membership.
+	 * Displays a message confirming purchase of membership and amount charged to rider for membership.
 	 * @param membershipType	the type of the membership
 	 * @param baseRate			the amount initially charged to the user's account (i.e. does not include overtime fee for rides)
 	 */
@@ -67,7 +69,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays message confirming new account creation and username.
+	 * Displays a message confirming new account creation and username.
 	 * @param newUsername 	username associated with newly created account
 	 */
 	public void displayAccountCreationSuccess(String newUsername) {
@@ -75,7 +77,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays message confirming successful login.
+	 * Displays a message confirming successful login.
 	 * @param newUsername 	username associated with newly created account
 	 */
 	public void displayLoginSuccess() {
@@ -83,7 +85,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays message at program exit.
+	 * Displays a message at program exit.
 	 */
 	public void displayExit() {
 		System.out.println("Thank you for using ValleyBike!");
@@ -216,8 +218,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * 
-	 * @param amountCharged
+	 * Notify the user that they have an overdue bike and have been charged the stolen bike fee
 	 */
 	public void notifyOverdue() {
 		System.out.println("You have an overdue bike. You have been charged a stolen bike fee in the amount of $2000.");
@@ -225,7 +226,7 @@ public class ValleyBikeSimView {
 	
 	/**
 	 * Displays the menu appropriate for the type of user (rider or admin)
-	 * @param userIsAdmin
+	 * @param userIsAdmin whether the logged-in user is an admin. Used for displaying the correct menu.
 	 */
 	public void displayMainMenu(boolean userIsAdmin) {
 		
@@ -273,14 +274,14 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Display a message confirming successful bike check-out and beginning of a ride.
+	 * Displays a message confirming successful bike check-out and beginning of a ride.
 	 */
 	public void displayRideStart() {
 		System.out.println("Enjoy your ride.");
 	}
 	
 	/**
-	 * Display the full list of station in the ValleyBike System.
+	 * Displays the full list of station in the ValleyBike System.
 	 */
 	public void displayStationList(ArrayList<String> stationList) {
 		for (String s : stationList) {
@@ -289,7 +290,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Display message confirming that the user has logged out.
+	 * Displays message confirming that the user has logged out.
 	 */
 	public void displayLogout() {
 		System.out.println("You have successfully logged out of your account. Come back soon!");
@@ -304,11 +305,14 @@ public class ValleyBikeSimView {
 				+ "specifically for those issues.");
 	}
 
+	/**
+	 * Informs the user that the station they are trying to return their bike to is full,
+	 * and offers them options for next steps
+	 */
 	public void displayFullDock() {
 		System.out.println("This station has no available docks. Would you like to return your bike to a different station?\n"
 							+ "1) Return my bike to a different station\n"
-							+ "2) Contact customer support to end your ride here");
-		
+							+ "2) Contact customer support to end your ride here");	
 	}
 
 	/**
@@ -320,7 +324,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Displays message confirming successful addition of a new station.
+	 * Displays a message confirming successful addition of a new station.
 	 * @param stationInfo	Information of the newly added station.
 	 */
 	public void displayStationAdded(String stationInfo) {
@@ -329,43 +333,43 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirms successful equalization of stations
+	 * Confirms the successful equalization of stations.
 	 */
 	public void displayEqualizationCompleted() {
 		System.out.println("Bikes redistributed successfully.");
 	}
 
 	/**
-	 * Display message notifying user of unsuccessful reading of file.
+	 * Displays a message notifying user of unsuccessful reading of file.
 	 */
 	public void displayInvalidFileName() {
 		System.out.println("The system has encountered an error while trying to read the file you entered. Please check for errors and try again.");	
 	}
 
 	/**
-	 * Display the result of calculations for resolveRide.
-	 * @param resolveRideResult 		Average stats for the day
+	 * Displays the result of calculations for resolveRide.
+	 * @param resolveRideResult		Average stats for the day
 	 */
 	public void displayResolveRide(String resolveRideResult) {
 		System.out.println(resolveRideResult);
 	}
 	
 	/**
-	 * Displays confirmation that all data in the system have been saved in .csv files.
+	 * Displays a confirmation that all data in the system have been saved in .csv files.
 	 */
 	public void displaySaveData() {
 		System.out.println("All data have been saved successfully.");	
 	}
 
 	/**
-	 * Notifies user that their credit card has expired.
+	 * Notifies the user that their credit card has expired.
 	 */
 	public void cardExpired() {
 		System.out.println("Your credit card has expired. Please select or enter a different payment method in order to continue with this action.");	
 	}
 
 	/**
-	 * Notifies user of stolen bike charge.
+	 * Notifies the user of a stolen bike charge.
 	 */
 	public void bikeStolen() {
 		System.out.println("You have an overdue bike which has been marked as stolen. A hold has been placed on your account.\n"
@@ -373,7 +377,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Notifies user that no station currently exists in the system.
+	 * Notifies the user that no station currently exists in the system.
 	 */
 	public void displayNoStationExistsError() {
 		System.out.println("Action cannot be completed because no station currently exists in the system.");
@@ -381,13 +385,16 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirm removal of station from system
-	 * @param stationId
+	 * Confirms the removal of a station from system
+	 * @param stationId		The ID of the staiton to be removed
 	 */
 	public void removeStationSuccess(int stationId) {
 		System.out.println("Station " + Integer.toString(stationId) + " has been successfully removed from the system.");
 	}
 
+	/**
+	 * Informs the user that their input is invalid because of format of conflicts with existing data.
+	 */
 	public void displayInvalidInput() {
 		System.out.println("Invalid input - wrong input format, or there has been some conflict with existing data in the system.\n"
 				+ "Please follow the instructions and try again.");
@@ -395,7 +402,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Instruct the user to choose between adding a bike to a station or storage
+	 * Instructs the user to choose between adding a bike to a station or storage.
 	 */
 	public void displayAddNewOrExistingBike() {
 		System.out.println("Would you like to add a new or existing bike?\n"
@@ -404,8 +411,8 @@ public class ValleyBikeSimView {
 	}
 		
 	/**
-	 * Display the formatted ride list
-	 * @param formattedRideList
+	 * Displays the formatted ride list
+	 * @param formattedRideList		A list of printable ride information
 	 */
 	public void displayRideList(ArrayList<String> formattedRideList) {
 		System.out.println("You have completed "+(formattedRideList.size()-1)+" rides since joing ValleyBike:\n");
@@ -415,8 +422,8 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Display the formatted transaction list
-	 * @param formattedTransactionList
+	 * Displays the formatted transaction list
+	 * @param formattedTransactionList		A list of printable transaction information
 	 */
 	public void displayTransactionList(ArrayList<String> formattedTransactionList) {
 		for (String transactionInfo : formattedTransactionList) {
@@ -425,8 +432,8 @@ public class ValleyBikeSimView {
 		
 	}
 
-	/*
-	 * Ask the user whether they would like to add a bike from storage to a station
+	/**
+	 * Asks the user whether they would like to add a bike from storage to a station.
 	 */
 	public void displayAddBikeToStationOrNot() {
 		System.out.println("Would you like to add the bike to a station, or leave it in storage?\n"
@@ -435,8 +442,8 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirm successful addition of a new bike to storage.
-	 * @param string
+	 * Confirms the successful addition of a new bike to storage.
+	 * @param bikeId	The bike's ID number
 	 */
 	public void addNewBikeToStorageSuccess(String bikeId) {
 		System.out.println("You have successfully added a new bike with ID " + bikeId + " into the system.\n"
@@ -445,7 +452,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirm successful addition of a  bike from storage to a station.
+	 * Confirms the successful addition of a  bike from storage to a station.
 	 * @param bikeId		The bike's ID number
 	 * @param stationId		The station's ID number
 	 */
@@ -465,9 +472,9 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Tells the user that they have entered a bike number for a bike not at their current station
-	 * @param stationId
-	 * @param bikeId
-	 * @param bikeIdList
+	 * @param stationId		The station's ID number
+	 * @param bikeId		The bike's ID number
+	 * @param bikeIdList	The list of bike IDs at that station
 	 */
 	public void displayBikeNotBelongToStation(int stationId, int bikeId, HashSet<Integer> bikeIdList) {
 		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + ".\n"
@@ -482,7 +489,7 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Tells the user what membership they have and that the default is Pay-per-ride
-	 * @param numCurrentMembership
+	 * @param numCurrentMembership		The number representing their current membership
 	 */
 	public void displayEditMembership(int numCurrentMembership) {
 		System.out.println("numCurrentMembership: "+numCurrentMembership);
@@ -500,29 +507,29 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Displays message reassuring user that they have kept their current membership
+	 * Displays a message reassuring user that they have kept their current membership
 	 */
 	public void displayKeepCurrentMembership() {
 		System.out.println("You have chosen to keep your current membership");
 	}
 
 	/**
-	 * Displays message when a user with no ride history tries to view their ride history
+	 * Displays a message when a user with no ride history tries to view their ride history
 	 */
 	public void displayNoRidesMade() {
 		System.out.println("You have not yet completed any rides.");
 	}
 	
 	/**
-	 * Displays message when a user with no transaction history tries to view their transaction history
+	 * Displays a message when a user with no transaction history tries to view their transaction history
 	 */
 	public void displayNoTransactionsMade() {
 		System.out.println("You have not yet completed any transactions.");
 	}
 	
 	/**
-	 * Informs user that the bike is in, or has been moved to, storage.
-	 * @param bikeInStorageMessage	Message to be shown
+	 * Informs the user that the bike is in, or has been moved to, storage.
+	 * @param bikeInStorageMessage		Message to be shown
 	 */
 	public void displayBikeInStorageMessage(String bikeInStorageMessage) {
 		System.out.println(bikeInStorageMessage);
@@ -540,7 +547,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Displays confirmation of successful removal of bike from system.
+	 * Displays a confirmation of successful removal of bike from system.
 	 * @param bikeId		The bike ID
 	 */
 	public void displayRemoveBikeFromSystemSuccess(int bikeId) {
@@ -548,8 +555,8 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Displays message when user views their current payment method and offers options
-	 * @param paymentMethodString
+	 * Displays a message when user views their current payment method and offers options
+	 * @param paymentMethodString		The printable payment method information
 	 */
 	public void displayCurrentPaymentMethod(String paymentMethodString) {
 		System.out.println("Your current payment method:\n\n"+paymentMethodString);
@@ -561,8 +568,8 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Displays user's current profile and options for what to edit
-	 * @param userProfileString
+	 * Displays the user's current profile and options for what to edit
+	 * @param userProfileString		The printable user profile information
 	 */
 	public void displayCurrentUserProfile(String userProfileString) {
 		System.out.println("Your current user profile:\n\n"+userProfileString);
@@ -577,14 +584,14 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Prints out ride statistics for a day
-	 * @param rideStatistics
+	 * @param rideStatistics	The printable ride statistic information
 	 */
 	public void displayRideStatistics(String rideStatistics) {
 		System.out.println(rideStatistics);
 	}
 
 	/**
-	 * Display all ticket categories
+	 * Displays all ticket categories
 	 */
 	public void displayTicketCategory() {
 		System.out.println("What is this issue related to?\n"
@@ -596,7 +603,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Prompt user to choose a support ticket category
+	 * Prompts the user to choose a support ticket category
 	 */
 	public void displayChooseStation() {
 		System.out.println("Which station is this issue related to?");
@@ -604,7 +611,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirm successful creation of support ticket. Displays different confirmation messages depending on the ticket content
+	 * Confirms successful creation of support ticket. Displays different confirmation messages depending on the ticket content
 	 */
 	public void displaySubmitSupportTicketSuccess(int ticketId, String optionSelected) {
 		
@@ -625,9 +632,9 @@ public class ValleyBikeSimView {
 		
 	}
 	
-	/*
+	/**
 	 * Prints out transaction statistics for a day
-	 * @param transactionStatistics
+	 * @param transactionStatistics		The printable transaction statistic information
 	 */
 	public void displayTransactionStatistics(ArrayList<String> transactionStatistics) {
 		if (transactionStatistics.size()<=2) {
@@ -647,13 +654,13 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Tell the user they cannot enter an empty string
+	 * Tells the user they cannot enter an empty string
 	 */
 	public void displayEmptyInputError() {
 		System.out.println("You may not enter an empty input. Please try again.");
 	}
 	
-	/*
+	/**
 	 * Tells the user that they can't re-use their old password
 	 */
 	public void displayOldPassword() {
@@ -668,7 +675,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Informs user that they've contacted customer support successfully about returning a bike at a full station
+	 * Informs the user that they've contacted customer support successfully about returning a bike at a full station
 	 */
 	public void displayReturnBikeAtFullStationSuccess() {
 		System.out.println("Thank you for letting us know! Please lock the bike securely near the station, \n"
@@ -683,7 +690,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Display the full list of support tickets.
+	 * Displays the full list of support tickets.
 	 */
 	public void displaySupportTickets(ArrayList<String> formattedTicketList) {
 		for (String s : formattedTicketList) {
@@ -693,7 +700,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Tells user this bike is already in storage/already reported as broken
+	 * Tells the user this bike is already in storage/already reported as broken
 	 */
 	public void displayBikeAlreadyInStorage() {
 		System.out.println("This bike is in storage or has already been reported as broken.");
@@ -701,7 +708,7 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Let user know they should check in their bike before submitting the ticket.
+	 * Lets the user know they should check in their bike before submitting the ticket.
 	 */
 	public void displayEndRideFirst() {
 		System.out.println("This bike is currently in use. If you are using this bike, or know someone who is,\n"
@@ -711,7 +718,7 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Informs the user the ticket has been resolved
-	 * @param ticketId The ID number associated with the ticket
+	 * @param ticketId	The ID number associated with the ticket
 	 */
 	public void resolvedTicket(int ticketId) {
 		System.out.println("Ticket #" + ticketId + " has been resolved.");

@@ -19,7 +19,6 @@ import java.util.regex.Pattern;
  * Model component of Valley Bike system. 
  * Stores and modifies system data
  */
-
 public class ValleyBikeSimModel {
 	
 	/** map all stations to their station ID */
