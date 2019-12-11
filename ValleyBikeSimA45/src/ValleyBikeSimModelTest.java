@@ -179,6 +179,8 @@ class ValleyBikeSimModelTest {
 		assertFalse(model.isValid("newUsername", " ")); //user passes a space
 		assertFalse(model.isValid("newUsername", "Bob Snel")); //user passes a string with a space in-between
 		assertFalse(model.isValid("newUsername", "username1")); //user passes a username that already exists
+		assertFalse(model.isValid("newUsername", "adminUsername1")); //user passes an admin username that already exists
+		assertFalse(model.isValid("newUsername", "{{{{{{{{")); //user passes a username that only contains unusual characters
 	}
 	
 	//isValid should return true if email is in a valid format and it does not belong to an existing user
