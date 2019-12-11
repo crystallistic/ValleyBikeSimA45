@@ -58,7 +58,6 @@ class ValleyBikeSimModelTest {
 		model.startRide(830,33);
 		model.endRide(23,false);
 		assertFalse(model.isRideInProgress()); //Ride should no longer be in progress
-
 		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
 	}
 	
@@ -84,9 +83,9 @@ class ValleyBikeSimModelTest {
 		assertEquals(null, model.getStation(70));
 	}
 	
-	//Tests if addBikeFromStorageToStation (adds a bike) adds a bike to the model and updates the station list
-	//Works for adding new and existing bikes because this method takes bikes from storage for both cases, so
-	//we are assuming new and existing bikes are properly put in storage
+	/*Tests if addBikeFromStorageToStation (adds a bike) adds a bike to the model and updates the station list
+	* Works for adding new and existing bikes because this method takes bikes from storage for both cases, so
+	* we are assuming new and existing bikes are properly put in storage */
 	@Test 
 	void addBikeFromStorageToStationTest(){ 
 		//Controller validates user input so do not need to check that station information is valid here
@@ -95,10 +94,38 @@ class ValleyBikeSimModelTest {
 		assertTrue(model.isBikeInStorage(111)); //checks to see if bike is moved to storage
 		model.addBikeFromStorageToStation(111, 33);
 		assertFalse(model.isBikeInStorage(111)); //bike should be removed from storage
-		assertTrue(model.stationHasBike(33, 111)); //does the station have the bike
+		assertTrue(model.stationHasBike(33, 111)); //does the station have the new bike
 		
 	}
 	
+		
+	//Tests if moveBikeFromStationToStorage moves a bike from a station to storage and updates station and bike list
+	@Test
+	void moveBikeFromStationToStorageTest() {
+		model.readData();
+		//Controller validates user input so do not need to check that station information is valid here
+		//put the bike into the station
+		model.addNewBikeToStorage(300); //creates a new bike with ID 300 and puts it in storage
+		model.addBikeFromStorageToStation(300, 20);
+		
+		//test if bike is removed from the station
+		model.moveBikeFromStationToStorage(300, "inStorage");
+		assertTrue(model.isBikeInStorage(300));
+	}
+		
+	//Tests if removeBikeInStorageFromSystem deletes a bike in storage from the system
+	//User cannot enter a bike id that doesn't exist in storage, so bike is assumed to exist in storage
+	@Test
+	void removeBikeInStorageFromSystemTest() {
+		model.readData();
+		model.addNewBikeToStorage(500); //creates a new bike with ID 300 and puts it in storage
+		model.removeBikeInStorageFromSystem(500);
+		//code reference: https://stackoverflow.com/questions/22623649/junit-testing-for-assertequal-nullpointerexception/22624210 (listed in A5 design document)
+		assertThrows(NullPointerException.class,
+            ()->{
+            	model.isBikeInStorage(500); //will return a null pointer exception if bike does not exist
+            });
+	}
 	
 	/* NEW SECTION HERE */
 	/* TESTING isValid() method below, which verifies user input */
