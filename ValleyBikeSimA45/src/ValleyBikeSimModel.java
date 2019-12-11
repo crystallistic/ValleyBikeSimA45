@@ -2230,6 +2230,21 @@ public class ValleyBikeSimModel {
 					chargeDates.put(username, today);
 				} else if (membership instanceof Monthly) {
 					monthlyUncharged = true;
+				} else if (membership instanceof Yearly) {
+					Transaction transaction = new Transaction(username,new BigDecimal("80.00"),new Date(),"ValleyBike Yearly Subscription");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
+				} else if (membership instanceof FoundingMember) {
+					Transaction transaction = new Transaction(username,new BigDecimal("90.00"),new Date(),"ValleyBike Founding Member Subscription");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
+				} else if (membership instanceof PayPerRide) {
+					Transaction transaction = new Transaction(username,new BigDecimal("2.00"),new Date(),"ValleyBike Pay Per Ride Pass Renewel");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
 				}
 			}
 		}
