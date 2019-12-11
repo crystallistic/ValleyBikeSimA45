@@ -1,34 +1,47 @@
 username,amount,time,description
-username1,20.00,08/15/19 14:02,ValleyBike Monthly Subscription Initial
-username3,90.00,08/19/19 12:05,ValleyBike Founding Member Subscription Initial
-username2,80.00,08/19/19 20:02,ValleyBike Yearly Subscription Initial
-username1,1.20,08/20/19 03:20,ValleyBike Ride
-username2,1.95,08/20/19 06:09,ValleyBike Ride
-username4,2.00,08/20/19 02:15,ValleyBike Pay Per Ride Pass
-username4,3.35,08/20/19 03:01,ValleyBike Ride
+username9,2.00,05/21/19 18:32,ValleyBike Pay Per Ride Pass
+username9,3.20,08/20/19 00:56,ValleyBike Ride
+username9,5.60,08/20/19 16:21,ValleyBike Ride
+username9,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
+username7,80.00,06/24/19 01:33,ValleyBike Yearly Subscription Initial
+username7,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
+username7,80.00,12/11/19 04:15,ValleyBike Yearly Subscription
+username7,0.00,12/11/19 16:46,ValleyBike Pay Per Ride Reset
+username6,20.00,08/20/19 07:45,ValleyBike Monthly Subscription Initial
+username6,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
+username6,20.00,12/11/19 16:42,ValleyBike Monthly Subscription
+maggieUsername1,0,12/09/19 12:51,ValleyBike Ride
+maggieUsername1,20.00,12/11/19 16:42,ValleyBike Monthly Subscription
+padfoot,2,12/08/19 23:57,ValleyBike Pay Per Ride Pass
+padfoot,2,12/09/19 12:47,ValleyBike Ride
+padfoot,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
 username5,6.00,08/20/19 12:01,ValleyBike Day Pass
 username5,4.20,08/20/19 01:43,ValleyBike Ride
-username6,20.00,08/20/19 07:45,ValleyBike Monthly Subscription Initial
-username7,80.00,06/24/19 01:33,ValleyBike Yearly Subscription Initial
-hes_a_keeper,90.00,06/05/19 21:58,ValleyBike Founding Member Subscription Initial
-username9,2.00,05/21/19 18:32,ValleyBike Pay Per Ride Pass
-username10,2.00,04/12/19 07:59,ValleyBike Pay Per Ride Pass
-username9,3.20,08/20/19 00:56,ValleyBike Ride
-username10,6.20,08/20/19 02:42,ValleyBike Ride
-username4,2.00,08/20/19 19:41,ValleyBike Ride
 username5,1.20,08/20/19 13:10,ValleyBike Ride
-username9,5.60,08/20/19 16:21,ValleyBike Ride
-username10,2.75,08/20/19 05:36,ValleyBike Ride
-padfoot,2,12/08/19 23:57,ValleyBike Pay Per Ride Pass
-username7,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
-username6,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
 username5,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
+username5,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
+username4,2.00,08/20/19 02:15,ValleyBike Pay Per Ride Pass
+username4,3.35,08/20/19 03:01,ValleyBike Ride
+username4,2.00,08/20/19 19:41,ValleyBike Ride
 username4,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
-username3,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
-username2,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
-padfoot,2,12/09/19 12:47,ValleyBike Ride
-maggieUsername1,0,12/09/19 12:51,ValleyBike Ride
+hes_a_keeper,90.00,06/05/19 21:58,ValleyBike Founding Member Subscription Initial
 hes_a_keeper,0,12/09/19 12:52,ValleyBike Ride
+hes_a_keeper,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
+username3,90.00,08/19/19 12:05,ValleyBike Founding Member Subscription Initial
+username3,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
+username3,90.00,12/11/19 04:15,ValleyBike Founding Member Subscription
+username2,80.00,08/19/19 20:02,ValleyBike Yearly Subscription Initial
+username2,1.95,08/20/19 06:09,ValleyBike Ride
+username2,2000.00,12/09/19 12:26,ValleyBike Stolen Bike Fee
+username2,80.00,12/11/19 04:15,ValleyBike Yearly Subscription
+username2,0.00,12/11/19 16:46,ValleyBike Pay Per Ride Reset
+username1,20.00,08/15/19 14:02,ValleyBike Monthly Subscription Initial
+username1,1.20,08/20/19 03:20,ValleyBike Ride
+username1,20.00,12/10/19 23:02,ValleyBike Monthly Subscription
+username10,2.00,04/12/19 07:59,ValleyBike Pay Per Ride Pass
+username10,6.20,08/20/19 02:42,ValleyBike Ride
+username10,2.75,08/20/19 05:36,ValleyBike Ride
+username10,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
 username,6,12/09/19 19:03,ValleyBike Subscription
 username,0,12/09/19 19:03,ValleyBike Ride
 username,6,12/09/19 19:03,ValleyBike Subscription
@@ -50,13 +63,5 @@ username,0,12/10/19 22:40,ValleyBike Ride
 username,6,12/10/19 22:41,ValleyBike Subscription
 username,0,12/10/19 22:41,ValleyBike Ride
 username,2.00,12/10/19 23:02,ValleyBike Pay Per Ride Pass
-username1,20.00,12/10/19 23:02,ValleyBike Monthly Subscription
-username9,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
-username7,80.00,12/11/19 04:15,ValleyBike Yearly Subscription
-padfoot,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
-username5,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
-hes_a_keeper,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
-username3,90.00,12/11/19 04:15,ValleyBike Founding Member Subscription
-username2,80.00,12/11/19 04:15,ValleyBike Yearly Subscription
-username10,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
 username,2.00,12/11/19 04:15,ValleyBike Pay Per Ride Pass Renewel
+username2,0.00,12/11/19 16:57,ValleyBike Pay Per Ride Reset

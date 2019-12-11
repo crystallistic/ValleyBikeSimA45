@@ -711,11 +711,18 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Informs the user the ticket has been resolved
-	 * @param ticketId
+	 * @param ticketId the id of the ticket being resolved
 	 */
 	public void resolvedTicket(int ticketId) {
 		System.out.println("Ticket #" + ticketId + " has been resolved.");
 		
+	}
+
+	/**
+	 * Informs the user that their yearly subscription has expired.
+	 */
+	public void displaySubscriptionExpired() {
+		System.out.println("Your subscription has expired. Your membership has been reset to a Pay Per Ride Pass. If you would like a different membership, please choose 'Edit Membership' from the menu");
 	}
 	
 }
