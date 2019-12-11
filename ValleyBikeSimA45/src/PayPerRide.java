@@ -1,13 +1,13 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class PayPerRide extends Membership {
 
 	/**
-	 * 
+	 * constructor of Pay Per Ride object
 	 */
 	public PayPerRide() {
 		membershipType = "Pay Per Ride";
@@ -37,7 +37,7 @@ public class PayPerRide extends Membership {
 	}
 
 	/**
-	 *
+	 *@return rideDurationLimit Holds the amount of time a rider can ride without being charged for overtime
 	 */
 	@Override
 	public int getRideDurationLimit() {

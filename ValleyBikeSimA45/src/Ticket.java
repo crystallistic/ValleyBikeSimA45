@@ -1,5 +1,5 @@
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Ticket {
@@ -34,8 +34,12 @@ public class Ticket {
 	private boolean isResolved;
 	
 	/**
-	 * @param ticketId
-	 * @param description
+	 * @param ticketId Holds the id for the ticket, in numbers
+	 * @param description Holds the description  of the problem, cannot be empty
+	 * @param username Holds the username of the user that submitted the request
+	 * @param category Holds the category of the problem (1-4)
+	 * @param identifyingInfo Holds the bikeid or stationid or is empty depending on the category of the ticket
+	 * @param isResolved Holds a boolean (yes or no) for if the ticket has been resolved
 	 */
 	public Ticket(int ticketId, String username, String category, String identifyingInfo, boolean isResolved, String description) {
 		this.ticketId = ticketId;
@@ -98,14 +102,14 @@ public class Ticket {
 	}
 	
 	/**
-	 * @return the isResolved
+	 * @return the boolean isResolved 
 	 */
 	public boolean isResolved() {
 		return isResolved;
 	}
 
 	/**
-	 * @param isResolved the isResolved to set
+	 * @param isResolved Holds
 	 */
 	public void setResolved(boolean isResolved) {
 		this.isResolved = isResolved;
