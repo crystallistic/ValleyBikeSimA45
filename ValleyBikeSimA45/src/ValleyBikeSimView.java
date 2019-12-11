@@ -118,10 +118,10 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your password:");
 			break;
 		case "newUsername":
-			System.out.println("Please enter a username (at least 6 characters):");
+			System.out.println("Please enter a username (at least 6 characters and only letters and numbers):");
 			break;
 		case "newPassword":
-			System.out.println("Please enter a password (at least 6 characters):");
+			System.out.println("Please enter a password (at least 6 characters and only letters and numbers):");
 			break;
 		case "newEmail":
 			System.out.println("Please enter your email. You should not use an email that is already registered to another ValleyBike user.");
@@ -268,7 +268,7 @@ public class ValleyBikeSimView {
 				+ "7) View ride history\n"
 				+ "8) View transaction history\n"
 				+ "9) Report issue\n"
-				+ "10) Display my support tickets\n"
+				+ "10) View my support tickets\n"
 				+ "11) Log out\n");
 	}
 
@@ -711,7 +711,7 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Informs the user the ticket has been resolved
-	 * @param ticketId the id of the ticket being resolved
+	 * @param ticketId The ID number associated with the ticket
 	 */
 	public void resolvedTicket(int ticketId) {
 		System.out.println("Ticket #" + ticketId + " has been resolved.");
@@ -723,6 +723,13 @@ public class ValleyBikeSimView {
 	 */
 	public void displaySubscriptionExpired() {
 		System.out.println("Your subscription has expired. Your membership has been reset to a Pay Per Ride Pass. If you would like a different membership, please choose 'Edit Membership' from the menu");
+	}
+	
+	/**
+	 * Informs the user their credit card has expired
+	 */
+	public void displayExpiredCreditCard() {
+		System.out.println("Your credit card has expired. Please use a different credit card.");
 	}
 	
 }

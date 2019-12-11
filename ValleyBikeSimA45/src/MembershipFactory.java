@@ -1,12 +1,16 @@
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class MembershipFactory {
 
 	public MembershipFactory() {
 	};
-
+	
+	/**
+	 * @param membershipType Holds users type of membership
+	 * @return Returns the type of memebership user has
+	 */
 	public Membership getMembership(String membershipType) {
 
 		if (membershipType == null) {

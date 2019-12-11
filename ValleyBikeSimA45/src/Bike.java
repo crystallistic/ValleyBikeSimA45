@@ -1,5 +1,5 @@
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Bike {
@@ -9,8 +9,8 @@ public class Bike {
 	private String status; // working, OOO, or stolen
 
 	/**
-	 * @param bikeId
-	 * @param status
+	 * @param bikeId Holds bike's id number, which is three numbers only
+	 * @param status Holds the bike's status, which is either working, OOO(out of order) or stolen
 	 */
 	public Bike(int bikeId, String status) {
 		this.bikeId = bikeId;
