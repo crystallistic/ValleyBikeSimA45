@@ -689,6 +689,7 @@ public class ValleyBikeSimController {
 			// if user wants to return bike to different station, restart process
 			if (optionSelected.equals("1")) {
 				endRide();
+				return;
 			} else { // if user wants to contact customer support to end ride here, create ticket
 				model.createSupportTicket("bike", Integer.toString(model.getBikeIdRideInProgress()), "Check in bike at full station");
 				view.displayReturnBikeAtFullStationSuccess();
