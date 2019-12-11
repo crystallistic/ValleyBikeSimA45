@@ -882,7 +882,6 @@ public class ValleyBikeSimModel {
 		Membership membership = memberships.get(activeUsername); //user's membership
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
-		System.out.println(ride.toString());
 		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
 		
 		//Charge user for the completed ride
@@ -895,10 +894,12 @@ public class ValleyBikeSimModel {
 		transactionsByUser.putIfAbsent(activeUser.getUsername(), new ArrayList<Transaction>());
 		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
-		//Update bike list at current Station if station isn't full
-		if (!dockIsFull) {
+		// if station is full, move bike to storage
+		if (dockIsFull) {
+			bikes.get(ride.getBikeId()).setStatus("inStorage");
+		} else { // Update bike list at current Station if station isn't full
 			stationsBikes.get(stationId).add(ride.getBikeId());
-		}	
+		}
 		
 		//Add end time and end station to Ride associated to User
 		ride.setEndTime(now);
@@ -2119,12 +2120,14 @@ public class ValleyBikeSimModel {
 			// if bike is broken, move to storage
 			if (ticket.getDescription().equalsIgnoreCase("Bike OOO")) {
 				moveBikeFromStationToStorage(bikeId, "OOO");
-			} else { // if user is trying to check a bike into full station, move it to storage
-				bikes.get(bikeId).setStatus("inStorage");
+			} else if (ticket.getDescription().equalsIgnoreCase("Check in bike at full station")){ 
+
 				// ticket is instantly resolved since we've moved the bike to storage
 				tickets.get(ticketId).setResolved(true);
 				saveStationList();
 				saveBikeList();
+			} else { // if the user had an overdue bike, close ticket, inform them of the $2000 charge
+				tickets.get(ticketId).setResolved(true);
 			}
 		}
 		
@@ -2300,4 +2303,71 @@ public class ValleyBikeSimModel {
 	public int getBikeIdRideInProgress() {
 		return ridesInProgress.get(activeUser.getUsername()).getBikeId();
 	}
+
+	/**
+	 * Returns the ID of the bike that the user has not checked in for more than 24hrs
+	 * @return
+	 */
+	public int getActiveUserStolenBikeId() {
+		return ridesOverdue.get(activeUser.getUsername()).getBikeId();
+	}
+
+	/**
+	 * Returns full formatted list of support tickets.
+	 * @return Array List containing tickets
+	 */
+	public ArrayList<String> getFormattedTicketList() {
+		ArrayList<String> formattedTicketList = new ArrayList<>();
+		formattedTicketList.add("ID\tUsername\tCategory\tIdenfying Information\tIs resolved?\tDescription\n");
+		Object[] ticketIds = tickets.keySet().toArray();
+		Arrays.sort(ticketIds);
+		
+		for (Object ticketId : ticketIds) {	
+			formattedTicketList.add(formatTicketToString((Integer)ticketId));
+		}
+		
+		return formattedTicketList;
+	}
+	
+	/**
+	 * Helper function to wrap all information pertaining to the specified station in a string.
+	 * @param station		Station ID
+	 * @return		a string with all of this station's information, formatted
+	 */
+	public String formatTicketToString(int ticketId) {
+		Ticket ticket = tickets.get(ticketId);
+		String id = Integer.toString(ticketId);
+		String username = ticket.getUsername();
+		String category = ticket.getCategory();
+		String info = ticket.getIdentifyingInfo();
+		String isResolved = (ticket.isResolved() ? "Yes" : "No");
+		String description = ticket.getDescription();
+		return id + "\t" + username + "\t" + category + "\t" + info + "\t" + isResolved + "\t" + description;
+	}
+
+	
+	/**
+	 * Check if this bike is out of order
+	 * @param bike ID the bike ID
+	 * @return true if bike is OOO, or in storage
+	 */
+	public boolean bikeIsInStorage(int bikeId) {
+		String bikeStatus = bikes.get(bikeId).getStatus();
+		return (bikeStatus.equals("OOO") || bikeStatus.equals("inStorage"));
+	}
+	
+	/**
+	 * Check if this bike is in use
+	 * @param bike ID the bike ID
+	 * @return true if bike is in use
+	 */
+	public boolean bikeIsInUse(int bikeId) {
+		boolean inUse = false;
+		
+		for (Ride ride : ridesInProgress.values()) {
+			inUse = (ride.getBikeId() == bikeId);
+		}
+		return inUse;
+	}
+
 }

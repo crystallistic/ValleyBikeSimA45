@@ -246,7 +246,8 @@ public class ValleyBikeSimView {
 				+ "6) View station list\n"
 				+ "7) View daily statistics\n"
 				+ "8) Create support ticket\n"
-				+ "9) Log out");
+				+ "9) Resolve support ticket\n"
+				+ "10)Log out");
 	}
 	
 	/**
@@ -274,7 +275,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Display a message confirming successful bike check-out and beginning of a ride.
+	 * Display the full list of station in the ValleyBike System.
 	 */
 	public void displayStationList(ArrayList<String> stationList) {
 		for (String s : stationList) {
@@ -294,7 +295,8 @@ public class ValleyBikeSimView {
 	 */
 	public void displayNoActiveRide() {
 		System.out.println("Sorry, action cannot be completed because you have no ride in progress.\n"
-				+ "If you are trying to return a bike that is not yours, please submit a maintenance request.");
+				+ "If you are trying to return a bike that is not yours or you have an overdue bike, please submit a support ticket\n"
+				+ "specifically for those issues.");
 	}
 
 	public void displayFullDock() {
@@ -361,7 +363,7 @@ public class ValleyBikeSimView {
 	 * Notifies user of stolen bike charge.
 	 */
 	public void bikeStolen() {
-		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000.\n"
+		System.out.println("You have an overdue bike which has been marked as stolen. A hold has been placed on your account.\n"
 				+ "Please contact ValleyBike for instructions for next steps");
 	}
 
@@ -583,8 +585,9 @@ public class ValleyBikeSimView {
 		System.out.println("What is this issue related to?\n"
 							+ "1) A station (issues with kiosks, docks, etc.)\n"
 							+ "2) A broken bike\n"
-							+ "3) Check in a bike at a full station\n"
+							+ "3) Resolve issue with an overdue bike\n"
 							+ "4) Other (user account, payment methods, etc.)");
+
 	}
 
 	/**
@@ -596,11 +599,25 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirm successful creation of support ticket
+	 * Confirm successful creation of support ticket. Displays different confirmation messages depending on the ticket content
 	 */
-	public void displaySubmitSupportTicketSuccess(int ticketId) {
-		System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
-				+ "Your support ticket number is " + ticketId + ".");
+	public void displaySubmitSupportTicketSuccess(int ticketId, String optionSelected) {
+		
+		// open tickets
+		if (optionSelected.equals("1") || optionSelected.equals("2") || optionSelected.equals("4")) {
+			System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
+					+ "Your support ticket number is " + ticketId + ".");
+		}
+		
+		if (optionSelected.equals("3")) {
+			System.out.println("You have been charged $2000 for not returning your bike to a station within 24 hours of starting your ride."
+					+ "\nPlease note that this charge is non-refundable even if you return this bike to ValleyBike,\n"
+					+ "although we do encourage that you do so by contacting customer service.\n"
+					+ "You may now start a new ride.");
+		}
+		
+		
+		
 	}
 	
 	/*
@@ -651,6 +668,40 @@ public class ValleyBikeSimView {
 	public void displayReturnBikeAtFullStationSuccess() {
 		System.out.println("Thank you for letting us know! Please lock the bike securely near the station, \n"
 				+ "and we will mark your ride as completed in the system. Thank you for riding with ValleyBike.");
+	}
+
+	/**
+	 * Informs user that they did not steal a bike.
+	 */
+	public void displayUserDidNotStealBike() {
+		System.out.println("You do not have any overdue rides.");
+	}
+
+	/**
+	 * Display the full list of support tickets.
+	 */
+	public void displaySupportTickets(ArrayList<String> formattedTicketList) {
+		for (String s : formattedTicketList) {
+			System.out.println(s);
+		}
+		
+	}
+
+	/**
+	 * Tells user this bike is already in storage/already reported as broken
+	 */
+	public void displayBikeAlreadyInStorage() {
+		System.out.println("This bike is in storage or has already been reported as broken.");
+		
+	}
+
+	/**
+	 * Let user know they should check in their bike before submitting the ticket.
+	 */
+	public void displayEndRideFirst() {
+		System.out.println("This bike is currently in use. If you are using this bike, or know someone who is,\n"
+				+ "please dock this bike at a station before submitting a support ticket for a broken bike.\n"
+				+ "This will help ValleyBike locate the bike for repair.");
 	}
 	
 }

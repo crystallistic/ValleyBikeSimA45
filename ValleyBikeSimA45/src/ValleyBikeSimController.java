@@ -281,8 +281,8 @@ public class ValleyBikeSimController {
 				createSupportTicket();
 				break;
 			case "9": // 9) Resolve support ticket
-				// resolveSupportTicket();
-				System.out.println("Feature not yet available, check back soon!");
+				resolveSupportTicket();
+				break;
 			case "10":// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
@@ -327,6 +327,13 @@ public class ValleyBikeSimController {
 			}
 		}
 		mainMenu(userIsAdmin);
+	}
+
+	/**
+	 * Resolve a support ticket.
+	 */
+	private void resolveSupportTicket() {
+		view.displaySupportTickets(model.getFormattedTicketList());
 	}
 
 	/**
@@ -634,7 +641,7 @@ public class ValleyBikeSimController {
 				// if user's credit card expired, display error message
 				if (model.activeUserCreditCardExpired()) {
 					view.cardExpired();
-					// TODO: subsequent actions: prompt user for new payment method, or select from existing
+					// TODO: subsequent actions: prompt user for new payment method
 				}
 				else if (model.activeUserStolenBike()) {
 					view.bikeStolen();
@@ -689,7 +696,8 @@ public class ValleyBikeSimController {
 			// if user wants to return bike to different station, restart process
 			if (optionSelected.equals("1")) {
 				endRide();
-			} else { // if user wants to contact customer support to end ride here
+				return;
+			} else { // if user wants to contact customer support to end ride here, create ticket
 				model.createSupportTicket("bike", Integer.toString(model.getBikeIdRideInProgress()), "Check in bike at full station");
 				view.displayReturnBikeAtFullStationSuccess();
 			}
@@ -912,10 +920,6 @@ public class ValleyBikeSimController {
 	 * Create a ticket
 	 */
 	private void createSupportTicket() {
-
-		if (model.activeUserIsAdmin()) {
-			//view.displaySorry();
-		}
 		
 		String optionSelected;
 		view.displayTicketCategory();
@@ -934,13 +938,33 @@ public class ValleyBikeSimController {
 		case "2": // broken bike 
 			category = "bike";
 			identifyingInfo = getUserInput("bikeId");
+			
+			// if bike is in storage or already marked as out-of-order, let user know
+			if (model.bikeIsInStorage(Integer.parseInt(identifyingInfo))) {
+				view.displayBikeAlreadyInStorage();
+				return;
+			}
+			
+			// if bike is in use, require user to end ride before submitting ticket
+			if (model.bikeIsInUse(Integer.parseInt(identifyingInfo))) {
+				view.displayEndRideFirst();
+				return;
+			}
+			
 			description = "Bike OOO";
 			break;
-		case "3": // check in bike at full station
+		case "3": // rider needs to resolve overdue ride issue
+			
+			// if the user does not in fact have any overdue ride, do nothing
+			if (!model.activeUserStolenBike()) {
+				view.displayUserDidNotStealBike();
+				return;
+			}
 			category = "bike";
-			identifyingInfo = getUserInput("bikeId");
-			description = "Check in bike at full station";
+			identifyingInfo = Integer.toString(model.getActiveUserStolenBikeId());
+			description = "User stole bike";
 			break;
+	
 		case "4": // general issue
 			category = "general";
 			break;
@@ -951,7 +975,7 @@ public class ValleyBikeSimController {
 		}
 		
 		int ticketId = model.createSupportTicket(category,identifyingInfo,description);
-		view.displaySubmitSupportTicketSuccess(ticketId);
+		view.displaySubmitSupportTicketSuccess(ticketId,optionSelected);
 		
 	}
 			
