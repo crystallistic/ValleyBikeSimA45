@@ -281,8 +281,8 @@ public class ValleyBikeSimController {
 				createSupportTicket();
 				break;
 			case "9": // 9) Resolve support ticket
-				// resolveSupportTicket();
-				System.out.println("Feature not yet available, check back soon!");
+				resolveSupportTicket();
+				break;
 			case "10":// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
@@ -327,6 +327,13 @@ public class ValleyBikeSimController {
 			}
 		}
 		mainMenu(userIsAdmin);
+	}
+
+	/**
+	 * Resolve a support ticket.
+	 */
+	private void resolveSupportTicket() {
+		view.displaySupportTickets(model.getFormattedTicketList());
 	}
 
 	/**
@@ -716,7 +723,7 @@ public class ValleyBikeSimController {
 		int capacity = Integer.parseInt(getUserInput("capacity"));
 		boolean hasKiosk = getUserInput("hasKiosk").contentEquals("1");
 		
-		Station station = model.addStation(stationId,stationName,address,capacity,hasKiosk);
+		model.addStation(stationId,stationName,address,capacity,hasKiosk);
 		
 		view.displayStationAdded(model.formatStationToString(stationId));
 	
@@ -913,10 +920,6 @@ public class ValleyBikeSimController {
 	 * Create a ticket
 	 */
 	private void createSupportTicket() {
-
-		if (model.activeUserIsAdmin()) {
-			//view.displaySorry();
-		}
 		
 		String optionSelected;
 		view.displayTicketCategory();
@@ -938,22 +941,16 @@ public class ValleyBikeSimController {
 			description = "Bike OOO";
 			break;
 		case "3": // check in bike at full station
+			// if user does not in fact have any ongoing ride, do nothing
+			if (!model.isRideInProgress()) {
+				view.displayNoActiveRide();
+				return;
+			}
 			category = "bike";
 			identifyingInfo = getUserInput("bikeId");
 			description = "Check in bike at full station";
 			break;
-		case "4": // rider needs to resolve overdue ride issue
-			
-			// if the user does not in fact have any overdue ride, do nothing
-			if (!model.activeUserStolenBike()) {
-				view.displayUserDidNotStealBike();
-				return;
-			}
-			category = "bike";
-			identifyingInfo = Integer.toString(model.getActiveUserStolenBikeId());
-			description = "User stole bike";
-			break;
-		case "5": // general issue
+		case "4": // general issue
 			category = "general";
 			break;
 		}

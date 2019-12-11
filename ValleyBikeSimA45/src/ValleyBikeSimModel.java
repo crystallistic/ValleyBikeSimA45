@@ -2311,4 +2311,38 @@ public class ValleyBikeSimModel {
 	public int getActiveUserStolenBikeId() {
 		return ridesOverdue.get(activeUser.getUsername()).getBikeId();
 	}
+
+	/**
+	 * Returns full formatted list of support tickets.
+	 * @return Array List containing tickets
+	 */
+	public ArrayList<String> getFormattedTicketList() {
+		ArrayList<String> formattedTicketList = new ArrayList<>();
+		formattedTicketList.add("ID\tUsername\tCategory\tIdenfying Information\tIs resolved?\tDescription\n");
+		Object[] ticketIds = tickets.keySet().toArray();
+		Arrays.sort(ticketIds);
+		
+		for (Object ticketId : ticketIds) {	
+			formattedTicketList.add(formatTicketToString((Integer)ticketId));
+		}
+		
+		return formattedTicketList;
+	}
+	
+	/**
+	 * Helper function to wrap all information pertaining to the specified station in a string.
+	 * @param station		Station ID
+	 * @return		a string with all of this station's information, formatted
+	 */
+	public String formatTicketToString(int ticketId) {
+		Ticket ticket = tickets.get(ticketId);
+		String id = Integer.toString(ticketId);
+		String username = ticket.getUsername();
+		String category = ticket.getCategory();
+		String info = ticket.getIdentifyingInfo();
+		String isResolved = (ticket.isResolved() ? "Yes" : "No");
+		String description = ticket.getDescription();
+		return id + "\t" + username + "\t" + category + "\t" + info + "\t" + isResolved + "\t" + description;
+	}
+
 }

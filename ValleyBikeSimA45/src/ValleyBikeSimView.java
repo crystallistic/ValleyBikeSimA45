@@ -246,7 +246,8 @@ public class ValleyBikeSimView {
 				+ "6) View station list\n"
 				+ "7) View daily statistics\n"
 				+ "8) Create support ticket\n"
-				+ "9) Log out");
+				+ "9) Resolve support ticket\n"
+				+ "10)Log out");
 	}
 	
 	/**
@@ -274,7 +275,7 @@ public class ValleyBikeSimView {
 	}
 	
 	/**
-	 * Display a message confirming successful bike check-out and beginning of a ride.
+	 * Display the full list of station in the ValleyBike System.
 	 */
 	public void displayStationList(ArrayList<String> stationList) {
 		for (String s : stationList) {
@@ -294,7 +295,8 @@ public class ValleyBikeSimView {
 	 */
 	public void displayNoActiveRide() {
 		System.out.println("Sorry, action cannot be completed because you have no ride in progress.\n"
-				+ "If you are trying to return a bike that is not yours or you have an overdue bike, please submit a support ticket.");
+				+ "If you are trying to return a bike that is not yours or you have an overdue bike, please submit a support ticket\n"
+				+ "specifically for those issues.");
 	}
 
 	public void displayFullDock() {
@@ -583,8 +585,9 @@ public class ValleyBikeSimView {
 		System.out.println("What is this issue related to?\n"
 							+ "1) A station (issues with kiosks, docks, etc.)\n"
 							+ "2) A broken bike\n"
-							+ "3) Check in a bike at a full station\n"
+							+ "3) Resolve issue with an overdue bike\n"
 							+ "4) Other (user account, payment methods, etc.)");
+
 	}
 
 	/**
@@ -672,6 +675,16 @@ public class ValleyBikeSimView {
 	 */
 	public void displayUserDidNotStealBike() {
 		System.out.println("You do not have any overdue rides.");
+	}
+
+	/**
+	 * Display the full list of support tickets.
+	 */
+	public void displaySupportTickets(ArrayList<String> formattedTicketList) {
+		for (String s : formattedTicketList) {
+			System.out.println(s);
+		}
+		
 	}
 	
 }
