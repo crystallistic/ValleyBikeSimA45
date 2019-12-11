@@ -719,8 +719,14 @@ public class ValleyBikeSimView {
 	}
 
 	/**
+	 * Informs the user that their yearly subscription has expired.
+	 */
+	public void displaySubscriptionExpired() {
+		System.out.println("Your subscription has expired. Your membership has been reset to a Pay Per Ride Pass. If you would like a different membership, please choose 'Edit Membership' from the menu");
+	}
+	
+	/**
 	 * Informs the user their credit card has expired
-	 * @param ticketId
 	 */
 	public void displayExpiredCreditCard() {
 		System.out.println("Your credit card has expired. Please use a different credit card.");

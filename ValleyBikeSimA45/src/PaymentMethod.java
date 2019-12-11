@@ -6,18 +6,18 @@ import java.math.BigDecimal;
  */
 public class PaymentMethod {
 	
-	private String billingName;
-	private String cardNumber;
-	private String billingAddress;
-	private String expiryDate;
-	private String cvv;
+	private String billingName; //customer's name
+	private String cardNumber; //user's credit card number
+	private String billingAddress; //user's address associated with their credit card
+	private String expiryDate; //user's credit card's expiration date
+	private String cvv; //user's credit card's 3 digit code on the back of their card
 	
 	/**
-	 * @param billingName
-	 * @param cardNumber
-	 * @param address
-	 * @param expiryDate
-	 * @param cvv
+	 * @param billingName Holds the user's name associated with the credit card
+	 * @param cardNumber Hold's the user's credit card's number
+	 * @param address Hold's the address associated with the credit card 
+	 * @param expiryDate Hold's the expiration date of the credit card 
+	 * @param cvv Hold's the secret code for the credit cared (found on the back of the card)
 	 */
 	public PaymentMethod(String billingName, String cardNumber, String billingAddress, String expiryDate, String cvv) {
 		this.billingName = billingName;
@@ -35,14 +35,14 @@ public class PaymentMethod {
 	}
 
 	/**
-	 * @param billingName the billingName to set
+	 * @param billingName the billingName to set, and is the name associated a specific credit card
 	 */
 	public void setBillingName(String billingName) {
 		this.billingName = billingName;
 	}
 
 	/**
-	 * @return the cardNumber
+	 * @return the cardNumber that is associated with the card on file and the user
 	 */
 	public String getCardNumber() {
 		return cardNumber;
@@ -56,14 +56,14 @@ public class PaymentMethod {
 	}
 
 	/**
-	 * @return the address
+	 * @return the address associated with the user's credit card on file
 	 */
 	public String getAddress() {
 		return billingAddress;
 	}
 
 	/**
-	 * @param address the address to set
+	 * @param address Holds the billing address of the user's credit card
 	 */
 	public void setAddress(String billingAddress) {
 		this.billingAddress = billingAddress;

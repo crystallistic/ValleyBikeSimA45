@@ -162,6 +162,13 @@ public class ValleyBikeSimController {
 			model.chargeMonthly();
 		}
 		
+		//Checks if user's yearly or founding member subscription has expired
+		boolean subExpired = model.hasSubscriptionExpired();
+		
+		if (subExpired) {
+			view.displaySubscriptionExpired();
+		}
+		
 		Date now = new Date();
 		DateFormat df = new SimpleDateFormat("MM/dd/yy");
 		String today = df.format(now);

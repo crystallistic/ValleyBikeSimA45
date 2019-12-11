@@ -11,6 +11,7 @@ bikeId,stationId,status
 742,-1,inStorage
 242,-1,inStorage
 507,-1,inStorage
+774,0,working
 224,33,working
 481,33,working
 866,33,working
@@ -29,7 +30,6 @@ bikeId,stationId,status
 227,20,working
 509,20,working
 209,21,working
-774,21,working
 812,22,working
 436,23,working
 534,23,working
