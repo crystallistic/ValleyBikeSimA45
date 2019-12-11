@@ -118,10 +118,10 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your password:");
 			break;
 		case "newUsername":
-			System.out.println("Please enter a username (at least 6 characters):");
+			System.out.println("Please enter a username (at least 6 characters and only letters and numbers):");
 			break;
 		case "newPassword":
-			System.out.println("Please enter a password (at least 6 characters):");
+			System.out.println("Please enter a password (at least 6 characters and only letters and numbers):");
 			break;
 		case "newEmail":
 			System.out.println("Please enter your email. You should not use an email that is already registered to another ValleyBike user.");
