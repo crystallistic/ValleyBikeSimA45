@@ -604,12 +604,12 @@ public class ValleyBikeSimView {
 	public void displaySubmitSupportTicketSuccess(int ticketId, String optionSelected) {
 		
 		// open tickets
-		if (optionSelected.equals("1") || optionSelected.equals("2") || optionSelected.equals("5")) {
+		if (optionSelected.equals("1") || optionSelected.equals("2") || optionSelected.equals("4")) {
 			System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
 					+ "Your support ticket number is " + ticketId + ".");
 		}
 		
-		if (optionSelected.equals("4")) {
+		if (optionSelected.equals("3")) {
 			System.out.println("You have been charged $2000 for not returning your bike to a station within 24 hours of starting your ride."
 					+ "\nPlease note that this charge is non-refundable even if you return this bike to ValleyBike,\n"
 					+ "although we do encourage that you do so by contacting customer service.\n"

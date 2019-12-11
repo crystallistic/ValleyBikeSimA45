@@ -940,16 +940,18 @@ public class ValleyBikeSimController {
 			identifyingInfo = getUserInput("bikeId");
 			description = "Bike OOO";
 			break;
-		case "3": // check in bike at full station
-			// if user does not in fact have any ongoing ride, do nothing
-			if (!model.isRideInProgress()) {
-				view.displayNoActiveRide();
+		case "3": // rider needs to resolve overdue ride issue
+			
+			// if the user does not in fact have any overdue ride, do nothing
+			if (!model.activeUserStolenBike()) {
+				view.displayUserDidNotStealBike();
 				return;
 			}
 			category = "bike";
-			identifyingInfo = getUserInput("bikeId");
-			description = "Check in bike at full station";
+			identifyingInfo = Integer.toString(model.getActiveUserStolenBikeId());
+			description = "User stole bike";
 			break;
+	
 		case "4": // general issue
 			category = "general";
 			break;
