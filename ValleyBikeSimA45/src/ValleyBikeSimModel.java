@@ -176,7 +176,7 @@ public class ValleyBikeSimModel {
 	
 	
 	/**
-	 * Read in the bike data file, store bikes in the model, and .
+	 * Read in the bike data file, store bikes in the model.
 	 */
 	private void readBikeData() {
 		try {
@@ -539,7 +539,7 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean activeUserCreditCardExpired() throws ParseException {
 		
-		// getting first credit card on file. TODO: Verify method to keep track of preferred payment method
+		// getting first credit card on file.
 		PaymentMethod pm = paymentMethods.get(activeUser.getUsername()); 
 		Date date = new SimpleDateFormat("MM/yy").parse(pm.getExpiryDate());
 		Date now = new Date();
@@ -567,12 +567,11 @@ public class ValleyBikeSimModel {
 		boolean inputIsValid = false;
 		boolean matchRegex = false;
 		boolean existInSys = false;
-		Pattern r = null;
-		HashMap<String,Pattern> regex = new HashMap<>();
-		regex.put("stationId", Pattern.compile("^([1-9]|[1-9][0-9]){2}$"));
-		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));
-		regex.put("newStationName", Pattern.compile("^[^ ]+.*$")); // must contain at least one non-space character
-		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
+		HashMap<String,Pattern> regex = new HashMap<>(); 
+		regex.put("stationId", Pattern.compile("^(0*[1-9]|[1-9][0-9])$")); // accept values between 1-99
+		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));	// 3 digits 
+		regex.put("newUsername", Pattern.compile("^[a-zA-Z0-9]{6,}$")); // lowercase + uppercase + nummbers, min 6 chars
+		regex.put("newStationName", Pattern.compile("^[^ ]+.*$")); // must contain at least 1 non-whitespace character
 		regex.put("newEmail", Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z]{2,}$"));
 		regex.put("stationAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2
@@ -878,11 +877,12 @@ public class ValleyBikeSimModel {
 	 * @param stationId the id of the station that the bike is being returned to
 	 * @return the amount that the user has been charged
 	 */
-	public BigDecimal endRide (int stationId) {
+	public BigDecimal endRide (int stationId, boolean dockIsFull) {
 		String activeUsername = activeUser.getUsername(); //active User's username
 		Membership membership = memberships.get(activeUsername); //user's membership
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
+		System.out.println(ride.toString());
 		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
 		
 		//Charge user for the completed ride
@@ -895,8 +895,10 @@ public class ValleyBikeSimModel {
 		transactionsByUser.putIfAbsent(activeUser.getUsername(), new ArrayList<Transaction>());
 		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
-		//Update bike list at current Station
-		stationsBikes.get(stationId).add(ride.getBikeId());
+		//Update bike list at current Station if station isn't full
+		if (!dockIsFull) {
+			stationsBikes.get(stationId).add(ride.getBikeId());
+		}	
 		
 		//Add end time and end station to Ride associated to User
 		ride.setEndTime(now);
@@ -1084,7 +1086,7 @@ public class ValleyBikeSimModel {
 	public boolean isStationDockFull(int stationId) {
 		
 		// station is full if the number of bikes at that station equals capacity
-		return (stationsBikes.get(stationId).size() == stations.get(stationId).getCapacity());
+		return (stationsBikes.get(stationId).size() >= stations.get(stationId).getCapacity());
 	}
 	
 	/**
@@ -1129,7 +1131,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1195,7 +1196,6 @@ public class ValleyBikeSimModel {
 				writer.close();
 					      
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1252,7 +1252,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1397,7 +1396,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1534,7 +1532,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1557,7 +1554,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -2117,10 +2113,19 @@ public class ValleyBikeSimModel {
 		usersTickets.putIfAbsent(username, new HashSet<>());
 		usersTickets.get(username).add(ticket);
 		
-		// if bike is broken, move to storage
+		// bike category issues 
 		if (category.equals("bike")) {
 			int bikeId = Integer.parseInt(identifyingInfo);
-			moveBikeFromStationToStorage(bikeId, "OOO");
+			// if bike is broken, move to storage
+			if (ticket.getDescription().equalsIgnoreCase("Bike OOO")) {
+				moveBikeFromStationToStorage(bikeId, "OOO");
+			} else { // if user is trying to check a bike into full station, move it to storage
+				bikes.get(bikeId).setStatus("inStorage");
+				// ticket is instantly resolved since we've moved the bike to storage
+				tickets.get(ticketId).setResolved(true);
+				saveStationList();
+				saveBikeList();
+			}
 		}
 		
 		// if ticket is maintenance request for station, edit station data
@@ -2271,5 +2276,13 @@ public class ValleyBikeSimModel {
 			billingCycleMonthly.get(1).addAll(riders);
 		}
 		saveUserLists();
+	}
+	
+	/**
+	 * Returns the bike ID of the user's ride in progress
+	 * @return bike ID
+	 */
+	public int getBikeIdRideInProgress() {
+		return ridesInProgress.get(activeUser.getUsername()).getBikeId();
 	}
 }

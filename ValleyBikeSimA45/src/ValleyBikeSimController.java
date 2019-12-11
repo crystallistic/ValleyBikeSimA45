@@ -444,20 +444,46 @@ public class ValleyBikeSimController {
 	public String getUserInput(String userInputName) {
 
 		boolean inputIsValid;
-
+		
+		// check for empty string/ string with only spaces
 		String userInput = view.prompt(userInputName);
+		while (userInput.replaceAll(" ", "").length() == 0) {
+			view.displayEmptyInputError();
+			userInput = view.prompt(userInputName);
+		}
+
 
 		if (userInputName.equals("username")) {
-			String password = view.prompt("password").trim();
+			
+			// make sure password is not empty
+			String password = view.prompt("password");
+			while (password.replaceAll(" ", "").length() == 0) {
+				view.displayEmptyInputError();
+				password = view.prompt("password");
+			}
+			password = password.trim();
+			
+			// check the username-password combination in the system
 			String loginInfo = userInput + " " + password;
 			inputIsValid = model.isValid("loginInfo", loginInfo);
 
 			while (!inputIsValid) {
-
 				System.out.println("Invalid username and password combination, please try again.");
-
-				userInput = view.prompt(userInputName); // username
+				
+				// get username
+				userInput = view.prompt(userInputName);
+				while (userInput.replaceAll(" ", "").length() == 0) {
+					view.displayEmptyInputError();
+					userInput = view.prompt(userInputName);
+				}
+				
 				password = view.prompt("password");
+				while (password.replaceAll(" ", "").length() == 0) {
+					view.displayEmptyInputError();
+					password = view.prompt("password");
+				}
+				password = password.trim();
+				
 				loginInfo = userInput + " " + password;
 				inputIsValid = model.isValid("loginInfo", loginInfo);
 			}
@@ -624,6 +650,7 @@ public class ValleyBikeSimController {
 						view.displayBikeNotBelongToStation(stationId, bikeId, model.getBikeListFromStation(stationId));
 						bikeId = Integer.parseInt(getUserInput("bikeId"));
 						stationId = Integer.parseInt(getUserInput("stationId"));
+						stationHasBike = model.stationHasBike(stationId, bikeId);
 					}
 					
 					// Pass info to model to start ride and modify system data
@@ -657,12 +684,19 @@ public class ValleyBikeSimController {
 		
 		if (dockIsFull) {
 			view.displayFullDock();
-			//TODO Maybe generate a ticket automatically about this full station?
-			return;
+			String optionSelected = getUserInput("option2");
+			
+			// if user wants to return bike to different station, restart process
+			if (optionSelected.equals("1")) {
+				endRide();
+			} else { // if user wants to contact customer support to end ride here
+				model.createSupportTicket("bike", Integer.toString(model.getBikeIdRideInProgress()), "Check in bike at full station");
+				view.displayReturnBikeAtFullStationSuccess();
+			}
 		}
 
 		// charge the user for this ride
-		BigDecimal chargeAmount = model.endRide(stationId);
+		BigDecimal chargeAmount = model.endRide(stationId,dockIsFull);
 		view.chargeUserForRide(chargeAmount);
 	}
 	
@@ -878,7 +912,6 @@ public class ValleyBikeSimController {
 	 * Create a ticket
 	 */
 	private void createSupportTicket() {
-		
 
 		if (model.activeUserIsAdmin()) {
 			//view.displaySorry();
@@ -886,10 +919,11 @@ public class ValleyBikeSimController {
 		
 		String optionSelected;
 		view.displayTicketCategory();
-		optionSelected = getUserInput("option3");
+		optionSelected = getUserInput("option4");
 		
 		String category = "";
 		String identifyingInfo = "";
+		String description = "";
 		switch (optionSelected) {
 		case "1": // ticket is station-related
 			view.displayChooseStation();
@@ -897,16 +931,24 @@ public class ValleyBikeSimController {
 			category = "station";
 			identifyingInfo = getUserInput("stationId");
 			break;
-		case "2": // ticket is bike-related
+		case "2": // broken bike 
 			category = "bike";
 			identifyingInfo = getUserInput("bikeId");
+			description = "Bike OOO";
 			break;
-		case "3": // general issue
+		case "3": // check in bike at full station
+			category = "bike";
+			identifyingInfo = getUserInput("bikeId");
+			description = "Check in bike at full station";
+			break;
+		case "4": // general issue
 			category = "general";
 			break;
 		}
 		
-		String description = getUserInput("ticketDescription");
+		if (!category.equals("bike")) {
+			description = getUserInput("ticketDescription");
+		}
 		
 		int ticketId = model.createSupportTicket(category,identifyingInfo,description);
 		view.displaySubmitSupportTicketSuccess(ticketId);

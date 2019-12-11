@@ -16,14 +16,17 @@ class ValleyBikeSimModelTest {
 		assertEquals("username", model.getActiveUser().getUsername());
 	}
 	
-	//Tests if readRidesDataFile works and ride data is accurate
-	/*
+	//Tests if getRidesStatistics works and ride data is accurate
 	@Test
-	void readRidesDataFileTest() {
-		String message = "The ride list contains 20 rides and the average ride time is 36 minutes." + "\n";
-		assertEquals(message, model.readRidesDataFile("rides-completed-data.csv")); //Error: this should work
+	void getRidesStatisticsTest() {
+		/*String message = "On this day there were 1 rides with average ride time of 317 minutes"+ "\n\n" + "From	To Start  End" + "\n" +
+				"32	20	12/08/19 10:15	12/08/19 15:32";*/
+		String message = "On this day there were 1 rides with average ride time of 317 minutes\n" + 
+				"\n" + 
+				"From	To	Start		End\n" + 
+				"32	20	12/08/19 10:15	12/08/19 15:32" + "\n";
+		assertEquals(message, model.getRidesStatistics("data-files/rides-Dec-08-2019.csv"));
 	}
-	*/
 	
 	//Tests if startRide method is working correctly
 	@Test
@@ -53,10 +56,75 @@ class ValleyBikeSimModelTest {
 		model.addPaymentMethod("username", payment);
 		model.setMembership("username", membership.getMembership("DayPass"));
 		model.startRide(830,33);
-		model.endRide(23);
+		model.endRide(23,false);
 		assertFalse(model.isRideInProgress()); //Ride should no longer be in progress
-
 		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
+	}
+	
+	//Tests if addStation adds a Station object to the model
+	@Test
+	void addStationTest() {
+		//Controller validates user input so do not need to check that station information is valid here 
+		model.readData();
+		model.addStation(80, "my_station", "777 Brockton Avenue, Abington, MA, 2351", 10, true);
+		assertEquals("my_station", model.getStation(80).getStationName());
+		assertEquals("777 Brockton Avenue, Abington, MA, 2351", model.getStation(80).getAddress());
+		assertEquals(10, model.getStation(80).getCapacity());
+		assertEquals(true, model.getStation(80).isHasKiosk());
+	}
+	
+	//Tests if removeStation removes a station properly
+	@Test
+	void removeStationTest() {
+		//Controller validates user input so do not need to check that station information is valid here
+		model.readData();
+		model.addStation(70, "my_station1", "37 Elm Street, Northampton, MA 01063", 15, false);
+		model.removeStation(70);
+		assertEquals(null, model.getStation(70));
+	}
+	
+	/*Tests if addBikeFromStorageToStation (adds a bike) adds a bike to the model and updates the station list
+	* Works for adding new and existing bikes because this method takes bikes from storage for both cases, so
+	* we are assuming new and existing bikes are properly put in storage */
+	@Test 
+	void addBikeFromStorageToStationTest(){ 
+		//Controller validates user input so do not need to check that station information is valid here
+		model.readData();
+		model.addNewBikeToStorage(111); //creates a new bike with ID 111 and puts it in storage
+		assertTrue(model.isBikeInStorage(111)); //checks to see if bike is moved to storage
+		model.addBikeFromStorageToStation(111, 33);
+		assertFalse(model.isBikeInStorage(111)); //bike should be removed from storage
+		assertTrue(model.stationHasBike(33, 111)); //does the station have the new bike
+		
+	}
+	
+		
+	//Tests if moveBikeFromStationToStorage moves a bike from a station to storage and updates station and bike list
+	@Test
+	void moveBikeFromStationToStorageTest() {
+		model.readData();
+		//Controller validates user input so do not need to check that station information is valid here
+		//put the bike into the station
+		model.addNewBikeToStorage(300); //creates a new bike with ID 300 and puts it in storage
+		model.addBikeFromStorageToStation(300, 20);
+		
+		//test if bike is removed from the station
+		model.moveBikeFromStationToStorage(300, "inStorage");
+		assertTrue(model.isBikeInStorage(300));
+	}
+		
+	//Tests if removeBikeInStorageFromSystem deletes a bike in storage from the system
+	//User cannot enter a bike id that doesn't exist in storage, so bike is assumed to exist in storage
+	@Test
+	void removeBikeInStorageFromSystemTest() {
+		model.readData();
+		model.addNewBikeToStorage(500); //creates a new bike with ID 300 and puts it in storage
+		model.removeBikeInStorageFromSystem(500);
+		//code reference: https://stackoverflow.com/questions/22623649/junit-testing-for-assertequal-nullpointerexception/22624210 (listed in A5 design document)
+		assertThrows(NullPointerException.class,
+            ()->{
+            	model.isBikeInStorage(500); //will return a null pointer exception if bike does not exist
+            });
 	}
 	
 	/* NEW SECTION HERE */
@@ -79,7 +147,10 @@ class ValleyBikeSimModelTest {
 	@Test
 	void isValidBikeId() {
 		model.readData();
-		assertTrue(model.isValid("bikeId", "628"));
+		//add a bike to the model for testing
+		model.addNewBikeToStorage(300); //creates a new bike with ID 300 and puts it in storage
+		model.addBikeFromStorageToStation(300, 33);
+		assertTrue(model.isValid("bikeId", "300"));
 		assertFalse(model.isValid("bikeId", "hello")); //user passes a string of characters
 		assertFalse(model.isValid("bikeId", "62812"));
 		assertFalse (model.isValid("bikeId", " ")); //user passes a space
@@ -92,7 +163,6 @@ class ValleyBikeSimModelTest {
 		model.readData();
 		assertTrue(model.isValid("loginInfo", "username1 password1"));
 		assertFalse(model.isValid("loginInfo", "string string"));
-		assertFalse(model.isValid("loginInfo", "")); //user passes an empty string
 		assertFalse(model.isValid("loginInfo", "010101 100")); //user enters numbers
 	}
 	
@@ -107,6 +177,8 @@ class ValleyBikeSimModelTest {
 		assertFalse(model.isValid("newUsername", " ")); //user passes a space
 		assertFalse(model.isValid("newUsername", "Bob Snel")); //user passes a string with a space in-between
 		assertFalse(model.isValid("newUsername", "username1")); //user passes a username that already exists
+		assertFalse(model.isValid("newUsername", "adminUsername1")); //user passes an admin username that already exists
+		assertFalse(model.isValid("newUsername", "{{{{{{{{")); //user passes a username that only contains unusual characters
 	}
 	
 	//isValid should return true if email is in a valid format and it does not belong to an existing user

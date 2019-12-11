@@ -127,7 +127,8 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your email. You should not use an email that is already registered to another ValleyBike user.");
 			break;
 		case "fullName":
-			System.out.println("Please enter your first and last name:");
+			System.out.println("Please enter your first and last name.\n"
+					+ "Make sure to capitalize the first letter of your first and last name (example: Johnny Appleseed):");
 			break;
 		case "phoneNumber":
 			System.out.println("Please enter your 10-digit cellphone number:");
@@ -177,7 +178,7 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter the new 3-digit bike ID. It must not coincide with another bike ID number in the system:");
 			break;	
 		case "bikeIdInStorage":
-			System.out.println("Please enter the new 3-digit bike ID. The bike must be in storage in order to be added to a station:");
+			System.out.println("Please enter the 3-digit bike ID. The bike must be in storage in order to be added to a station:");
 			break;	
 		case "riderAddress":
 			System.out.println("Please enter your address on one line, in the following format:\n"
@@ -297,7 +298,9 @@ public class ValleyBikeSimView {
 	}
 
 	public void displayFullDock() {
-		System.out.println("Dock is full. Please return bike to another station");
+		System.out.println("This station has no available docks. Would you like to return your bike to a different station?\n"
+							+ "1) Return my bike to a different station\n"
+							+ "2) Contact customer support to end your ride here");
 		
 	}
 
@@ -358,7 +361,8 @@ public class ValleyBikeSimView {
 	 * Notifies user of stolen bike charge.
 	 */
 	public void bikeStolen() {
-		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000. Please contact ValleyBike for instructions for next steps");
+		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000.\n"
+				+ "Please contact ValleyBike for instructions for next steps");
 	}
 
 	/**
@@ -459,12 +463,13 @@ public class ValleyBikeSimView {
 	 * @param bikeIdList
 	 */
 	public void displayBikeNotBelongToStation(int stationId, int bikeId, HashSet<Integer> bikeIdList) {
-		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + "\n"
+		System.out.println("Station " + Integer.toString(stationId) + " does not have bike " + Integer.toString(bikeId) + ".\n"
 				+ "You may want to select a bike ID from the list of bike IDs currently at this station below:");
 		for (Integer bId : bikeIdList) {
 			System.out.print(bId);
 			System.out.print(',');
 		}
+		System.out.println();
 		
 	}
 
@@ -578,8 +583,8 @@ public class ValleyBikeSimView {
 		System.out.println("What is this issue related to?\n"
 							+ "1) A station (issues with kiosks, docks, etc.)\n"
 							+ "2) A broken bike\n"
-							+ "3) Check "
-							+ "3) Other (user account, payment methods, etc.)");
+							+ "3) Check in a bike at a full station\n"
+							+ "4) Other (user account, payment methods, etc.)");
 	}
 
 	/**
@@ -620,6 +625,13 @@ public class ValleyBikeSimView {
 	}
 
 	/**
+	 * Tell the user they cannot enter an empty string
+	 */
+	public void displayEmptyInputError() {
+		System.out.println("You may not enter an empty input. Please try again.");
+	}
+	
+	/*
 	 * Tells the user that they can't re-use their old password
 	 */
 	public void displayOldPassword() {
@@ -631,6 +643,14 @@ public class ValleyBikeSimView {
 	 */
 	public void displayDayPassExpired() {
 		System.out.println("Your Day Pass has expired. You now have a Pay-Per-Ride Pass.");
+	}
+	
+	/**
+	 * Informs user that they've contacted customer support successfully about returning a bike at a full station
+	 */
+	public void displayReturnBikeAtFullStationSuccess() {
+		System.out.println("Thank you for letting us know! Please lock the bike securely near the station, \n"
+				+ "and we will mark your ride as completed in the system. Thank you for riding with ValleyBike.");
 	}
 	
 }

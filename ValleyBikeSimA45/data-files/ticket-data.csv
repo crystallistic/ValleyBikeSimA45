@@ -1,16 +1,22 @@
 ticketId,username,category,identifyingInfo,isResolved,description
 1,username4,general,,No,"I broke a bike, sorry"
 2,username5,general,,No,"I want to delete my account, don't speak to me or my son ever again."
-3,username6,general,,No,Valley Bike charged me twice yesterday for a single ride! I would like a refund.
-4,username7,general,,No,Could you send me a new fob?
-5,hes_a_keeper,general,,No,Oh hello!
-6,adminUsername1,station,21,No,Broken kiosk
-7,adminUsername2,station,30,No,Broken dock
-8,adminUsername3,station,30,No,Returning missing bike
-9,adminUsername1,bike,784,No,Bike OOO
-10,adminUsername2,bike,546,No,Bike OOO
-11,adminUsername1,bike,631,No,Bike OOO
-12,adminUsername2,bike,912,No,Bike OOO
-13,adminUsername3,bike,245,No,Bike OOO
-14,adminUsername1,bike,213,No,Bike OOO
-15,adminUsername1,station,31,No,Dock broken
+3,username6,general,,No,"Valley Bike charged me twice yesterday for a single ride! I would like a refund."
+4,username7,general,,No,"Could you send me a new fob?"
+5,username8,general,,No,"Oh hello!"
+6,adminUsername1,station,21,No,"Broken kiosk"
+7,adminUsername2,station,30,No,"Broken dock"
+8,adminUsername3,station,30,No,"Returning missing bike"
+9,adminUsername1,bike,784,No,"Bike OOO"
+10,adminUsername2,bike,546,No,"Bike OOO"
+11,adminUsername1,bike,631,No,"Bike OOO"
+12,adminUsername2,bike,912,No,"Bike OOO"
+13,adminUsername3,bike,245,No,"Bike OOO"
+14,adminUsername1,bike,213,No,"Bike OOO"
+15,adminUsername1,station,31,No,"Dock broken"
+16,adminUsername1,general,,No,"   "
+17,adminUsername1,station,24,No,"I don't like the number and it looked at me funny."
+18,username,bike,830,Yes,"Check in bike at full station"
+19,username,bike,324,Yes,"Check in bike at full station"
+20,username,bike,286,Yes,"Check in bike at full station"
+21,username,bike,995,Yes,"Check in bike at full station"
