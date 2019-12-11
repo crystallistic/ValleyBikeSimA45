@@ -268,7 +268,7 @@ public class ValleyBikeSimView {
 				+ "7) View ride history\n"
 				+ "8) View transaction history\n"
 				+ "9) Report issue\n"
-				+ "10) Display my support tickets\n"
+				+ "10) View my support tickets\n"
 				+ "11) Log out\n");
 	}
 
