@@ -15,12 +15,8 @@ import com.opencsv.CSVWriter;
 import java.util.regex.Pattern;
 
 /**
- * @author maingo
- *
- */
-/**
- * @author maingo
- *
+ * @author maingo, Jemimah Charles, Maggie Burkart, Emma Tanur
+ * 
  */
 public class ValleyBikeSimModel {
 	
