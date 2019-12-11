@@ -711,11 +711,19 @@ public class ValleyBikeSimView {
 
 	/**
 	 * Informs the user the ticket has been resolved
-	 * @param ticketId
+	 * @param ticketId The ID number associated with the ticket
 	 */
 	public void resolvedTicket(int ticketId) {
 		System.out.println("Ticket #" + ticketId + " has been resolved.");
 		
+	}
+
+	/**
+	 * Informs the user their credit card has expired
+	 * @param ticketId
+	 */
+	public void displayExpiredCreditCard() {
+		System.out.println("Your credit card has expired. Please use a different credit card.");
 	}
 	
 }

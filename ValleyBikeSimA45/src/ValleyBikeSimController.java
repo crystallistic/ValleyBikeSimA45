@@ -216,14 +216,33 @@ public class ValleyBikeSimController {
 			membership = mf.getMembership("FoundingMember");
 			break;
 		}
-
-		// get credit card information, add to user account
-		String billingName = getUserInput("billingName");
-		String creditCardNumber = getUserInput("creditCardNumber");
-		String billingAddress = getUserInput("billingAddress").replaceAll(",", "");
-		String creditCardDate = getUserInput("creditCardDate");
-		String cvv = getUserInput("CVV");
-
+		
+		String billingName = ""; 
+		String creditCardNumber = "";
+		String billingAddress = "";
+		String cvv = "";
+		String creditCardDate = "";
+		// check if the card is expired
+		boolean creditCardIsExpired = true;
+		while (creditCardIsExpired) {
+			try {
+				// get credit card information, add to user account
+				billingName = getUserInput("billingName");
+				creditCardNumber = getUserInput("creditCardNumber");
+				billingAddress = getUserInput("billingAddress").replaceAll(",", "");
+				cvv = getUserInput("CVV");
+				
+				creditCardDate = getUserInput("creditCardDate");
+				creditCardIsExpired = creditCardIsExpired(creditCardDate);
+				// if credit card is expired, let user know and prompt for a different credit card.
+				if (creditCardIsExpired) {
+					view.displayExpiredCreditCard(); 
+				}
+			} catch (ParseException e1) {
+				System.out.println("Unable to parse credit card date.");
+			}
+		}
+		
 		PaymentMethod paymentMethod = new PaymentMethod(billingName, creditCardNumber, billingAddress, creditCardDate,
 				cvv);
 		model.addPaymentMethod(newUsername, paymentMethod);
@@ -1013,7 +1032,16 @@ public class ValleyBikeSimController {
 		
 		// display confirmation of ticket resolution
 		view.resolvedTicket(ticketId);
-		
 	}
-			
+	
+	/**
+	 * Check if a card is expired
+	 * @param creditCardDate	The expiration date on the user's credit card
+	 * @return true if the card is expired, else false
+	 */
+	private boolean creditCardIsExpired (String creditCardDate) throws ParseException{
+		Date expirationDate = new SimpleDateFormat("MM/yy").parse(creditCardDate);
+		Date now = new Date();
+		return (now.getTime() - expirationDate.getTime() > 0);
+	}		
 }
