@@ -50,11 +50,11 @@ public class ValleyBikeSimView {
 	 */
 	public void displayMembershipOptions() {
 		System.out.println("Please choose from the membership options below by entering the corresponding option number (1-5):\n"
-				+ "1) Pay per ride\n"
-				+ "2) Day Pass\n"
-				+ "3) Monthly\n"
-				+ "4) Yearly\n"
-				+ "5) Founding Member\n");
+				+ "1) Pay per ride\t($2 per ride, first 30 minutes are free, $0.15 for each additional minute)\n"
+				+ "2) Day Pass\t($6 for one day, first 30 minutes are free, $0.15 for each additional minute)\n"
+				+ "3) Monthly\t($20 a month, first 45 minutes are free, $0.15 for each additional minute)\n"
+				+ "4) Yearly\t($80 a year, first 45 minutes are free, $0.15 for each additional minute)\n"
+				+ "5) Founding Member\t($90 a year, first 60 minutes are free, $0.15 for each additional minute)\n");
 	}
 	
 	/**
@@ -560,13 +560,12 @@ public class ValleyBikeSimView {
 	public void displayCurrentUserProfile(String userProfileString) {
 		System.out.println("Your current user profile:\n\n"+userProfileString);
 		System.out.println("Which of the following would you like to edit?:\n"
-							+ "1) Username\n"
-							+ "2) Password\n"
-							+ "3) Full name\n"
-							+ "4) Email\n"
-							+ "5) Phone number\n"
-							+ "6) Address\n"
-							+ "7) Return to main menu\n");
+							+ "1) Password\n"
+							+ "2) Full name\n"
+							+ "3) Email\n"
+							+ "4) Phone number\n"
+							+ "5) Address\n"
+							+ "6) Return to main menu\n");
 	}
 
 	/**
@@ -654,12 +653,18 @@ public class ValleyBikeSimView {
 	}
 
 	/**
+	 * Tells the user that their Day Pass has expired 
+	 */
+	public void displayDayPassExpired() {
+		System.out.println("Your Day Pass has expired. You now have a Pay-Per-Ride Pass.");
+	}
+	
+	/**
 	 * Informs user that they've contacted customer support successfully about returning a bike at a full station
 	 */
 	public void displayReturnBikeAtFullStationSuccess() {
 		System.out.println("Thank you for letting us know! Please lock the bike securely near the station, \n"
 				+ "and we will mark your ride as completed in the system. Thank you for riding with ValleyBike.");
-		
 	}
 
 	/**

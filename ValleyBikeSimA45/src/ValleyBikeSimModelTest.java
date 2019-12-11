@@ -47,6 +47,7 @@ class ValleyBikeSimModelTest {
 	//Tests if endRide method is working correctly
 	@Test
 	void endRideTest() {
+		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress
 		model.readData();
 		Rider rider = new Rider("username", "password", "myname", "myemail", "8008008000", "1 Chapin Way Northampton MA 01063");
 		model.addUser(rider);
@@ -58,7 +59,7 @@ class ValleyBikeSimModelTest {
 		model.startRide(830,33);
 		model.endRide(23,false);
 		assertFalse(model.isRideInProgress()); //Ride should no longer be in progress
-		//Controller checks to see if dock is full, stationID does not exist, or a ride is not in progress 		
+		 		
 	}
 	
 	//Tests if addStation adds a Station object to the model
@@ -127,6 +128,12 @@ class ValleyBikeSimModelTest {
             });
 	}
 	
+	@Test
+	void createTicket() {
+		
+	}
+	
+	
 	/* NEW SECTION HERE */
 	/* TESTING isValid() method below, which verifies user input */
 	
@@ -163,8 +170,6 @@ class ValleyBikeSimModelTest {
 		model.readData();
 		assertTrue(model.isValid("loginInfo", "username1 password1"));
 		assertFalse(model.isValid("loginInfo", "string string"));
-		assertFalse(model.isValid("loginInfo", "")); //user passes an empty string
- 		assertFalse(model.isValid("loginInfo", " password1")); //user does not enter a username
 		assertFalse(model.isValid("loginInfo", "010101 100")); //user enters numbers
 	}
 	

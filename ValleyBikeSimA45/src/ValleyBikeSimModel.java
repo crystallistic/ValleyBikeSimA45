@@ -73,6 +73,13 @@ public class ValleyBikeSimModel {
 	/** used to write .csv files */
 	private CSVWriter writer;
 	
+	/** stores a list of users that should be charged on that day for each calendar day */
+	private ArrayList<HashSet<Rider>> billingCycleMonthly;
+	
+	/** maps all riders by username to the date they should be charged*/
+	private HashMap<String, String> chargeDates;
+	
+	
 	/**
 	 * Constructor for the Valley Bike Simulator Model.
 	 */
@@ -92,6 +99,11 @@ public class ValleyBikeSimModel {
 		emails = new HashMap<>();
 		memberships = new HashMap<>();
 		transactionsByUser = new HashMap<>();
+		billingCycleMonthly = new ArrayList<>();
+		for (int i=0; i<32; i++) {
+			billingCycleMonthly.add(new HashSet<Rider>());
+		}
+		chargeDates = new HashMap<>();
 	} 
 	
 	/**
@@ -270,6 +282,15 @@ public class ValleyBikeSimModel {
 					
 					// map rider object to membership object
 					this.memberships.put(array[0],  membership);
+					
+					// add rider to billingCycleMonthly according to date
+					if (array[6].contentEquals("Monthly")) {
+						int day = Integer.parseInt(array[7].substring(3,5));
+						billingCycleMonthly.get(day).add(rider);
+					}
+					
+					// add rider's charge date to chargeDages
+					chargeDates.put(array[0], array[7]);
 				}
 				counter++;	
 			}
@@ -535,52 +556,6 @@ public class ValleyBikeSimModel {
 	 *
 	 */
 	
-	
-	/**
-	 * Reads a ride data file that contains all the rides for one day of service.
-	 * After processing the data, returns statistics for the day.
-	 * @return true if file is successfully read in, false if file cannot be read.
-	 */
-	public String readRidesDataFile(String fileName) {
-		String rideData = "data-files/" + fileName;
-		
-		try {
-			CSVReader rideDataReader = new CSVReader(new FileReader(rideData));
-			List<String[]> allRideEntries = rideDataReader.readAll();
-			long totalDuration = 0;
-			
-			int counter = 0;
-			for(String[] array : allRideEntries) {
-				if(counter == 0) {
-					
-				} else {
-					
-					// add to the total duration
-					Date startTime = toDate(array[4]);
-					Date endTime = toDate(array[5]);
-					totalDuration += endTime.getTime() - startTime.getTime();
-					
-				}
-				counter++;
-			} 
-			
-			rideDataReader.close();
-			
-			// calculate the average duration of a ride
-			long calc = (totalDuration / (allRideEntries.size()-1))/60000;
-			int averageDuration = (int) calc;
-			return "The ride list contains " + (allRideEntries.size()-1) + " rides and the average ride time is " + averageDuration + " minutes.\n";
-			
-		} 
-		
-		catch (Exception e) {
-			//System.out.println("\n" + e.getMessage());
-			System.out.println("Invalid file name, please try again.");
-	
-		}
-		return "";
-	}
-	
 	/**
 	 * Checks user input validity (check for formatting and membership)
 	 * @param userInputName 	the user's input type
@@ -822,6 +797,11 @@ public class ValleyBikeSimModel {
 			Transaction transaction = new Transaction(username,chargeAmount,new Date(),description);
 			transactionsByUser.putIfAbsent(username, new ArrayList<Transaction>());
 			transactionsByUser.get(username).add(transaction);
+			
+			Date now = new Date();
+			DateFormat df = new SimpleDateFormat("MM/dd/yy");
+			String chargeDate = df.format(now);
+			chargeDates.put(username,chargeDate);
 			
 			//updates user lists
 			saveUserLists();
@@ -1546,7 +1526,7 @@ public class ValleyBikeSimModel {
 			  //overwrites existing file with new data
 			  csvWriter = new FileWriter("data-files/rider-data.csv");
 			  writer = new CSVWriter(csvWriter);
-		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType".split(",");
+		      String [] record = "username,password,fullname,email,phoneNumber,address,membershipType,chargeDate".split(",");
 		      
 		      writer.writeNext(record,false);
 
@@ -1621,6 +1601,11 @@ public class ValleyBikeSimModel {
 			}
 			
 			csvWriter.append(membershipType);
+			csvWriter.append(",");
+			
+			String chargeDate = chargeDates.get(rider.getUsername());
+			
+			csvWriter.append(chargeDate);
 			csvWriter.append("\n");
 			csvWriter.flush();
 			csvWriter.close();
@@ -2219,6 +2204,94 @@ public class ValleyBikeSimModel {
 		case "address":
 			activeRider.setAddress(value);
 			break;
+		}
+		saveUserLists();
+	}
+
+	/**
+	 * Charges user for their monthly subscriptions (if they haven't already been charged today)
+	 */
+	public boolean chargeSubscriptions() {
+		boolean monthlyUncharged = false;
+		
+		Date now = new Date();
+		DateFormat df = new SimpleDateFormat("MM/dd/yy");
+		String today = df.format(now);
+		
+		for (String username: memberships.keySet()) {
+			String chargeDate = chargeDates.get(username);
+			if (!chargeDate.contentEquals(today)) { //if the user has not already been charged today
+				//check if user has a day pass. If so, give them a pay per ride pass instead and charge
+				Membership membership = memberships.get(username);
+				if (membership instanceof DayPass) {
+					MembershipFactory mf = new MembershipFactory();
+					Membership newMembership = mf.getMembership("PayPerRide");
+					memberships.put(username,newMembership);
+					Transaction transaction = new Transaction(username,new BigDecimal("2.00"),new Date(),"ValleyBike Pay Per Ride Pass");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
+				} else if (membership instanceof Monthly) {
+					monthlyUncharged = true;
+				} else if (membership instanceof Yearly) {
+					Transaction transaction = new Transaction(username,new BigDecimal("80.00"),new Date(),"ValleyBike Yearly Subscription");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
+				} else if (membership instanceof FoundingMember) {
+					Transaction transaction = new Transaction(username,new BigDecimal("90.00"),new Date(),"ValleyBike Founding Member Subscription");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
+				} else if (membership instanceof PayPerRide) {
+					Transaction transaction = new Transaction(username,new BigDecimal("2.00"),new Date(),"ValleyBike Pay Per Ride Pass Renewel");
+					transactionsByUser.get(username).add(transaction);
+					saveAllTransaction(transaction);
+					chargeDates.put(username, today);
+				}
+			}
+		}
+		saveUserLists();
+		return monthlyUncharged;
+	}
+
+	/**
+	 * charges monthly users for their subscriptions
+	 */
+	public void chargeMonthly() {
+		Date now = new Date();
+		DateFormat df = new SimpleDateFormat("MM/dd/yy");
+		int day = Integer.parseInt(df.format(now).substring(3,5));
+		int month = Integer.parseInt(df.format(now).substring(0,2));
+		
+		HashSet<Rider> ridersToCharge = billingCycleMonthly.get(day);
+		for (Rider rider: ridersToCharge) {
+			int chargeMonth = Integer.parseInt(chargeDates.get(rider.getUsername()).substring(0,2));
+			if (chargeMonth!=month) {
+				Transaction transaction = new Transaction(rider.getUsername(),new BigDecimal("20.00"),now,"ValleyBike Monthly Subscription");
+				transactionsByUser.get(rider.getUsername()).add(transaction);
+				saveAllTransaction(transaction);
+				chargeDates.put(rider.getUsername(), df.format(now));
+			}
+		}
+		saveUserLists();
+	}
+
+	/**
+	 * Move all users charged after that day of the month to the first
+	 * @param today
+	 */
+	public void moveChargeDates(int today) {
+		for (int i=today+1; i<32; i++) {
+			HashSet<Rider> riders = billingCycleMonthly.get(i);
+			
+			for (Rider rider: riders) {
+				String chargeDate = chargeDates.get(rider.getUsername());
+				String newChargeDate = chargeDate.substring(0,3)+"01"+chargeDate.substring(5);
+				chargeDates.put(rider.getUsername(),newChargeDate);
+			}
+			
+			billingCycleMonthly.get(1).addAll(riders);
 		}
 		saveUserLists();
 	}

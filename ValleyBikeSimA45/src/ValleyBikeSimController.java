@@ -1,4 +1,5 @@
 import java.math.BigDecimal;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -147,6 +148,27 @@ public class ValleyBikeSimController {
 			if (isOverdue) {
 				view.bikeStolen(); // notify user of overdue charge
 			}
+
+		}
+		
+		//Deals with expired Day Passes and checks if monthly users have not been charged yet
+		boolean monthlyUncharged = model.chargeSubscriptions();
+		
+		//Charges all users who should be charged today for their Monthly subscriptions		
+		if (monthlyUncharged) {
+			model.chargeMonthly();
+		}
+		
+		Date now = new Date();
+		DateFormat df = new SimpleDateFormat("MM/dd/yy");
+		String today = df.format(now);
+		String tomorrowString = today.substring(0,3) + (1 + Integer.parseInt(today.substring(3,5))) + today.substring(5);
+		
+		//If today is the last day of the month, move all riders after that date to the 1st
+		try {
+			Date tomorrow = df.parse(tomorrowString);
+		} catch (ParseException e) { //Today is the last day of the month
+			model.moveChargeDates(Integer.parseInt(today.substring(3,5)));
 		}
 
 		view.displayLoginSuccess();
@@ -314,14 +336,9 @@ public class ValleyBikeSimController {
 		//print out rider's current information, asks user what they want to edit
 		view.displayCurrentUserProfile(model.getUserProfileString());
 
-		String option = getUserInput("option7");
+		String option = getUserInput("option6");
 		switch(option) {
-		case "1": //change username
-			String newUsername = getUserInput("newUsername");
-			model.setActiveUserInfo("username",newUsername);
-			editProfile();
-			break;
-		case "2": //change password
+		case "1": //change password
 			getUserInput("username"); //makes the user log in again for security reasons
 			String newPassword = view.prompt("newPassword");
 			while (newPassword.equals(model.getActiveUser().getPassword())) {
@@ -331,27 +348,28 @@ public class ValleyBikeSimController {
 			model.setActiveUserInfo("password",newPassword);
 			editProfile();
 			break;
-		case "3": //change full name
+		case "2": //change full name
 			String newFullName = getUserInput("fullName");
 			model.setActiveUserInfo("fullName",newFullName);
 			editProfile();
 			break;
-		case "4": //change email
+		case "3": //change email
 			String newEmail = getUserInput("newEmail");
+			newEmail = newEmail.replace(",", "");
 			model.setActiveUserInfo("email",newEmail);
 			editProfile();
 			break;
-		case "5": //change phone number
+		case "4": //change phone number
 			String phoneNumber = getUserInput("phoneNumber");
 			model.setActiveUserInfo("phoneNumber",phoneNumber);
 			editProfile();
 			break;
-		case "6": //change address
+		case "5": //change address
 			String address = getUserInput("riderAddress");
 			model.setActiveUserInfo("address",address);
 			editProfile();
 			break;
-		case "7": //return to main menu
+		case "6": //return to main menu
 			break;
 		}
 	}
