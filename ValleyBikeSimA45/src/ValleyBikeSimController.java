@@ -5,17 +5,25 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author maingo
+ * The controller for ValleyBikeSim.
+ * @author maingo, maggieburkart, emmatanur, jemimahcharles
  *
  */
 public class ValleyBikeSimController {
+	
+	/** The ValleyBikeSim view */ 
 	ValleyBikeSimView view;
+	
+	/** The ValleyBikeSim model */
 	ValleyBikeSimModel model;
+	
+	/** The hashmap of regexes used to validate input format. Maps input type to regex. */
 	HashMap<String, Pattern> regex;
+	
+	/** Set of input types that need to be validated using the system data in the ValleyBikeSimModel */
 	Set<String> validateInModel;
 
 	/**
@@ -29,11 +37,12 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
+		
+		// List all input data that need to be validated using the system database
 		String fieldsToValidateInModel[] = 
 			{ "bikeId", "stationId", "newUsername", "newEmail","newStationId", 
 			"newStationName", "newStationAddress","newBikeId","bikeIdInStorage",
 			"removeBikeId","ticketId"};
-		// Set demonstration using HashSet Constructor
 		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
 
@@ -69,32 +78,52 @@ public class ValleyBikeSimController {
 	 * Generate all the regular expressions needed to validate user input.
 	 */
 	private void generateRegex() {
-		//regex.put("email", Pattern.compile("\b[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}\b"));
-		regex.put("newPassword", Pattern.compile("^[a-zA-Z0-9]{6,}$")); // password has to be at least 6 characters
+
+		// password has to be at least 6 characters, can only contain uppercase letters , lowercase letters & numbers
+		regex.put("newPassword", Pattern.compile("^[a-zA-Z0-9]{6,}$"));
+		
+		// rider's physical address
 		regex.put("riderAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 											+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
 											+ "([a-zA-Z .'-]+)," // city 
 											+ "([a-zA-Z0-9 .'\\/#-]+)," // state
 											+ " *([0-9]{5}) *," // zip code
 											+ " *([a-zA-Z .,'-]+)$"));  // country
-		regex.put("phoneNumber", Pattern.compile("^[1-9][0-9]{9}$")); // phone number format
+		// phone number format
+		regex.put("phoneNumber", Pattern.compile("^[1-9][0-9]{9}$")); 
 		
-		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$")); // we're not supporting Amex, so all credit card numbers will be 16 digits minimum
+		// Regex for credit card numbers
+		// We're not supporting Amex, so all credit card numbers will be 16 digits minimum.
+		regex.put("creditCardNumber", Pattern.compile("^[0-9]{16}$")); 
 		regex.put("billingAddress", Pattern.compile("^([a-zA-Z0-9 .'\\/#-]+)," // address line 1
 													+ "([a-zA-Z0-9 \\/#.'-]+,)*" // address line 2 (optional)
 													+ "([a-zA-Z .'-]+)," // city
 													+ "([a-zA-Z0-9 .'\\/#-]+)," // state
 													+ " *([0-9]{5}) *," // zip code
 													+ " *([a-zA-Z .,'-]+)$")); // country
-		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/([0-9]{2})$")); // expiry date of credit card. Regex source:																							// https://stackoverflow.com/questions/20430391/regular-expression-to-match-credit-card-expiration-date
-		regex.put("CVV", Pattern.compile("^[0-9]{3,4}$")); // CVV of credit card. Regex source:
-															// https://stackoverflow.com/questions/12011792/regular-expression-matching-a-3-or-4-digit-cvv-of-a-credit-card
-		regex.put("fullName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // first and last name separated by space.
-		regex.put("billingName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); // billingName, first name and last name separated by space
-		regex.put("capacity",Pattern.compile("^(0*[5-9]|1[0-9]|2[0-7])$")); // capacity is within the range [5-27]
-		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); // 0 if there's no kiosk at this station, 1 if there is
+		// Expiration date of credit card
+		regex.put("creditCardDate", Pattern.compile("^(0[1-9]|1[0-2])\\/([0-9]{2})$"));
+		
+		// 3-digit CVV of credit card
+		regex.put("CVV", Pattern.compile("^[0-9]{3}$"));
+		
+		// First and last name separated by space, with proper capitalization (example: Johnny Appleseed
+		regex.put("fullName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); 
+		
+		// billingName, first name and last name separated by space, with proper capitalization (example: Johnny Appleseed
+		regex.put("billingName", Pattern.compile("^([A-Z][a-zA-Z'-]+) ([A-Z][a-zA-Z'-]+)$")); 
+		
+		// capacity is within the range [5-27]
+		regex.put("capacity",Pattern.compile("^(0*[5-9]|1[0-9]|2[0-7])$"));
+		
+		// 0 if there's no kiosk at this station, 1 if there is
+		regex.put("hasKiosk", Pattern.compile("^(0|1)$")); 
+		
+		// regex for parsing in the name of a .csv file
 		regex.put("fileName", Pattern.compile("^[a-zA-Z0-9-]*\\.csv$"));
-		regex.put("ticketDescription", Pattern.compile("[^ ]{3,}")); // description of issues cannot be empty
+		
+		// description of issues cannot be empty
+		regex.put("ticketDescription", Pattern.compile("[^ ]{3,}")); 
 	}
 
 	/**
@@ -109,13 +138,13 @@ public class ValleyBikeSimController {
 
 		switch (optionSelected) {
 		case "1":
-			signup(); // rider logs in using valid username and password
+			signup(); // rider sign up and purchase a membership
 			break;
 		case "2":
-			login(); // rider creates new account and purchase a membership
+			login(); // user (admin/rider) login to their account
 			break;
 		case "3":
-			exit(); // displays exit message, exit system
+			exit(); // logout, displays exit message, exit system
 			break;
 		}
 	}
@@ -131,30 +160,32 @@ public class ValleyBikeSimController {
 		view.displayLoginScreen();
 		String username = getUserInput("username");
 
-		if (username.equals("leave")) {
-			start();
-			return;
-		}
-
+		// set the currently logged in user
 		model.setActiveUser(username);
+		
+		// check if the user is an admin
 		boolean userIsAdmin = model.activeUserIsAdmin();
 		
+		// checks to see if the user has a bike that's been checked out for more than 24h
 		boolean isOverdue = model.checkStolenBikes();
 		// if active user is a rider
 		if (!userIsAdmin) {
 			// check if user has a ride in progress < 24hrs in duration
 			boolean rideIsInProgress = model.isRideInProgress(); 
 
+			// display message reminding user to end ride
 			if (rideIsInProgress) {
-				view.remindEndRide(); // display message reminding user to end ride
+				view.remindEndRide(); 
 			}
+			
+			// notify user of overdue charge
 			if (isOverdue) {
-				view.bikeStolen(); // notify user of overdue charge
+				view.bikeStolen(); 
 			}
 
 		}
 		
-		//Deals with expired Day Passes and checks if monthly users have not been charged yet
+		// Deals with expired Day Passes and checks if monthly users have not been charged yet
 		boolean monthlyUncharged = model.chargeSubscriptions();
 		
 		//Charges all users who should be charged today for their Monthly subscriptions		
@@ -165,6 +196,7 @@ public class ValleyBikeSimController {
 		//Checks if user's yearly or founding member subscription has expired
 		boolean subExpired = model.hasSubscriptionExpired();
 		
+		// informs user if subscription has expired
 		if (subExpired) {
 			view.displaySubscriptionExpired();
 		}
@@ -193,6 +225,7 @@ public class ValleyBikeSimController {
 	public void signup() {
 		view.displaySignupScreen();
 
+		// prompt user for profile information
 		String newUsername = getUserInput("newUsername");
 		String password = getUserInput("newPassword");
 		String fullName = getUserInput("fullName");
@@ -200,6 +233,7 @@ public class ValleyBikeSimController {
 		String address = getUserInput("riderAddress").replaceAll(",", "");	
 		String phoneNumber = getUserInput("phoneNumber");
 
+		// show all membership option
 		view.displayMembershipOptions();
 		String membershipOption = getUserInput("option5");
 
@@ -224,6 +258,7 @@ public class ValleyBikeSimController {
 			break;
 		}
 		
+		// prompt user for credit card information
 		String billingName = ""; 
 		String creditCardNumber = "";
 		String billingAddress = "";
@@ -238,9 +273,10 @@ public class ValleyBikeSimController {
 				creditCardNumber = getUserInput("creditCardNumber");
 				billingAddress = getUserInput("billingAddress").replaceAll(",", "");
 				cvv = getUserInput("CVV");
-				
+			
 				creditCardDate = getUserInput("creditCardDate");
 				creditCardIsExpired = creditCardIsExpired(creditCardDate);
+				
 				// if credit card is expired, let user know and prompt for a different credit card.
 				if (creditCardIsExpired) {
 					view.displayExpiredCreditCard(); 
@@ -250,23 +286,31 @@ public class ValleyBikeSimController {
 			}
 		}
 		
+		// add the payment method to database and map it to the user
 		PaymentMethod paymentMethod = new PaymentMethod(billingName, creditCardNumber, billingAddress, creditCardDate,
 				cvv);
 		model.addPaymentMethod(newUsername, paymentMethod);
 
+		// add new rider's data into the system
 		Rider rider = new Rider(newUsername, password, fullName, email, phoneNumber, address);
-
 		model.createNewRider(rider,paymentMethod,membership);
-		model.setActiveUser(newUsername); // set rider as currently active user
+		
+		// set rider as currently active user, so they are logged in
+		model.setActiveUser(newUsername); 
 		
 		// Charge user's credit card. To simplify process: we assume for now that all
 		// credit card payments go through
 		view.displayPurchaseMembershipSuccess(membership.getMembershipType(), membership.getBaseRate());
+		
+		// confirms successful account creation
 		view.displayAccountCreationSuccess(newUsername);
 				
 		mainMenu(false); // show rider menu (userIsAdmin = false)
 	}
 
+	/**
+	 * Exit the ValleyBike system.
+	 */
 	public void exit() {
 		view.displayExit();
 		System.exit(0);
@@ -279,10 +323,13 @@ public class ValleyBikeSimController {
 	 */
 	public void mainMenu(boolean userIsAdmin) {
 
+		// display the main menu
 		view.displayMainMenu(userIsAdmin);
 
 		String optionSelected;
-		if (model.activeUserIsAdmin()) { // Deal with the Admin menu options
+		
+		// Admin menu options
+		if (model.activeUserIsAdmin()) {
 			optionSelected = getUserInput("option11");
 			switch (optionSelected) {
 			case "1": // 1) Add station
@@ -321,7 +368,7 @@ public class ValleyBikeSimController {
 				start();
 				break;
 			}
-		} else { // Deal with the Rider menu options
+		} else { // Rider menu options
 			optionSelected = getUserInput("option11");
 			switch (optionSelected) {
 			case "1":// 1) View station list
@@ -361,6 +408,8 @@ public class ValleyBikeSimController {
 				break;
 			}
 		}
+		
+		// once the user has finished an action, show main menu again
 		mainMenu(userIsAdmin);
 	}
 
@@ -413,7 +462,7 @@ public class ValleyBikeSimController {
 	 * Allows user to change their payment method.
 	 */
 	private void editPaymentMethod() {
-		//print out rider's current information, asks user what they want to edit
+		// Print out rider's current information, asks user what they want to edit
 		view.displayCurrentPaymentMethod(model.getPaymentMethodString());
 
 		String option = getUserInput("option4");	
@@ -441,7 +490,7 @@ public class ValleyBikeSimController {
 	}
 
 	/**
-	 * displays the transaction history of the active user
+	 * Displays the transaction history of the active user
 	 */
 	private void displayTransactionHistory() {
 		if (model.activeUserHasTransactions()) {
@@ -456,7 +505,7 @@ public class ValleyBikeSimController {
 	}
 
 	/**
-	 * displays the ride history of the active user
+	 * Displays the ride history of the active user
 	 */
 	private void displayRideHistory() {
 		// get formatted station list from model
@@ -471,9 +520,8 @@ public class ValleyBikeSimController {
 	}
 
 	/**
-	 * Prompts user and validates using the name of the thing that we want (e.g.
-	 * getUserInput(email))
-	 * 
+	 * Prompts user and validates using the name of the thing that we want 
+	 * (e.g. getUserInput(email))
 	 * @return user input as a string
 	 */
 	public String getUserInput(String userInputName) {
@@ -488,15 +536,15 @@ public class ValleyBikeSimController {
 		}
 
 
+		// Validate login information
 		if (userInputName.equals("username")) {
-			
 			// make sure password is not empty
 			String password = view.prompt("password");
 			while (password.replaceAll(" ", "").length() == 0) {
 				view.displayEmptyInputError();
 				password = view.prompt("password");
 			}
-			password = password.trim();
+			password = password.trim(); // delete trailing
 			
 			// check the username-password combination in the system
 			String loginInfo = userInput + " " + password;
@@ -576,7 +624,8 @@ public class ValleyBikeSimController {
 			// convert user input to a string and return
 			userInput = Integer.toString(intUserInput);
 
-		} else if (userInputName.equals("pastDay")) {
+		} else if (userInputName.equals("pastDay")) { 
+			// check to see if the ride data file for a certain day exists
 			inputIsValid = false;
 			try {
 				Date df = new SimpleDateFormat("MM-dd-yy").parse(userInput);
@@ -594,11 +643,10 @@ public class ValleyBikeSimController {
 				}
 			}
 		}
-		else {
+		else { // validate input format using regexes
 			Pattern r = regex.get(userInputName);
 			Matcher m = r.matcher(userInput);
-
-			inputIsValid = m.find();
+			inputIsValid = m.find(); 
 			while (!inputIsValid) {
 				System.out.println("Invalid input, please follow the provided instructions and try again.");
 				userInput = view.prompt(userInputName);
@@ -610,8 +658,11 @@ public class ValleyBikeSimController {
 
 	}
 	
+	/**
+	 * Allow the user to edit their membership.
+	 */
 	private void editMembership() {
-		//print out the current membership they have
+		// Print out the current membership they have
 		String currentMembershipName = model.getActiveUserMembershipName();
 		System.out.println("currentMembershipName: "+currentMembershipName);
 		String[] membershipOptions = {"Pay Per Ride","Day Pass","Monthly","Yearly","Founding Member"};
@@ -625,6 +676,7 @@ public class ValleyBikeSimController {
 		view.displayEditMembership(numCurrentMembership);
 		int membershipOption = Integer.parseInt(getUserInput("option5"));
 
+		
 		if (membershipOption == numCurrentMembership) {
 			view.displayKeepCurrentMembership();
 		} else {
@@ -669,7 +721,6 @@ public class ValleyBikeSimController {
 				// if user's credit card expired, display error message
 				if (model.activeUserCreditCardExpired()) {
 					view.cardExpired();
-					// TODO: subsequent actions: prompt user for new payment method
 				}
 				else if (model.activeUserStolenBike()) {
 					view.bikeStolen();
@@ -938,14 +989,16 @@ public class ValleyBikeSimController {
 		String filename = "data-files/rides-"+dateString+".csv";
 		
 		String rideStatistics = model.getRidesStatistics(filename);
+		// displays all ride statistics
 		view.displayRideStatistics(rideStatistics);
 		
 		ArrayList<String> transactionStatistics = model.getTransactionsStatistics(dateString.substring(0,7)+dateString.substring(9));
+		// displays all transaction statistics
 		view.displayTransactionStatistics(transactionStatistics);
 	}
 	
 	/**
-	 * Create a ticket
+	 * Create a support ticket.
 	 */
 	private void createSupportTicket() {
 		
@@ -998,6 +1051,7 @@ public class ValleyBikeSimController {
 			break;
 		}
 		
+		// if the ticket is not bike related, then get the description from the user
 		if (!category.equals("bike")) {
 			description = getUserInput("ticketDescription");
 		}

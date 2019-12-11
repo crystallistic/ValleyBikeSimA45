@@ -110,25 +110,15 @@ public class ValleyBikeSimModel {
 	 * Read in all the data files and store them in appropriate data structures.
 	 */
 	public void readData() {
-		System.out.println("readStationData");
 		readStationData();
-		System.out.println("readBikeData");
 		readBikeData();
-		System.out.println("readAdminData");
 		readAdminData();
-		System.out.println("readRiderData");
 		readRiderData();
-		System.out.println("readTicketData");
 		readTicketData();
-		System.out.println("readRidesCompletedData");
 		readRidesCompletedData();
-		System.out.println("readRideInProgressData");
 		readRidesInProgressData();
-		System.out.println("readRidesOverdueData");
 		readRidesOverdueData();
-		System.out.println("readPaymentMethodData");
 		readPaymentMethodData();
-		System.out.println("readTransactionData");
 		readTransactionData();
 	}
 	
