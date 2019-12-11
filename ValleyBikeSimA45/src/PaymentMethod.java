@@ -107,7 +107,9 @@ public class PaymentMethod {
 	}
 	
 	/**
-	 * Charge the user the specified amount.
+	 * Charge the user the specified amount. 
+	 * Since we don't deal with credit card, this function does nothing for now, but maybe useful
+	 * in the future if we want to integrate an API to do this. 
 	 * @param chargeAmount		Amount to be charged
 	 */
 	public void chargeCard(BigDecimal chargeAmount) {
