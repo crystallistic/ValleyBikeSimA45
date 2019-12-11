@@ -1,6 +1,6 @@
 /**
  * The User class. Note that there is no function to set username as the username cannot be changed.
- * @author maingo
+ * @author maingo,  jemimahcharles, maggieburkart, emmatanur
  * 
  */
 public class User {
@@ -9,8 +9,8 @@ public class User {
 	private String password;
 	
 	/**
-	 * @param username
-	 * @param password
+	 * @param userName Holds username for current user, which must be 6 characters and only contain numbers and letters
+	 * @param password Holds the password, which must be 6 characters and only contain numbers and letters
 	 */
 	public User(String username, String password) {
 		this.username = username;
@@ -25,7 +25,7 @@ public class User {
 	}
 
 	/**
-	 * @param username the username to set
+	 * @param username Holds the current user name
 	 */
 	public void setUsername(String username) {
 		this.username = username;
@@ -39,7 +39,7 @@ public class User {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @param password Holds the current user password
 	 */
 	public void setPassword(String password) {
 		this.password = password;
