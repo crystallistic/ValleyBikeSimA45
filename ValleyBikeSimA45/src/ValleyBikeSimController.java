@@ -162,6 +162,13 @@ public class ValleyBikeSimController {
 			model.chargeMonthly();
 		}
 		
+		//Checks if user's yearly or founding member subscription has expired
+		boolean subExpired = model.hasSubscriptionExpired();
+		
+		if (subExpired) {
+			view.displaySubscriptionExpired();
+		}
+		
 		Date now = new Date();
 		DateFormat df = new SimpleDateFormat("MM/dd/yy");
 		String today = df.format(now);
@@ -169,7 +176,7 @@ public class ValleyBikeSimController {
 		
 		//If today is the last day of the month, move all riders after that date to the 1st
 		try {
-			Date tomorrow = df.parse(tomorrowString);
+			df.parse(tomorrowString);
 		} catch (ParseException e) { //Today is the last day of the month
 			model.moveChargeDates(Integer.parseInt(today.substring(3,5)));
 		}
