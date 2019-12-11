@@ -2421,7 +2421,6 @@ public class ValleyBikeSimModel {
 			
 			// update bike data file to reflect this change
 			saveBikeList();
-			
 		}
 		
 		// set resolved ticket to true

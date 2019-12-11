@@ -169,7 +169,7 @@ public class ValleyBikeSimController {
 		
 		//If today is the last day of the month, move all riders after that date to the 1st
 		try {
-			Date tomorrow = df.parse(tomorrowString);
+			df.parse(tomorrowString);
 		} catch (ParseException e) { //Today is the last day of the month
 			model.moveChargeDates(Integer.parseInt(today.substring(3,5)));
 		}

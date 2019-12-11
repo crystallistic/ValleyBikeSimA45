@@ -124,11 +124,4 @@ public class Ticket {
 	public void setIdentifyingInfo(String identifyingInfo) {
 		this.identifyingInfo = identifyingInfo;
 	}
-
-	@Override
-	public String toString() {
-		return "Ticket [ticketId=" + ticketId + ", username=" + username + ", category=" + category
-				+ ", identifyingInfo=" + identifyingInfo + ", description=" + description + ", isResolved=" + isResolved
-				+ "]";
-	}
 }
