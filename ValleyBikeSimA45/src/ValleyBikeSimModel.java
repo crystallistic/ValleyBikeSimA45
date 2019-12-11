@@ -2345,4 +2345,29 @@ public class ValleyBikeSimModel {
 		return id + "\t" + username + "\t" + category + "\t" + info + "\t" + isResolved + "\t" + description;
 	}
 
+	
+	/**
+	 * Check if this bike is out of order
+	 * @param bike ID the bike ID
+	 * @return true if bike is OOO, or in storage
+	 */
+	public boolean bikeIsInStorage(int bikeId) {
+		String bikeStatus = bikes.get(bikeId).getStatus();
+		return (bikeStatus.equals("OOO") || bikeStatus.equals("inStorage"));
+	}
+	
+	/**
+	 * Check if this bike is in use
+	 * @param bike ID the bike ID
+	 * @return true if bike is in use
+	 */
+	public boolean bikeIsInUse(int bikeId) {
+		boolean inUse = false;
+		
+		for (Ride ride : ridesInProgress.values()) {
+			inUse = (ride.getBikeId() == bikeId);
+		}
+		return inUse;
+	}
+
 }

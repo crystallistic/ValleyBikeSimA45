@@ -938,6 +938,19 @@ public class ValleyBikeSimController {
 		case "2": // broken bike 
 			category = "bike";
 			identifyingInfo = getUserInput("bikeId");
+			
+			// if bike is in storage or already marked as out-of-order, let user know
+			if (model.bikeIsInStorage(Integer.parseInt(identifyingInfo))) {
+				view.displayBikeAlreadyInStorage();
+				return;
+			}
+			
+			// if bike is in use, require user to end ride before submitting ticket
+			if (model.bikeIsInUse(Integer.parseInt(identifyingInfo))) {
+				view.displayEndRideFirst();
+				return;
+			}
+			
 			description = "Bike OOO";
 			break;
 		case "3": // rider needs to resolve overdue ride issue

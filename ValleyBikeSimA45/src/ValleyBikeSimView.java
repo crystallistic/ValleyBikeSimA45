@@ -686,5 +686,22 @@ public class ValleyBikeSimView {
 		}
 		
 	}
+
+	/**
+	 * Tells user this bike is already in storage/already reported as broken
+	 */
+	public void displayBikeAlreadyInStorage() {
+		System.out.println("This bike is in storage or has already been reported as broken.");
+		
+	}
+
+	/**
+	 * Let user know they should check in their bike before submitting the ticket.
+	 */
+	public void displayEndRideFirst() {
+		System.out.println("This bike is currently in use. If you are using this bike, or know someone who is,\n"
+				+ "please dock this bike at a station before submitting a support ticket for a broken bike.\n"
+				+ "This will help ValleyBike locate the bike for repair.");
+	}
 	
 }
