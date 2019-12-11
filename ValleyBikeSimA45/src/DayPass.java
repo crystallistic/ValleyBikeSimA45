@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store the Day Pass membership
  */
 public class DayPass extends Membership {
 

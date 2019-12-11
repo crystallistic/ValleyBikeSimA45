@@ -2,7 +2,7 @@ import java.math.BigDecimal;
 
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store Founding Member membership information
  */
 public class FoundingMember extends Membership {
 

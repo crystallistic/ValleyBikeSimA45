@@ -1,6 +1,6 @@
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store Admin information
  */
 public class Admin extends User {
 

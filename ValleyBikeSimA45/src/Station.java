@@ -1,6 +1,6 @@
 /**
- * @author maingo
- *
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
+ * Object to store the station information
  */
 public class Station {
 	
@@ -16,11 +16,11 @@ public class Station {
 	/**
 	 * 
 	 * Constructor for the Station object. Creates an empty station.
-	 * @param stationId
-	 * @param address
-	 * @param capacity
-	 * @param maintenanceReqs
-	 * @param hasKiosk
+	 * @param stationId Holds the station id of current station
+	 * @param address Holds address of the station
+	 * @param capacity Holds the amount of pedelecs a station can hold in integers 
+	 * @param maintenanceReqs Holds the maintenance requests for the station 
+	 * @param hasKiosk Holds a boolean of if a station has a kiosk or not
 	 */
 	public Station(int stationId, String stationName, String address, 
 		int capacity, int maintenanceReqs, boolean hasKiosk) {
@@ -54,32 +54,32 @@ public class Station {
 		return address;
 	}
 	/**
-	 * @param address 		the address to set
+	 * @param address HOlds the address of the station
 	 */
 	public void setAddress(String address) {
 		this.address = address;
 	}
 	
 	/**
-	 * @return the capacity of the station 
+	 * @return the capacity of the station in integers
 	 */
 	public int getCapacity() {
 		return capacity;
 	}
 	/**
-	 * @param capacity	the capacity to set
+	 * @param capacity	Holds the capacity of pedelecs a station can hold
 	 */
 	public void setCapacity(int capacity) {
 		this.capacity = capacity;
 	}
 	/**
-	 * @return the number of maintenance requests
+	 * @return the number of maintenance requests for that station
 	 */
 	public int getMaintenanceReqs() {
 		return maintenanceReqs;
 	}
 	/**
-	 * @param maintenanceReqs	the number of maintenance requests to set
+	 * @param maintenanceReqs HOlds id of the maintenace request
 	 */
 	public void setMaintenanceReqs(int maintenanceReqs) {
 		this.maintenanceReqs = maintenanceReqs;
@@ -91,21 +91,21 @@ public class Station {
 		return hasKiosk;
 	}
 	/**
-	 * @param hasKiosk		boolean to set for whether this station has a kiosk or not
+	 * @param hasKiosk	boolean to set for whether this station has a kiosk or not
 	 */
 	public void setHasKiosk(boolean hasKiosk) {
 		this.hasKiosk = hasKiosk;
 	}
 
 	/**
-	 * @return the stationName
+	 * @return the stationName of the staiton
 	 */
 	public String getStationName() {
 		return stationName;
 	}
 
 	/**
-	 * @param stationName the stationName to set
+	 * @param stationName Holds the name of the station
 	 */
 	public void setStationName(String stationName) {
 		this.stationName = stationName;

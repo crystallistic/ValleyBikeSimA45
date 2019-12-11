@@ -2,6 +2,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
+/**
+ * Used to test the program
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
+ *
+ */
+
 class ValleyBikeSimModelTest {
 
 	ValleyBikeSimModel model = new ValleyBikeSimModel();
@@ -128,13 +134,7 @@ class ValleyBikeSimModelTest {
             });
 	}
 	
-	@Test
-	void createTicket() {
-		
-	}
 	
-	
-	/* NEW SECTION HERE */
 	/* TESTING isValid() method below, which verifies user input */
 	
 	//isValid should return true if station ID exists in station-data.csv file

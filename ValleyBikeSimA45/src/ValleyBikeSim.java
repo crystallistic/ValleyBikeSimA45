@@ -1,6 +1,6 @@
 /**
+ * Main class used to run the program
  * @author maingo, Jemimah Charles, Maggie Burkart, Emma Tanur
- *
  */
 public class ValleyBikeSim {
 

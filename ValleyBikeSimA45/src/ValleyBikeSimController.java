@@ -8,9 +8,13 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 
 /**
+<<<<<<< HEAD
  * The controller for ValleyBikeSim.
  * @author maingo, maggieburkart, emmatanur, jemimahcharles
  *
+=======
+ * @author maingo
+>>>>>>> branch 'master' of https://github.com/crystallistic/ValleyBikeSimA45.git
  */
 public class ValleyBikeSimController {
 	
@@ -193,12 +197,13 @@ public class ValleyBikeSimController {
 			model.chargeMonthly();
 		}
 		
-		//Checks if user's yearly or founding member subscription has expired
-		boolean subExpired = model.hasSubscriptionExpired();
-		
-		// informs user if subscription has expired
-		if (subExpired) {
-			view.displaySubscriptionExpired();
+		if (!userIsAdmin) {
+			//Checks if user's yearly or founding member subscription has expired
+			boolean subExpired = model.hasSubscriptionExpired();
+			
+			if (subExpired) {
+				view.displaySubscriptionExpired();
+			}
 		}
 		
 		Date now = new Date();

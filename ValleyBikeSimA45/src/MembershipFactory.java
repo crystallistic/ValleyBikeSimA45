@@ -1,6 +1,7 @@
 /**
  * @author maingo, jemimahcharles, maggieburkart, emmatanur
- *
+ * Object to store create Membership Objects.
+ * Used for the Factory Method Design Pattern.
  */
 public class MembershipFactory {
 

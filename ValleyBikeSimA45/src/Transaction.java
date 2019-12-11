@@ -3,7 +3,7 @@ import java.util.Date;
 
 /**
  * Transaction object. Each Transaction object represents a transaction.
- * @author maingo
+ * @author maingo,  jemimahcharles, maggieburkart, emmatanur
  *
  */
 public class Transaction {
@@ -23,10 +23,10 @@ public class Transaction {
 	
 	
 	/**
-	 * @param username
-	 * @param amount
-	 * @param time
-	 * @param description
+	 * @param username HOlds the current username
+	 * @param amount Holds the amount that the user is charged in USD
+	 * @param time Holds the time a rider rode in hours and minutes
+	 * @param description Holds the explanation of the user's transaction 
 	 */
 	public Transaction(String username, BigDecimal amount, Date time, String description) {
 		this.username = username;
@@ -48,13 +48,13 @@ public class Transaction {
 		this.username = username;
 	}
 	/**
-	 * @return the amount
+	 * @return the amount the user is charged
 	 */
 	public BigDecimal getAmount() {
 		return amount;
 	}
 	/**
-	 * @param amount the amount to set
+	 * @param amount HOlds the amount that is being charged
 	 */
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
@@ -66,7 +66,7 @@ public class Transaction {
 		return time;
 	}
 	/**
-	 * @param time the time to set
+	 * @param time Holds the amount of time a rider rode in hours and minutes
 	 */
 	public void setTime(Date time) {
 		this.time = time;
@@ -78,7 +78,7 @@ public class Transaction {
 		return description;
 	}
 	/**
-	 * @param description the description to set
+	 * @param description Holds the description of the transaction 
 	 */
 	public void setDescription(String description) {
 		this.description = description;

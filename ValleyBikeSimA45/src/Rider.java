@@ -1,6 +1,6 @@
 /**
  * @author maingo
- *
+ * Object to store rider information
  */
 public class Rider extends User {
 	

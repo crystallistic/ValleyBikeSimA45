@@ -1,13 +1,13 @@
 import java.math.BigDecimal;
 
 /**
- * @author maingo
- *
+ * @author maingo,  jemimahcharles, maggieburkart, emmatanur
+ * Object to store Yearly membership information
  */
 public class Yearly extends Membership {
 
 	/**
-	 * 
+	 * Constructor for the Yearly object
 	 */
 	public Yearly() {
 		membershipType = "Yearly";

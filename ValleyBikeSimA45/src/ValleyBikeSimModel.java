@@ -7,7 +7,6 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-//import java.util.regex.Pattern;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -15,12 +14,10 @@ import com.opencsv.CSVWriter;
 import java.util.regex.Pattern;
 
 /**
- * @author maingo
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
- */
-/**
- * @author maingo
- *
+ * Model component of Valley Bike system. 
+ * Stores and modifies system data
  */
 public class ValleyBikeSimModel {
 	
@@ -409,7 +406,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Reads the rides completed data file, record all the completed rides
+	 * Reads the rides overdue data file, record all the rides overdue
 	 */
 	private void readRidesOverdueData() {
 		String ridesOverdueData = "data-files/rides-overdue.csv";
@@ -448,7 +445,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Reads the payment methods data file, record all payment methods in model.
+	 * Reads the payment methods data file, record all payment methods in model
 	 */
 	private void readPaymentMethodData() {
 		String paymentMethodsData = "data-files/payment-methods-data.csv";
@@ -482,7 +479,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Read in the transaction data file and store stations in the model.
+	 * Read in the transaction data file and store transactions in the model
 	 */
 	private void readTransactionData() {
 		try {
@@ -548,7 +545,7 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Checks user input validity (check for formatting and membership)
-	 * @param userInputName 	the user's input type
+	 * @param userInputName 	the user's input type (stationID, bikeID, etc...)
 	 * @param userInput			the user's input
 	 * @return true if valid input, else false
 	 */
@@ -735,7 +732,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Charges the user the $2000.00 lost bike fee + overtime fee, and return this total.
+	 * Charges the user the $2000.00 lost bike fee + overtime fee, and return this total
 	 * @return the total amount billed to the user account
 	 */
 	public BigDecimal chargeOverdue() {
@@ -751,7 +748,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * @param activeUser the activeUser to set
+	 * @param activerUsername the activeUser to set
 	 */
 	public void setActiveUser(String activeUsername) {
 		if (activeUsername == null) {
@@ -764,7 +761,7 @@ public class ValleyBikeSimModel {
 	/**
 	 * 
 	 * Map a rider to the associated membership.
-	 * @param rider			The rider
+	 * @param username		The username associated with the rider
 	 * @param membership	The rider's membership
 	 */
 	public void setMembership(String username, Membership membership) {
@@ -823,7 +820,7 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Map a rider with their payment methods.
-	 * @param rider			The rider
+	 * @param username		The username associated with the rider
 	 * @param paymentMethod	The rider's payment method
 	 */
 	public void addPaymentMethod(String username, PaymentMethod paymentMethod) {
@@ -840,8 +837,8 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Map an email address to the associated ValleyBike rider.
-	 * @param rider			The rider
 	 * @param email			The rider's email address
+	 * @param rider			The rider
 	 */
 	public void addEmail(String email,Rider rider) {
 	
@@ -878,6 +875,7 @@ public class ValleyBikeSimModel {
 	 * the bike being added to the end station
 	 * and the ride object being updated
 	 * @param stationId the id of the station that the bike is being returned to
+	 * @param dockIsFull if the station the user selects to return their bike is full
 	 * @return the amount that the user has been charged
 	 */
 	public BigDecimal endRide (int stationId, boolean dockIsFull) {
@@ -937,7 +935,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * Creates a new Station object and adds it to the list
+	 * Creates a new Station object and adds it to the list of stations
 	 * @param stationId 	The station's ID
 	 * @param stationName	The station's name
 	 * @param address		The station's address
@@ -1060,6 +1058,7 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Returns the full list of all the stations within the Valley Bike system.
+	 * @return a list of all the stations
 	 */
 	public ArrayList<String> getStationList() {
 		ArrayList<String> formattedStationList = new ArrayList<>();
@@ -1076,7 +1075,8 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Helper method for JUnit testing. Returns Station object corresponding to the id
-	 * @param the id of the station
+	 * @param stationId the id of the station
+	 * @return the station attached to the stationId
 	 */
 	public Station getStation(int stationId) {
 		return stations.get(stationId);
@@ -1085,7 +1085,7 @@ public class ValleyBikeSimModel {
 	/**
 	 * Check station to see if all the docks are full.
 	 * @param stationId		station ID
-	 * @return boolean 
+	 * @return boolean if the station is full
 	 */
 	public boolean isStationDockFull(int stationId) {
 		
@@ -1358,7 +1358,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * Save the updated bike list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 * Save the updated ticket list to the CSV file, by overwriting all the entries and adding new entries
 	 */
 	public void saveTicketList() {     
 		try {
@@ -1382,7 +1382,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Ancillary function to assist the saveBikeList() function.
+	 * Ancillary function to assist the saveTicketList() function.
 	 */
 	private void saveAllTicket(Ticket ticket) {
 		try {
@@ -1411,7 +1411,7 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Save the updated payment method list to the CSV file, by overwriting all the entries and adding new entries for the new stations. 
+	 * Save the updated payment method list to the CSV file, by overwriting all the entries and adding new entries 
 	 */
 	public void savePaymentMethodList() {     
 		try {
@@ -1548,7 +1548,9 @@ public class ValleyBikeSimModel {
 		saveRiderList(riders);
 	}
 	
-	
+	/**
+	 * Ancillary function to assist the saveUserLists() function
+	 */
 	private void saveRiderList(ArrayList<Rider> riders) {
 		try {
 			  //overwrites existing file with new data
@@ -1571,6 +1573,9 @@ public class ValleyBikeSimModel {
 		
 	}
 	
+	/**
+	 * Ancillary function to assist the saveUserLists() function
+	 */
 	private void saveAdminList(ArrayList<Admin> admins) {
 		try {
 			  //overwrites existing file with new data
@@ -1793,7 +1798,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * Checks whether the active suer has stolen a bike
+	 * Checks whether the active user has stolen a bike
 	 * @return true if the user has stolen a bike
 	 */
 	public boolean activeUserStolenBike() {
@@ -1943,7 +1948,7 @@ public class ValleyBikeSimModel {
 	/**
 	 * Helper function to return the list of bikes at a station.
 	 * @param stationId
-	 * @return
+	 * @return list of bikes at a station
 	 */
 	public HashSet<Integer> getBikeListFromStation(int stationId) {
 		return stationsBikes.get(stationId);
@@ -1951,8 +1956,8 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Helper function to wrap all information pertaining to the specified station in a string.
-	 * @param station		Station ID
-	 * @return		a string with all of this station's information, formatted
+	 * @param stationId		Station ID
+	 * @return	a string with all of this station's information, formatted
 	 */
 	public String formatStationToString(int stationId) {
 		Station station = stations.get(stationId);
@@ -2002,6 +2007,7 @@ public class ValleyBikeSimModel {
 	/**
 	 * Move bike from station to storage, and returns the name and ID of the station to which the bike belonged.
 	 * @param bikeId	The bike ID
+	 * @param bikeStatus the status of the bike
 	 * @return station name and ID
 	 */
 	public String[] moveBikeFromStationToStorage(int bikeId, String bikeStatus) {
@@ -2025,7 +2031,7 @@ public class ValleyBikeSimModel {
 
 	/**
 	 * Remove a bike currently in storage from the Valley Bike system
-	 * @param bikeId		The bike ID
+	 * @param bikeId	The bike ID
 	 */
 	public void removeBikeInStorageFromSystem(int bikeId) {
 		bikes.remove(bikeId);
@@ -2126,7 +2132,7 @@ public class ValleyBikeSimModel {
 
 	/**
 	 * Gets a list of all transactions completed in a specified day
-	 * @param dateString
+	 * @param desiredDate date to summarize 
 	 * @return
 	 */
 	public ArrayList<String> getTransactionsStatistics(String desiredDate) {
@@ -2157,8 +2163,8 @@ public class ValleyBikeSimModel {
 
 	/**
 	 * Change the activeUser's specified field
-	 * @param string
-	 * @param newUsername
+	 * @param fieldName the field
+	 * @param value what to change the active user's field to
 	 */
 	public void setActiveUserInfo(String fieldName, String value) {
 		Rider activeRider = (Rider)users.get(activeUser.getUsername());
@@ -2233,7 +2239,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * charges monthly users for their subscriptions
+	 * Charges monthly users for their subscriptions
 	 */
 	public void chargeMonthly() {
 		Date now = new Date();
@@ -2255,7 +2261,7 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * Move all users charged after that day of the month to the first
+	 * Move all users charged after that day of the month to the first day of the month
 	 * @param today
 	 */
 	public void moveChargeDates(int today) {
@@ -2291,6 +2297,7 @@ public class ValleyBikeSimModel {
 
 	/**
 	 * Returns full formatted list of support tickets.
+	 * @param forRider true if the request is from the rider
 	 * @return Array List containing tickets
 	 */
 	public ArrayList<String> getFormattedTicketList(boolean forRider) {
@@ -2316,9 +2323,9 @@ public class ValleyBikeSimModel {
 	}
 	
 	/**
-	 * Helper function to wrap all information pertaining to the specified station in a string.
-	 * @param station		Station ID
-	 * @return		a string with all of this station's information, formatted
+	 * Helper function to wrap all information pertaining to the specified ticket in a string.
+	 * @param ticketId	ticket ID
+	 * @return	a string with all of this ticket's information, formatted
 	 */
 	public String formatTicketToString(int ticketId) {
 		Ticket ticket = tickets.get(ticketId);
@@ -2334,7 +2341,7 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Check if this bike is out of order
-	 * @param bike ID the bike ID
+	 * @param bikeId the bike ID
 	 * @return true if bike is OOO, or in storage
 	 */
 	public boolean bikeIsInStorage(int bikeId) {
@@ -2344,7 +2351,7 @@ public class ValleyBikeSimModel {
 	
 	/**
 	 * Check if this bike is in use
-	 * @param bike ID the bike ID
+	 * @param bikeId the bike ID
 	 * @return true if bike is in use
 	 */
 	public boolean bikeIsInUse(int bikeId) {
