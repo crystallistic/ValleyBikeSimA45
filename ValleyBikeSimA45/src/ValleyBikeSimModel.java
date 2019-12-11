@@ -518,7 +518,7 @@ public class ValleyBikeSimModel {
 	 */
 	public boolean activeUserCreditCardExpired() throws ParseException {
 		
-		// getting first credit card on file. TODO: Verify method to keep track of preferred payment method
+		// getting first credit card on file.
 		PaymentMethod pm = paymentMethods.get(activeUser.getUsername()); 
 		Date date = new SimpleDateFormat("MM/yy").parse(pm.getExpiryDate());
 		Date now = new Date();
@@ -592,7 +592,6 @@ public class ValleyBikeSimModel {
 		boolean inputIsValid = false;
 		boolean matchRegex = false;
 		boolean existInSys = false;
-		Pattern r = null;
 		HashMap<String,Pattern> regex = new HashMap<>(); 
 		regex.put("stationId", Pattern.compile("^(0*[1-9]|[1-9][0-9])$")); // accept values between 1-99
 		regex.put("bikeId", Pattern.compile("^[0-9]{3}$"));	// 3 digits 
@@ -1152,7 +1151,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1218,7 +1216,6 @@ public class ValleyBikeSimModel {
 				writer.close();
 					      
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -1275,7 +1272,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1420,7 +1416,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1557,7 +1552,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -1580,7 +1574,6 @@ public class ValleyBikeSimModel {
 		      writer.close();
 		      
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

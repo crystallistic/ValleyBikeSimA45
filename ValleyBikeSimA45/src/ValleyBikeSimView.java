@@ -127,7 +127,8 @@ public class ValleyBikeSimView {
 			System.out.println("Please enter your email. You should not use an email that is already registered to another ValleyBike user.");
 			break;
 		case "fullName":
-			System.out.println("Please enter your first and last name:");
+			System.out.println("Please enter your first and last name.\n"
+					+ "Make sure to capitalize the first letter of your first and last name (example: Johnny Appleseed):");
 			break;
 		case "phoneNumber":
 			System.out.println("Please enter your 10-digit cellphone number:");
