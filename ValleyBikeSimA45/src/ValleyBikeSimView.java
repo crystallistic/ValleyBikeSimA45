@@ -194,6 +194,9 @@ public class ValleyBikeSimView {
 			System.out.println("Please describe the issue in a single paragraph. The message may not be empty.\n"
 					+ "Press \"Enter\" when you finish writing the message:");
 			break;
+		case "ticketId":
+			System.out.println("Please enter a valid ticket ID from the list. You may not enter the ID of a resolved ticket:");
+			break;
 		default: // default is options for a menu
 			System.out.println("Please enter a number corresponding to your option:");
 			break;
@@ -246,8 +249,9 @@ public class ValleyBikeSimView {
 				+ "6) View station list\n"
 				+ "7) View daily statistics\n"
 				+ "8) Create support ticket\n"
-				+ "9) Resolve support ticket\n"
-				+ "10)Log out");
+				+ "9) View support tickets\n"
+				+ "10) Resolve support ticket\n"
+				+ "11)Log out");
 	}
 	
 	/**
@@ -264,7 +268,8 @@ public class ValleyBikeSimView {
 				+ "7) View ride history\n"
 				+ "8) View transaction history\n"
 				+ "9) Report issue\n"
-				+ "10) Log out\n");
+				+ "10) Display my support tickets\n"
+				+ "11) Log out\n");
 	}
 
 	/**
@@ -702,6 +707,15 @@ public class ValleyBikeSimView {
 		System.out.println("This bike is currently in use. If you are using this bike, or know someone who is,\n"
 				+ "please dock this bike at a station before submitting a support ticket for a broken bike.\n"
 				+ "This will help ValleyBike locate the bike for repair.");
+	}
+
+	/**
+	 * Informs the user the ticket has been resolved
+	 * @param ticketId
+	 */
+	public void resolvedTicket(int ticketId) {
+		System.out.println("Ticket #" + ticketId + " has been resolved.");
+		
 	}
 	
 }

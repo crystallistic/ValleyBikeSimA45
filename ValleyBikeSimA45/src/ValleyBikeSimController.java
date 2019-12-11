@@ -29,7 +29,10 @@ public class ValleyBikeSimController {
 		this.model = model;
 		this.regex = new HashMap<>();
 		generateRegex();
-		String fieldsToValidateInModel[] = { "bikeId", "stationId", "newUsername", "newEmail","newStationId", "newStationName", "newStationAddress","newBikeId","bikeIdInStorage","removeBikeId"};
+		String fieldsToValidateInModel[] = 
+			{ "bikeId", "stationId", "newUsername", "newEmail","newStationId", 
+			"newStationName", "newStationAddress","newBikeId","bikeIdInStorage",
+			"removeBikeId","ticketId"};
 		// Set demonstration using HashSet Constructor
 		validateInModel = new HashSet<>(Arrays.asList(fieldsToValidateInModel));
 	}
@@ -254,7 +257,7 @@ public class ValleyBikeSimController {
 
 		String optionSelected;
 		if (model.activeUserIsAdmin()) { // Deal with the Admin menu options
-			optionSelected = getUserInput("option9");
+			optionSelected = getUserInput("option11");
 			switch (optionSelected) {
 			case "1": // 1) Add station
 				addStation(); 
@@ -280,17 +283,20 @@ public class ValleyBikeSimController {
 			case "8":// 8) Create support ticket
 				createSupportTicket();
 				break;
-			case "9": // 9) Resolve support ticket
+			case "9": // 9) Display support ticket 
+				displaySupportTicket();
+				break;
+			case "10": // 10) Resolve support ticket
 				resolveSupportTicket();
 				break;
-			case "10":// 10) Log out
+			case "11":// 11) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
 				break;
 			}
 		} else { // Deal with the Rider menu options
-			optionSelected = getUserInput("option10");
+			optionSelected = getUserInput("option11");
 			switch (optionSelected) {
 			case "1":// 1) View station list
 				displayStationList();
@@ -319,7 +325,10 @@ public class ValleyBikeSimController {
 			case "9":// 9) Report issue
 				createSupportTicket();
 				break;
-			case "10":// 10) Log out
+			case "10": // 10) View my support tickets
+				displayRiderSupportTickets();
+				break;
+			case "11":// 10) Log out
 				view.displayLogout();
 				model.setActiveUser(null);
 				start();
@@ -327,13 +336,6 @@ public class ValleyBikeSimController {
 			}
 		}
 		mainMenu(userIsAdmin);
-	}
-
-	/**
-	 * Resolve a support ticket.
-	 */
-	private void resolveSupportTicket() {
-		view.displaySupportTickets(model.getFormattedTicketList());
 	}
 
 	/**
@@ -976,6 +978,41 @@ public class ValleyBikeSimController {
 		
 		int ticketId = model.createSupportTicket(category,identifyingInfo,description);
 		view.displaySubmitSupportTicketSuccess(ticketId,optionSelected);
+		
+	}
+	
+	/**
+	 * Display full formatted list of support tickets in the system.
+	 */
+	private void displaySupportTicket() {
+		view.displaySupportTickets(model.getFormattedTicketList(false));
+		
+	}
+	
+	/**
+	 * Display full formatted list of support tickets associated with this user.
+	 */
+	private void displayRiderSupportTickets() {
+		view.displaySupportTickets(model.getFormattedTicketList(true));
+		
+	}
+	
+	/**
+	 * Resolve a support ticket.
+	 */
+	private void resolveSupportTicket() {
+		
+		// show all support tickets 
+		displaySupportTicket();
+		
+		// prompt user for ticket ID
+		int ticketId = Integer.parseInt(getUserInput("ticketId"));
+		
+		// resolve ticket in system, update data
+		model.resolveSupportTicket(ticketId);
+		
+		// display confirmation of ticket resolution
+		view.resolvedTicket(ticketId);
 		
 	}
 			

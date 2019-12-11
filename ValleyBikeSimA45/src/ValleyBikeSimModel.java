@@ -578,6 +578,7 @@ public class ValleyBikeSimModel {
 													+ "([a-zA-Z .'-]+),"		// city
 													+ "([a-zA-Z0-9 .'\\/#-]+),"	// state
 													+ " *([0-9]{5}) *$"));	// zip code
+		regex.put("ticketId", Pattern.compile("^[0-9]+$"));
 		
 		switch (userInputName) {
 		case "stationId":	// valid if is numeric and exists in system	
@@ -690,6 +691,18 @@ public class ValleyBikeSimModel {
 				}
 			}
 			inputIsValid = (matchRegex && existInSys && !bikeInUse);
+		case "ticketId": // valid if it is a number and exists in the system and has not been resolved
+			matchRegex = regex.get(userInputName).matcher(userInput).find();
+			
+			boolean isResolved = true;
+			if (matchRegex) {
+				existInSys = tickets.containsKey(Integer.parseInt(userInput));
+				if (existInSys) {
+					isResolved = tickets.get(Integer.parseInt(userInput)).isResolved();
+				}
+			}
+			inputIsValid = (matchRegex && existInSys && !isResolved);
+			
 		} 	
 		return inputIsValid;
 	}
@@ -2097,57 +2110,6 @@ public class ValleyBikeSimModel {
 	}
 
 	/**
-	 * Create a support ticket, and store it in the database. Update data files accordingly.
-	 * @param category
-	 * @param identifyingInfo
-	 * @param description
-	 */
-	public int createSupportTicket(String category, String identifyingInfo, String description) {
-		
-		// create ticket object
-		int ticketId = (Integer)Collections.max(tickets.keySet()) + 1;
-		String username = activeUser.getUsername();
-		Ticket ticket = new Ticket(ticketId, username, category,identifyingInfo,false, description);
-		
-		// map ticket object to the user and to the ticket ID
-		tickets.put(ticketId, ticket);
-		usersTickets.putIfAbsent(username, new HashSet<>());
-		usersTickets.get(username).add(ticket);
-		
-		// bike category issues 
-		if (category.equals("bike")) {
-			int bikeId = Integer.parseInt(identifyingInfo);
-			// if bike is broken, move to storage
-			if (ticket.getDescription().equalsIgnoreCase("Bike OOO")) {
-				moveBikeFromStationToStorage(bikeId, "OOO");
-			} else if (ticket.getDescription().equalsIgnoreCase("Check in bike at full station")){ 
-
-				// ticket is instantly resolved since we've moved the bike to storage
-				tickets.get(ticketId).setResolved(true);
-				saveStationList();
-				saveBikeList();
-			} else { // if the user had an overdue bike, close ticket, inform them of the $2000 charge
-				tickets.get(ticketId).setResolved(true);
-			}
-		}
-		
-		// if ticket is maintenance request for station, edit station data
-		if (category.equals("station")) {
-			int stationId = Integer.parseInt(identifyingInfo);
-			
-			// increase the number of maintenance requests at this station
-			Station station = stations.get(stationId);
-			station.setMaintenanceReqs(station.getMaintenanceReqs()+1);
-			saveStationList();
-		}
-		
-		// save ticket to data file
-		saveTicketList();
-		
-		return ticketId;
-	}
-	
-	/**
 	 * Gets a list of all transactions completed in a specified day
 	 * @param dateString
 	 * @return
@@ -2316,13 +2278,22 @@ public class ValleyBikeSimModel {
 	 * Returns full formatted list of support tickets.
 	 * @return Array List containing tickets
 	 */
-	public ArrayList<String> getFormattedTicketList() {
+	public ArrayList<String> getFormattedTicketList(boolean forRider) {
 		ArrayList<String> formattedTicketList = new ArrayList<>();
-		formattedTicketList.add("ID\tUsername\tCategory\tIdenfying Information\tIs resolved?\tDescription\n");
-		Object[] ticketIds = tickets.keySet().toArray();
-		Arrays.sort(ticketIds);
+		formattedTicketList.add("ID\tUsername\tCategory\tIdenfyingInfo\tIs resolved?\tDescription\n");
+		Object[] ticketIds = tickets.keySet().toArray(); // set of all ticket IDs
+		Arrays.sort(ticketIds); // sort ticket IDs to display in that order
+		String activeUsername = activeUser.getUsername(); // the username of currently active user
 		
+		// traverse all tickets
 		for (Object ticketId : ticketIds) {	
+			
+			// if we're getting a rider's list of tickets and this ticket isn't theirs, don't include in list
+			if (forRider && !tickets.get((Integer)ticketId).getUsername().equals(activeUsername)) {
+				continue;
+			}
+			
+			// else add ticket to list
 			formattedTicketList.add(formatTicketToString((Integer)ticketId));
 		}
 		
@@ -2342,7 +2313,7 @@ public class ValleyBikeSimModel {
 		String info = ticket.getIdentifyingInfo();
 		String isResolved = (ticket.isResolved() ? "Yes" : "No");
 		String description = ticket.getDescription();
-		return id + "\t" + username + "\t" + category + "\t" + info + "\t" + isResolved + "\t" + description;
+		return id + "\t" + username + "\t" + category + "\t\t" + info + "\t\t" + isResolved + "\t\t" + description;
 	}
 
 	
@@ -2368,6 +2339,96 @@ public class ValleyBikeSimModel {
 			inUse = (ride.getBikeId() == bikeId);
 		}
 		return inUse;
+	}
+	
+	/**
+	 * Create a support ticket, and store it in the database. Update data files accordingly.
+	 * @param category
+	 * @param identifyingInfo
+	 * @param description
+	 */
+	public int createSupportTicket(String category, String identifyingInfo, String description) {
+		
+		// create ticket object
+		int ticketId = (Integer)Collections.max(tickets.keySet()) + 1;
+		String username = activeUser.getUsername();
+		Ticket ticket = new Ticket(ticketId, username, category,identifyingInfo,false, description);
+		
+		// map ticket object to the user and to the ticket ID
+		tickets.put(ticketId, ticket);
+		usersTickets.putIfAbsent(username, new HashSet<>());
+		usersTickets.get(username).add(ticket);
+		
+		// bike category issues 
+		if (category.equals("bike")) {
+			int bikeId = Integer.parseInt(identifyingInfo);
+			// if bike is broken, move to storage
+			if (ticket.getDescription().equalsIgnoreCase("Bike OOO")) {
+				moveBikeFromStationToStorage(bikeId, "OOO");
+			} else if (ticket.getDescription().equalsIgnoreCase("Check in bike at full station")){ 
+
+				// ticket is instantly resolved since we've moved the bike to storage
+				tickets.get(ticketId).setResolved(true);
+				saveStationList();
+				saveBikeList();
+			} else { // if the user had an overdue bike, close ticket, inform them of the $2000 charge
+				tickets.get(ticketId).setResolved(true);
+			}
+		}
+		
+		// if ticket is maintenance request for station, edit station data
+		if (category.equals("station")) {
+			int stationId = Integer.parseInt(identifyingInfo);
+			
+			// increase the number of maintenance requests at this station
+			Station station = stations.get(stationId);
+			station.setMaintenanceReqs(station.getMaintenanceReqs()+1);
+			saveStationList();
+		}
+		
+		// save ticket to data file
+		saveTicketList();
+		
+		return ticketId;
+	}
+
+	/**
+	 * Resolves an unresolved support ticket depending on category.
+	 * @param ticketId the ticket ID
+	 */
+	public void resolveSupportTicket(int ticketId) {
+		String category = tickets.get(ticketId).getCategory();
+		String identifyingInfo = tickets.get(ticketId).getIdentifyingInfo();
+		
+		if (category.equals("station")) { // ticket is a maintenance request
+			// the admin should have already resolved this maintenance request 
+			// in real life before resolving it in the system
+			
+			// remove maintenance request from station
+			Station station = stations.get(Integer.parseInt(identifyingInfo));
+			station.setMaintenanceReqs(station.getMaintenanceReqs()-1);;
+			
+			// update station data file to reflect this change
+			saveStationList();
+			
+		} else if (category.equals("bike")) { // ticket of OOO bike
+			// (because this ticket is bike-related and a "bike overdue" ticket is always resolved, 
+			// this can only be a ticket of an OOO bike)
+			
+			// symbolically "fixing" this bike and change its status to inStorage
+			int bikeId = Integer.parseInt(identifyingInfo);
+			bikes.get(bikeId).setStatus("inStorage"); 
+			
+			// update bike data file to reflect this change
+			saveBikeList();
+			
+		}
+		
+		// set resolved ticket to true
+		tickets.get(ticketId).setResolved(true);
+		
+		saveTicketList();
+		
 	}
 
 }
