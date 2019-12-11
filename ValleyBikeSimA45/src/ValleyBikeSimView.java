@@ -294,7 +294,7 @@ public class ValleyBikeSimView {
 	 */
 	public void displayNoActiveRide() {
 		System.out.println("Sorry, action cannot be completed because you have no ride in progress.\n"
-				+ "If you are trying to return a bike that is not yours, please submit a maintenance request.");
+				+ "If you are trying to return a bike that is not yours or you have an overdue bike, please submit a support ticket.");
 	}
 
 	public void displayFullDock() {
@@ -361,7 +361,7 @@ public class ValleyBikeSimView {
 	 * Notifies user of stolen bike charge.
 	 */
 	public void bikeStolen() {
-		System.out.println("You have an overdue bike which has been marked as stolen. You have been charged $2000.\n"
+		System.out.println("You have an overdue bike which has been marked as stolen. A hold has been placed on your account.\n"
 				+ "Please contact ValleyBike for instructions for next steps");
 	}
 
@@ -597,11 +597,25 @@ public class ValleyBikeSimView {
 	}
 
 	/**
-	 * Confirm successful creation of support ticket
+	 * Confirm successful creation of support ticket. Displays different confirmation messages depending on the ticket content
 	 */
-	public void displaySubmitSupportTicketSuccess(int ticketId) {
-		System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
-				+ "Your support ticket number is " + ticketId + ".");
+	public void displaySubmitSupportTicketSuccess(int ticketId, String optionSelected) {
+		
+		// open tickets
+		if (optionSelected.equals("1") || optionSelected.equals("2") || optionSelected.equals("5")) {
+			System.out.println("You have successfully submitted a support ticket regarding your issue.\n"
+					+ "Your support ticket number is " + ticketId + ".");
+		}
+		
+		if (optionSelected.equals("4")) {
+			System.out.println("You have been charged $2000 for not returning your bike to a station within 24 hours of starting your ride."
+					+ "\nPlease note that this charge is non-refundable even if you return this bike to ValleyBike,\n"
+					+ "although we do encourage that you do so by contacting customer service.\n"
+					+ "You may now start a new ride.");
+		}
+		
+		
+		
 	}
 	
 	/*
@@ -646,6 +660,13 @@ public class ValleyBikeSimView {
 		System.out.println("Thank you for letting us know! Please lock the bike securely near the station, \n"
 				+ "and we will mark your ride as completed in the system. Thank you for riding with ValleyBike.");
 		
+	}
+
+	/**
+	 * Informs user that they did not steal a bike.
+	 */
+	public void displayUserDidNotStealBike() {
+		System.out.println("You do not have any overdue rides.");
 	}
 	
 }

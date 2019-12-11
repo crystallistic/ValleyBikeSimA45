@@ -902,7 +902,6 @@ public class ValleyBikeSimModel {
 		Membership membership = memberships.get(activeUsername); //user's membership
 		Date now = new Date(); //current time
 		Ride ride = ridesInProgress.get(activeUsername); //Ride being completed
-		System.out.println(ride.toString());
 		PaymentMethod paymentMethod = paymentMethods.get(activeUsername); //active user's payment method
 		
 		//Charge user for the completed ride
@@ -915,10 +914,12 @@ public class ValleyBikeSimModel {
 		transactionsByUser.putIfAbsent(activeUser.getUsername(), new ArrayList<Transaction>());
 		transactionsByUser.get(activeUser.getUsername()).add(transaction);
 		
-		//Update bike list at current Station if station isn't full
-		if (!dockIsFull) {
+		// if station is full, move bike to storage
+		if (dockIsFull) {
+			bikes.get(ride.getBikeId()).setStatus("inStorage");
+		} else { // Update bike list at current Station if station isn't full
 			stationsBikes.get(stationId).add(ride.getBikeId());
-		}	
+		}
 		
 		//Add end time and end station to Ride associated to User
 		ride.setEndTime(now);
@@ -2134,12 +2135,14 @@ public class ValleyBikeSimModel {
 			// if bike is broken, move to storage
 			if (ticket.getDescription().equalsIgnoreCase("Bike OOO")) {
 				moveBikeFromStationToStorage(bikeId, "OOO");
-			} else { // if user is trying to check a bike into full station, move it to storage
-				bikes.get(bikeId).setStatus("inStorage");
+			} else if (ticket.getDescription().equalsIgnoreCase("Check in bike at full station")){ 
+
 				// ticket is instantly resolved since we've moved the bike to storage
 				tickets.get(ticketId).setResolved(true);
 				saveStationList();
 				saveBikeList();
+			} else { // if the user had an overdue bike, close ticket, inform them of the $2000 charge
+				tickets.get(ticketId).setResolved(true);
 			}
 		}
 		
@@ -2226,5 +2229,13 @@ public class ValleyBikeSimModel {
 	 */
 	public int getBikeIdRideInProgress() {
 		return ridesInProgress.get(activeUser.getUsername()).getBikeId();
+	}
+
+	/**
+	 * Returns the ID of the bike that the user has not checked in for more than 24hrs
+	 * @return
+	 */
+	public int getActiveUserStolenBikeId() {
+		return ridesOverdue.get(activeUser.getUsername()).getBikeId();
 	}
 }

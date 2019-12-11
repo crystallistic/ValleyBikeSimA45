@@ -616,7 +616,7 @@ public class ValleyBikeSimController {
 				// if user's credit card expired, display error message
 				if (model.activeUserCreditCardExpired()) {
 					view.cardExpired();
-					// TODO: subsequent actions: prompt user for new payment method, or select from existing
+					// TODO: subsequent actions: prompt user for new payment method
 				}
 				else if (model.activeUserStolenBike()) {
 					view.bikeStolen();
@@ -671,7 +671,7 @@ public class ValleyBikeSimController {
 			// if user wants to return bike to different station, restart process
 			if (optionSelected.equals("1")) {
 				endRide();
-			} else { // if user wants to contact customer support to end ride here
+			} else { // if user wants to contact customer support to end ride here, create ticket
 				model.createSupportTicket("bike", Integer.toString(model.getBikeIdRideInProgress()), "Check in bike at full station");
 				view.displayReturnBikeAtFullStationSuccess();
 			}
@@ -923,7 +923,18 @@ public class ValleyBikeSimController {
 			identifyingInfo = getUserInput("bikeId");
 			description = "Check in bike at full station";
 			break;
-		case "4": // general issue
+		case "4": // rider needs to resolve overdue ride issue
+			
+			// if the user does not in fact have any overdue ride, do nothing
+			if (!model.activeUserStolenBike()) {
+				view.displayUserDidNotStealBike();
+				return;
+			}
+			category = "bike";
+			identifyingInfo = Integer.toString(model.getActiveUserStolenBikeId());
+			description = "User stole bike";
+			break;
+		case "5": // general issue
 			category = "general";
 			break;
 		}
@@ -933,7 +944,7 @@ public class ValleyBikeSimController {
 		}
 		
 		int ticketId = model.createSupportTicket(category,identifyingInfo,description);
-		view.displaySubmitSupportTicketSuccess(ticketId);
+		view.displaySubmitSupportTicketSuccess(ticketId,optionSelected);
 		
 	}
 			

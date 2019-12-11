@@ -141,11 +141,4 @@ public class Ride {
 		this.endStationName = endStationName;
 	}
 
-	@Override
-	public String toString() {
-		return "Ride [bikeId=" + bikeId + ", startStationId=" + startStationId + ", startStationName="
-				+ startStationName + ", endStationId=" + endStationId + ", endStationName=" + endStationName
-				+ ", startTime=" + startTime + ", endTime=" + endTime + "]";
-	}
-	
 }
