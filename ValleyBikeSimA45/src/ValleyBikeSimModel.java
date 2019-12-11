@@ -14,7 +14,7 @@ import com.opencsv.CSVWriter;
 import java.util.regex.Pattern;
 
 /**
- * @author maingo, Jemimah Charles, Maggie Burkart, Emma Tanur
+ * @author maingo, jemimahcharles, maggieburkart, emmatanur
  *
  * Model component of Valley Bike system. 
  * Stores and modifies system data
